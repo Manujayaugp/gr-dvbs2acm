@@ -1,0 +1,96 @@
+id: dvbs2acm_acm_controller
+label: DVB-S2 ACM Controller
+category: '[DVB-S2 ACM]'
+
+templates:
+  imports: import dvbs2acm
+  make: "dvbs2acm.acm_controller(acm_mode=${acm_mode}, initial_modcod=${initial_modcod}, target_ber=${target_ber}, snr_margin_db=${snr_margin_db}, hysteresis_db=${hysteresis_db}, history_len=${history_len}, use_ai=${use_ai}, ai_socket=${ai_socket}, frame_size=${frame_size})"
+  callbacks:
+    - set_acm_mode(${acm_mode})
+    - force_modcod(${initial_modcod})
+
+parameters:
+  - id: acm_mode
+    label: ACM Mode
+    dtype: enum
+    options: [dvbs2acm.AcmMode.ACM, dvbs2acm.AcmMode.VCM, dvbs2acm.AcmMode.CCM]
+    option_labels: [ACM (Adaptive), VCM (Variable), CCM (Constant)]
+    default: dvbs2acm.AcmMode.ACM
+
+  - id: initial_modcod
+    label: Initial MODCOD
+    dtype: int
+    default: 4
+    hide: none
+    # QPSK 1/2 = 4 (safe baseline)
+
+  - id: target_ber
+    label: Target BER
+    dtype: real
+    default: 1e-7
+
+  - id: snr_margin_db
+    label: SNR Margin (dB)
+    dtype: real
+    default: 1.0
+
+  - id: hysteresis_db
+    label: Hysteresis (dB)
+    dtype: real
+    default: 0.3
+
+  - id: history_len
+    label: SNR History Length
+    dtype: int
+    default: 16
+
+  - id: use_ai
+    label: Enable AI/ML
+    dtype: bool
+    default: 'False'
+    options: ['True', 'False']
+    option_labels: [Enabled, Disabled]
+
+  - id: ai_socket
+    label: AI Engine Socket
+    dtype: string
+    default: '"tcp://localhost:5557"'
+    hide: ${ 'none' if use_ai else 'all' }
+
+  - id: frame_size
+    label: FECFRAME Size
+    dtype: enum
+    options: [dvbs2acm.FrameSize.NORMAL, dvbs2acm.FrameSize.SHORT]
+    option_labels: [Normal (64800 bits), Short (16200 bits)]
+    default: dvbs2acm.FrameSize.NORMAL
+
+inputs:
+-   domain: message
+    id: snr_in
+    optional: false
+
+outputs:
+-   domain: message
+    id: modcod_out
+-   domain: message
+    id: stats_out
+    optional: true
+
+documentation: |
+  DVB-S2 ACM Controller
+
+  Central decision-making block for Adaptive Coding and Modulation.
+  Receives SNR measurements from the receiver (via message port)
+  and selects the optimal MODCOD to maximize spectral efficiency
+  while maintaining QoS.
+
+  In AI mode, communicates with a Python DQN+LSTM engine running
+  externally (acm_controller_ai.py) via ZMQ.
+
+  MODCOD IDs follow ETSI EN 302 307-1:
+    1  = QPSK 1/4  (min SNR: -2.35 dB)
+    4  = QPSK 1/2  (min SNR:  1.00 dB)
+    14 = 8PSK 3/4  (min SNR:  7.91 dB)
+    28 = 32APSK 9/10 (min SNR: 16.05 dB)
+
+file_format: 1

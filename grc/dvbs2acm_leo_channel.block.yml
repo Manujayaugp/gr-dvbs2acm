@@ -1,0 +1,111 @@
+id: dvbs2acm_leo_channel
+label: DVB-S2 LEO Channel Model
+category: '[DVB-S2 ACM]/Channel'
+
+templates:
+  imports: import dvbs2acm
+  make: >
+    dvbs2acm.leo_channel(
+        sample_rate=${sample_rate},
+        altitude_km=${altitude_km},
+        freq_hz=${freq_hz},
+        tx_power_dbw=${tx_power_dbw},
+        tx_gain_dbi=${tx_gain_dbi},
+        rx_gain_dbi=${rx_gain_dbi},
+        noise_temp_k=${noise_temp_k},
+        rain_rate_mm_hr=${rain_rate_mm_hr},
+        min_elevation_deg=${min_elevation_deg},
+        update_period_ms=${update_period_ms})
+
+parameters:
+  - id: sample_rate
+    label: Sample Rate (sps)
+    dtype: float
+    default: 1e6
+
+  - id: altitude_km
+    label: Orbital Altitude (km)
+    dtype: float
+    default: 500.0
+
+  - id: freq_hz
+    label: Carrier Frequency (Hz)
+    dtype: float
+    default: 8.025e9
+
+  - id: tx_power_dbw
+    label: TX Power (dBW)
+    dtype: float
+    default: 20.0
+
+  - id: tx_gain_dbi
+    label: TX Antenna Gain (dBi)
+    dtype: float
+    default: 35.0
+
+  - id: rx_gain_dbi
+    label: RX Antenna Gain (dBi)
+    dtype: float
+    default: 40.0
+
+  - id: noise_temp_k
+    label: System Noise Temp (K)
+    dtype: float
+    default: 150.0
+
+  - id: rain_rate_mm_hr
+    label: Rain Rate (mm/hr)
+    dtype: float
+    default: 5.0
+
+  - id: min_elevation_deg
+    label: Min Elevation (deg)
+    dtype: float
+    default: 5.0
+
+  - id: update_period_ms
+    label: Channel Update Period (ms)
+    dtype: float
+    default: 100.0
+
+inputs:
+- domain: stream
+  dtype: complex
+  label: IQ in
+
+outputs:
+- domain: stream
+  dtype: complex
+  label: IQ out
+- domain: message
+  id: channel_state
+  label: Channel State
+  optional: true
+
+documentation: |
+  LEO Satellite Channel Model (DVB-S2 ACM Research)
+
+  Physics-based LEO channel that applies time-varying effects to
+  a streaming IQ signal as the satellite passes overhead:
+
+    - Doppler shift: exact per-sample phase rotation (up to ±188 kHz at X-band, 500 km)
+    - Free-space path loss: Friis formula with elevation-dependent slant range
+    - Rain attenuation: ITU-R P.618-13 / P.838-3 (cosecant law)
+    - Tropospheric scintillation: ITU-R P.618-13 sigma scaling
+    - Rician fading: K-factor = 10^(el/45) — strong LoS at zenith
+
+  Amplitude is normalised: TCA (Time of Closest Approach) = 0 dB reference.
+  The pass loops continuously so the flowgraph runs indefinitely.
+
+  "channel_state" message dict (published every update_period_ms):
+    snr_db, elevation_deg, slant_range_km, doppler_hz,
+    doppler_rate_hz_s, fspl_db, rain_db, scint_db, rician_db,
+    rtt_ms, pass_fraction (0.0=AOS → 1.0=LOS)
+
+  Typical parameters for 500 km X-band LEO:
+    Pass duration:  ~9.2 min  (el > 5°)
+    Max Doppler:    ±188 kHz
+    Path loss swing: 12.2 dB
+    RTT range:      3.3 – 13.6 ms
+
+file_format: 1

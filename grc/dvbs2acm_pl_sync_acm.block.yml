@@ -1,0 +1,47 @@
+id: dvbs2acm_pl_sync_acm
+label: DVB-S2 PL Sync (ACM)
+category: '[DVB-S2 ACM]/Receiver'
+
+templates:
+  imports: import dvbs2acm
+  make: "dvbs2acm.pl_sync_acm(threshold=${threshold}, avg_frames=${avg_frames})"
+
+parameters:
+  - id: threshold
+    label: Correlation Threshold
+    dtype: real
+    default: 0.7
+
+  - id: avg_frames
+    label: Averaging Frames
+    dtype: int
+    default: 4
+
+inputs:
+-   domain: stream
+    dtype: complex
+    label: IQ in
+
+outputs:
+-   domain: stream
+    dtype: complex
+    label: IQ out (descrambled)
+-   domain: message
+    id: frame_info
+    optional: true
+
+documentation: |
+  DVB-S2 Physical Layer Synchronizer with ACM (ETSI EN 302 307-1 §11)
+
+  Performs:
+    1. Frame synchronization via SOF (Start of Frame) correlation
+    2. PLSCODE decoding to extract MODCOD ID and pilots flag
+    3. Gold code de-scrambling
+    4. Stream tagging with detected MODCOD
+
+  Output message port "frame_info":
+    PMT dict: modcod_id, pilots, locked, frame_num
+
+  Connect: USRP source → PL Sync → Demodulator
+
+file_format: 1

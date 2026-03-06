@@ -1,0 +1,51 @@
+id: dvbs2acm_pl_framer_acm
+label: DVB-S2 PL Framer (ACM)
+category: '[DVB-S2 ACM]/Transmitter'
+
+templates:
+  imports: import dvbs2acm
+  make: "dvbs2acm.pl_framer_acm(initial_modcod=${initial_modcod}, pilots=${pilots}, rolloff=${rolloff})"
+
+parameters:
+  - id: initial_modcod
+    label: Initial MODCOD
+    dtype: int
+    default: 4
+
+  - id: pilots
+    label: Pilot Symbols
+    dtype: bool
+    default: 'True'
+    options: ['True', 'False']
+    option_labels: [Enabled, Disabled]
+
+  - id: rolloff
+    label: Roll-off Factor
+    dtype: real
+    default: 0.20
+
+inputs:
+-   domain: stream
+    dtype: complex
+    label: IQ data in
+
+outputs:
+-   domain: stream
+    dtype: complex
+    label: PLFRAME out
+
+documentation: |
+  DVB-S2 Physical Layer Framer with ACM (ETSI EN 302 307-1 §5.5)
+
+  Assembles the complete PLFRAME:
+    - 90-symbol PL Header: SOF (26 symbols) + PLSCODE (64 symbols)
+    - Data slots: 90 symbols each
+    - Pilot blocks: 36 BPSK symbols every 16 data slots (if enabled)
+    - Gold code scrambling of the entire frame
+
+  PLSCODE encodes MODCOD ID (5 bits) + frame type (2 bits).
+  The receiver uses PLSCODE to identify MODCOD for demodulation.
+
+  Connect to USRP sink or channel model.
+
+file_format: 1

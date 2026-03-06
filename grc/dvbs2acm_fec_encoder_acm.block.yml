@@ -1,0 +1,53 @@
+id: dvbs2acm_fec_encoder_acm
+label: DVB-S2 FEC Encoder (ACM)
+category: '[DVB-S2 ACM]/Transmitter'
+
+templates:
+  imports: import dvbs2acm
+  make: "dvbs2acm.fec_encoder_acm(frame_size=${frame_size}, ldpc_algorithm=${ldpc_algorithm}, initial_modcod=${initial_modcod})"
+
+parameters:
+  - id: frame_size
+    label: FECFRAME Size
+    dtype: enum
+    options: [dvbs2acm.FrameSize.NORMAL, dvbs2acm.FrameSize.SHORT]
+    option_labels: [Normal (64800 bits), Short (16200 bits)]
+    default: dvbs2acm.FrameSize.NORMAL
+
+  - id: ldpc_algorithm
+    label: LDPC Algorithm
+    dtype: enum
+    options: [dvbs2acm.LdpcAlgorithm.ONESIDE, dvbs2acm.LdpcAlgorithm.TWOSIDE, dvbs2acm.LdpcAlgorithm.PHILOG]
+    option_labels: [One-Side, Two-Side, Phi-Log]
+    default: dvbs2acm.LdpcAlgorithm.ONESIDE
+
+  - id: initial_modcod
+    label: Initial MODCOD
+    dtype: int
+    default: 4
+
+inputs:
+-   domain: stream
+    dtype: byte
+    label: BBFRAME bits
+
+outputs:
+-   domain: stream
+    dtype: byte
+    label: FECFRAME bits
+
+documentation: |
+  DVB-S2 FEC Encoder with ACM (ETSI EN 302 307-1 §5.3)
+
+  Performs BCH outer coding followed by LDPC inner coding.
+  Code parameters (kbch, nbch, kldpc, nldpc) are selected per
+  MODCOD stream tag on the input.
+
+  MODCOD tag → BCH t-correction + LDPC code rate
+    QPSK 1/2  (ID 4):  kbch=32208, nldpc=64800, rate=1/2
+    8PSK 3/4  (ID 14): kbch=48408, nldpc=64800, rate=3/4
+    32APSK 9/10 (ID 28): kbch=58192, nldpc=64800, rate=9/10
+
+  Output: coded bits ready for interleaving + modulation.
+
+file_format: 1

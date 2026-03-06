@@ -1,0 +1,54 @@
+id: dvbs2acm_acm_feedback
+label: DVB-S2 ACM Feedback
+category: '[DVB-S2 ACM]'
+
+templates:
+  imports: import dvbs2acm
+  make: "dvbs2acm.acm_feedback(report_period_ms=${report_period_ms}, snr_alpha=${snr_alpha}, ber_alpha=${ber_alpha})"
+
+parameters:
+  - id: report_period_ms
+    label: Report Period (ms)
+    dtype: real
+    default: 100.0
+
+  - id: snr_alpha
+    label: SNR Filter Alpha
+    dtype: real
+    default: 0.1
+
+  - id: ber_alpha
+    label: BER/FER Filter Alpha
+    dtype: real
+    default: 0.05
+
+inputs:
+-   domain: message
+    id: snr_in
+-   domain: message
+    id: ber_in
+    optional: true
+
+outputs:
+-   domain: message
+    id: feedback_out
+
+documentation: |
+  DVB-S2 ACM Feedback Aggregator
+
+  Aggregates SNR (from SNR Estimator) and BER/FER (from FEC Decoder)
+  into a single feedback message for the ACM Controller.
+
+  This block closes the ACM control loop:
+    SNR Estimator → (snr_in) ACM Feedback (feedback_out) → ACM Controller
+    FEC Decoder   → (ber_in) ACM Feedback
+
+  On the ACM Controller, connect feedback_out → snr_in.
+
+  The feedback message dict contains:
+    snr_db, ber, fer, modcod_id, timestamp
+
+  Alpha parameters control exponential moving average filtering.
+  Lower alpha = more smoothing, slower response.
+
+file_format: 1

@@ -1,0 +1,59 @@
+id: dvbs2acm_fec_decoder_acm
+label: DVB-S2 FEC Decoder (ACM)
+category: '[DVB-S2 ACM]/Receiver'
+
+templates:
+  imports: import dvbs2acm
+  make: "dvbs2acm.fec_decoder_acm(frame_size=${frame_size}, ldpc_algorithm=${ldpc_algorithm}, max_iter=${max_iter}, initial_modcod=${initial_modcod})"
+
+parameters:
+  - id: frame_size
+    label: FECFRAME Size
+    dtype: enum
+    options: [dvbs2acm.FrameSize.NORMAL, dvbs2acm.FrameSize.SHORT]
+    option_labels: [Normal (64800 bits), Short (16200 bits)]
+    default: dvbs2acm.FrameSize.NORMAL
+
+  - id: ldpc_algorithm
+    label: LDPC Algorithm
+    dtype: enum
+    options: [dvbs2acm.LdpcAlgorithm.ONESIDE, dvbs2acm.LdpcAlgorithm.TWOSIDE, dvbs2acm.LdpcAlgorithm.PHILOG]
+    option_labels: [One-Side, Two-Side, Phi-Log]
+    default: dvbs2acm.LdpcAlgorithm.ONESIDE
+
+  - id: max_iter
+    label: Max LDPC Iterations
+    dtype: int
+    default: 20
+
+  - id: initial_modcod
+    label: Initial MODCOD
+    dtype: int
+    default: 4
+
+inputs:
+-   domain: stream
+    dtype: float
+    label: Soft LLRs
+
+outputs:
+-   domain: stream
+    dtype: byte
+    label: Info bits
+-   domain: message
+    id: ber_out
+
+documentation: |
+  DVB-S2 FEC Decoder (LDPC + BCH) with ACM (ETSI EN 302 307-1 §5.3)
+
+  Performs iterative LDPC decoding using min-sum algorithm,
+  followed by BCH error correction. Code parameters are selected
+  per "modcod" stream tag.
+
+  Output message port "ber_out":
+    PMT dict: fer, frame_count, ldpc_iters, modcod_id
+
+  Connect ber_out → ACM Feedback for control loop closure.
+  Connect: Demodulator → FEC Decoder → BB Deframer
+
+file_format: 1

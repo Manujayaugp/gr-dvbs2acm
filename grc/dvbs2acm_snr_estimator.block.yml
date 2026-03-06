@@ -1,0 +1,72 @@
+id: dvbs2acm_snr_estimator
+label: DVB-S2 SNR Estimator
+category: '[DVB-S2 ACM]/Receiver'
+
+templates:
+  imports: import dvbs2acm
+  make: "dvbs2acm.snr_estimator(estimator_type=${estimator_type}, frame_size=${frame_size}, pilots=${pilots}, avg_frames=${avg_frames}, report_period=${report_period}, kalman_filter=${kalman_filter})"
+
+parameters:
+  - id: estimator_type
+    label: Algorithm
+    dtype: enum
+    options: [dvbs2acm.SnrEstimatorType.HYBRID, dvbs2acm.SnrEstimatorType.PILOT_MMSE, dvbs2acm.SnrEstimatorType.BLIND_M2M4]
+    option_labels: [Hybrid (Auto), Pilot-MMSE, Blind M2M4]
+    default: dvbs2acm.SnrEstimatorType.HYBRID
+
+  - id: frame_size
+    label: FECFRAME Size
+    dtype: enum
+    options: [dvbs2acm.FrameSize.NORMAL, dvbs2acm.FrameSize.SHORT]
+    option_labels: [Normal, Short]
+    default: dvbs2acm.FrameSize.NORMAL
+
+  - id: pilots
+    label: Pilots Present
+    dtype: bool
+    default: 'True'
+
+  - id: avg_frames
+    label: Averaging Window (frames)
+    dtype: int
+    default: 4
+
+  - id: report_period
+    label: Report Every N Frames
+    dtype: int
+    default: 1
+
+  - id: kalman_filter
+    label: Kalman Filter
+    dtype: bool
+    default: 'True'
+    options: ['True', 'False']
+    option_labels: [Enabled, Disabled]
+
+inputs:
+-   domain: stream
+    dtype: complex
+    label: IQ in
+
+outputs:
+-   domain: message
+    id: snr_out
+
+documentation: |
+  DVB-S2 Real-Time SNR Estimator
+
+  Three algorithms available:
+    Pilot-MMSE: Uses known 36-symbol BPSK pilot blocks.
+                Accuracy: ±0.2 dB. Requires pilot symbols.
+    Blind M2M4: Uses 2nd and 4th order moments.
+                Works without pilots, slight bias at extremes.
+    Hybrid:     Auto-selects best available method.
+
+  Output (message port "snr_out"):
+    PMT dict with keys: snr_db, snr_linear, noise_var, method,
+                        timestamp_ns, lock_status
+
+  Kalman filter smooths the SNR time series for stable ACM operation.
+  Connect snr_out → ACM Feedback → ACM Controller.
+
+file_format: 1

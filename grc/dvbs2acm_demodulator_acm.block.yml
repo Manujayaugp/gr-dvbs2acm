@@ -1,0 +1,46 @@
+id: dvbs2acm_demodulator_acm
+label: DVB-S2 Demodulator (ACM)
+category: '[DVB-S2 ACM]/Receiver'
+
+templates:
+  imports: import dvbs2acm
+  make: "dvbs2acm.demodulator_acm(initial_modcod=${initial_modcod}, noise_var=${noise_var})"
+
+parameters:
+  - id: initial_modcod
+    label: Initial MODCOD
+    dtype: int
+    default: 4
+
+  - id: noise_var
+    label: Noise Variance (σ²)
+    dtype: real
+    default: 0.1
+
+inputs:
+-   domain: stream
+    dtype: complex
+    label: IQ symbols
+
+outputs:
+-   domain: stream
+    dtype: float
+    label: Soft LLRs
+
+documentation: |
+  DVB-S2 Soft Demodulator with ACM (ETSI EN 302 307-1 §5.4)
+
+  Computes soft-decision Log-Likelihood Ratios (LLRs) for all
+  modulation schemes, selected via "modcod" stream tag:
+
+    QPSK   (IDs  1-11): 2 LLRs/symbol
+    8PSK   (IDs 12-17): 3 LLRs/symbol
+    16APSK (IDs 18-23): 4 LLRs/symbol
+    32APSK (IDs 24-28): 5 LLRs/symbol
+
+  Uses max-log approximation: LLR_k = max(d²_0) - max(d²_1)
+  Positive LLR → likely bit 1, Negative → likely bit 0.
+
+  Connect: PL Sync → Demodulator → FEC Decoder
+
+file_format: 1

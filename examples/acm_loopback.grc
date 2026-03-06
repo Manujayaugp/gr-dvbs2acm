@@ -1,0 +1,802 @@
+options:
+  parameters:
+    author: Research - DVB-S2 ACM
+    catch_exceptions: 'True'
+    category: Custom
+    cmake_opt: ''
+    comment: ''
+    copyright: GPLv3
+    description: DVB-S2 ACM full loopback with physics-based LEO satellite channel
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: acm_loopback
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: "DVB-S2 ACM Loopback \u2014 LEO Satellite Channel"
+    window_size: (1400,900)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: altitude_km
+  id: variable
+  parameters:
+    comment: "LEO orbital altitude (km) \u2014 restart flowgraph to apply"
+    value: '500.0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [680, 8]
+    rotation: 0
+    state: enabled
+- name: noise_amp
+  id: variable
+  parameters:
+    comment: ''
+    value: 10**(-snr_db/20.0)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [504, 8]
+    rotation: 0
+    state: enabled
+- name: rain_rate
+  id: variable
+  parameters:
+    comment: "Rain rate (mm/hr) \u2014 0=clear sky, 5=light, 25=heavy"
+    value: '5.0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [840, 8]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '2000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [184, 8]
+    rotation: 0
+    state: enabled
+- name: snr_db
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 0,0,1,3
+    label: "AWGN Noise Floor (dB) \u2014 LEO fading handled by channel block"
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '20'
+    step: '1'
+    stop: '40'
+    value: '30'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [296, 8]
+    rotation: 0
+    state: enabled
+- name: analog_random_source_x_0
+  id: analog_random_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    max: '255'
+    maxoutbuf: '0'
+    min: '0'
+    minoutbuf: '0'
+    num_samps: '188000'
+    repeat: 'True'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [32, 220]
+    rotation: 0
+    state: enabled
+- name: blocks_message_debug_0
+  id: blocks_message_debug
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Prints MODCOD decisions to console
+    en_uvec: 'True'
+    log_level: info
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [904, 592.0]
+    rotation: 0
+    state: enabled
+- name: blocks_null_sink_0
+  id: blocks_null_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    bus_structure_sink: '[[0,],]'
+    comment: ''
+    num_inputs: '1'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [32, 420]
+    rotation: 0
+    state: enabled
+- name: blocks_throttle2_0
+  id: blocks_throttle2
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    limit: auto
+    maximum: '0.1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1080, 168.0]
+    rotation: 0
+    state: enabled
+- name: channels_channel_model_0
+  id: channels_channel_model
+  parameters:
+    affinity: ''
+    alias: ''
+    block_tags: 'False'
+    comment: "AWGN background noise only \u2014 LEO fading is in dvbs2acm_leo_channel_0"
+    epsilon: '1.0'
+    freq_offset: '0.0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    noise_voltage: noise_amp
+    seed: '0'
+    taps: 1.0+0j
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1376, 80.0]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_acm_controller_0
+  id: dvbs2acm_acm_controller
+  parameters:
+    acm_mode: dvbs2acm.AcmMode.VCM
+    affinity: ''
+    ai_socket: '"tcp://localhost:5557"'
+    alias: ''
+    comment: ''
+    frame_size: dvbs2acm.FrameSize.NORMAL
+    history_len: '16'
+    hysteresis_db: '0.3'
+    initial_modcod: '4'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    snr_margin_db: '1.0'
+    target_ber: 1e-7
+    use_ai: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [528, 564.0]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_acm_feedback_0
+  id: dvbs2acm_acm_feedback
+  parameters:
+    affinity: ''
+    alias: ''
+    ber_alpha: '0.05'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    report_period_ms: '100.0'
+    snr_alpha: '0.1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [296, 632.0]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_bb_framer_acm_0
+  id: dvbs2acm_bb_framer_acm
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    frame_size: dvbs2acm.FrameSize.NORMAL
+    initial_modcod: '4'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    pilots: 'True'
+    stream_type: dvbs2acm.StreamType.TRANSPORT
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [248, 200]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_demodulator_acm_0
+  id: dvbs2acm_demodulator_acm
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    initial_modcod: '4'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    noise_var: '0.1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [472, 420]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_fec_decoder_acm_0
+  id: dvbs2acm_fec_decoder_acm
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    frame_size: dvbs2acm.FrameSize.NORMAL
+    initial_modcod: '4'
+    ldpc_algorithm: dvbs2acm.LdpcAlgorithm.ONESIDE
+    max_iter: '20'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [248, 420]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_fec_encoder_acm_0
+  id: dvbs2acm_fec_encoder_acm
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    frame_size: dvbs2acm.FrameSize.NORMAL
+    initial_modcod: '4'
+    ldpc_algorithm: dvbs2acm.LdpcAlgorithm.ONESIDE
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [472, 200]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_leo_channel_0
+  id: dvbs2acm_leo_channel
+  parameters:
+    affinity: ''
+    alias: ''
+    altitude_km: altitude_km
+    comment: 'Physics-based LEO channel: Doppler + path loss + rain + Rician fading'
+    freq_hz: 8.025e9
+    maxoutbuf: '0'
+    min_elevation_deg: '5.0'
+    minoutbuf: '0'
+    noise_temp_k: '150.0'
+    rain_rate_mm_hr: rain_rate
+    rx_gain_dbi: '40.0'
+    sample_rate: samp_rate
+    tx_gain_dbi: '35.0'
+    tx_power_dbw: '20.0'
+    update_period_ms: '100.0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1048, 44.0]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_modulator_acm_0
+  id: dvbs2acm_modulator_acm
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    initial_modcod: '4'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    rolloff: '0.20'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [704, 232.0]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_pl_framer_acm_0
+  id: dvbs2acm_pl_framer_acm
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    initial_modcod: '4'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    pilots: 'True'
+    rolloff: '0.20'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [768, 96.0]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_pl_sync_acm_0
+  id: dvbs2acm_pl_sync_acm
+  parameters:
+    affinity: ''
+    alias: ''
+    avg_frames: '4'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    threshold: '0.7'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [920, 420]
+    rotation: 0
+    state: enabled
+- name: dvbs2acm_snr_estimator_0
+  id: dvbs2acm_snr_estimator
+  parameters:
+    affinity: ''
+    alias: ''
+    avg_frames: '4'
+    comment: ''
+    estimator_type: dvbs2acm.SnrEstimatorType.HYBRID
+    frame_size: dvbs2acm.FrameSize.NORMAL
+    kalman_filter: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    pilots: 'True'
+    report_period: '8'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [696, 420]
+    rotation: 0
+    state: enabled
+- name: qtgui_const_sink_x_0
+  id: qtgui_const_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'True'
+    axislabels: 'True'
+    color1: '"blue"'
+    color10: '"dark blue"'
+    color2: '"red"'
+    color3: '"green"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: ''
+    grid: 'True'
+    gui_hint: 1,1,1,1
+    label1: Received IQ
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    marker1: '0'
+    marker10: '0'
+    marker2: '0'
+    marker3: '0'
+    marker4: '0'
+    marker5: '0'
+    marker6: '0'
+    marker7: '0'
+    marker8: '0'
+    marker9: '0'
+    name: '"RX Constellation"'
+    nconnections: '1'
+    size: '2048'
+    style1: '0'
+    style10: '0'
+    style2: '0'
+    style3: '0'
+    style4: '0'
+    style5: '0'
+    style6: '0'
+    style7: '0'
+    style8: '0'
+    style9: '0'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: '""'
+    type: complex
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    xmax: '2'
+    xmin: '-2'
+    ymax: '2'
+    ymin: '-2'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1296, 472.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_const_sink_x_1
+  id: qtgui_const_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    axislabels: 'True'
+    color1: '"blue"'
+    color10: '"dark blue"'
+    color2: '"red"'
+    color3: '"green"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: ''
+    grid: 'False'
+    gui_hint: ''
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    marker1: '0'
+    marker10: '0'
+    marker2: '0'
+    marker3: '0'
+    marker4: '0'
+    marker5: '0'
+    marker6: '0'
+    marker7: '0'
+    marker8: '0'
+    marker9: '0'
+    name: '""'
+    nconnections: '1'
+    size: '1024'
+    style1: '0'
+    style10: '0'
+    style2: '0'
+    style3: '0'
+    style4: '0'
+    style5: '0'
+    style6: '0'
+    style7: '0'
+    style8: '0'
+    style9: '0'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: '""'
+    type: complex
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    xmax: '2'
+    xmin: '-2'
+    ymax: '2'
+    ymin: '-2'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [632, 80.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_freq_sink_x_0
+  id: qtgui_freq_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    average: '0.1'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '"blue"'
+    color10: '"dark blue"'
+    color2: '"red"'
+    color3: '"green"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: ''
+    ctrlpanel: 'False'
+    fc: '0'
+    fftsize: '1024'
+    freqhalf: 'True'
+    grid: 'True'
+    gui_hint: 1,0,1,1
+    label: Relative Gain
+    label1: TX Spectrum
+    label10: ''''''
+    label2: RX Spectrum
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''''''
+    label7: ''''''
+    label8: ''''''
+    label9: ''''''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '"DVB-S2 Spectrum"'
+    nconnections: '2'
+    norm_window: 'False'
+    showports: 'False'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_tag: '""'
+    type: complex
+    units: dB
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    wintype: window.WIN_BLACKMAN_hARRIS
+    ymax: '10'
+    ymin: '-140'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1408, 400.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_time_sink_x_0
+  id: qtgui_time_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '0.6'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'True'
+    axislabels: 'True'
+    color1: blue
+    color10: dark blue
+    color2: red
+    color3: green
+    color4: black
+    color5: cyan
+    color6: magenta
+    color7: yellow
+    color8: dark red
+    color9: dark green
+    comment: ''
+    ctrlpanel: 'False'
+    entags: 'True'
+    grid: 'True'
+    gui_hint: 1,2,1,1
+    label1: Real
+    label10: Signal 10
+    label2: Imag
+    label3: Signal 3
+    label4: Signal 4
+    label5: Signal 5
+    label6: Signal 6
+    label7: Signal 7
+    label8: Signal 8
+    label9: Signal 9
+    legend: 'True'
+    marker1: '-1'
+    marker10: '-1'
+    marker2: '-1'
+    marker3: '-1'
+    marker4: '-1'
+    marker5: '-1'
+    marker6: '-1'
+    marker7: '-1'
+    marker8: '-1'
+    marker9: '-1'
+    name: '"TX IQ Waveform"'
+    nconnections: '1'
+    size: '1024'
+    srate: samp_rate
+    stemplot: 'False'
+    style1: '1'
+    style10: '1'
+    style2: '1'
+    style3: '1'
+    style4: '1'
+    style5: '1'
+    style6: '1'
+    style7: '1'
+    style8: '1'
+    style9: '1'
+    tr_chan: '0'
+    tr_delay: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: '""'
+    type: complex
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    ylabel: Amplitude
+    ymax: '2'
+    ymin: '-2'
+    yunit: '""'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1368, 648.0]
+    rotation: 0
+    state: enabled
+
+connections:
+- [analog_random_source_x_0, '0', dvbs2acm_bb_framer_acm_0, '0']
+- [blocks_throttle2_0, '0', dvbs2acm_leo_channel_0, '0']
+- [channels_channel_model_0, '0', dvbs2acm_pl_sync_acm_0, '0']
+- [channels_channel_model_0, '0', dvbs2acm_snr_estimator_0, '0']
+- [channels_channel_model_0, '0', qtgui_const_sink_x_0, '0']
+- [channels_channel_model_0, '0', qtgui_freq_sink_x_0, '0']
+- [channels_channel_model_0, '0', qtgui_time_sink_x_0, '0']
+- [dvbs2acm_acm_controller_0, modcod_out, blocks_message_debug_0, print]
+- [dvbs2acm_acm_controller_0, modcod_out, dvbs2acm_bb_framer_acm_0, modcod_in]
+- [dvbs2acm_acm_controller_0, stats_out, blocks_message_debug_0, store]
+- [dvbs2acm_acm_feedback_0, feedback_out, dvbs2acm_acm_controller_0, snr_in]
+- [dvbs2acm_bb_framer_acm_0, '0', dvbs2acm_fec_encoder_acm_0, '0']
+- [dvbs2acm_demodulator_acm_0, '0', dvbs2acm_fec_decoder_acm_0, '0']
+- [dvbs2acm_fec_decoder_acm_0, '0', blocks_null_sink_0, '0']
+- [dvbs2acm_fec_decoder_acm_0, ber_out, dvbs2acm_acm_feedback_0, ber_in]
+- [dvbs2acm_fec_encoder_acm_0, '0', dvbs2acm_modulator_acm_0, '0']
+- [dvbs2acm_leo_channel_0, '0', channels_channel_model_0, '0']
+- [dvbs2acm_modulator_acm_0, '0', dvbs2acm_pl_framer_acm_0, '0']
+- [dvbs2acm_modulator_acm_0, '0', qtgui_const_sink_x_1, '0']
+- [dvbs2acm_pl_framer_acm_0, '0', blocks_throttle2_0, '0']
+- [dvbs2acm_pl_sync_acm_0, '0', dvbs2acm_demodulator_acm_0, '0']
+- [dvbs2acm_pl_sync_acm_0, '0', qtgui_freq_sink_x_0, '1']
+- [dvbs2acm_snr_estimator_0, snr_out, dvbs2acm_acm_feedback_0, snr_in]
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.9.2

@@ -1,0 +1,44 @@
+id: dvbs2acm_modulator_acm
+label: DVB-S2 Modulator (ACM)
+category: '[DVB-S2 ACM]/Transmitter'
+
+templates:
+  imports: import dvbs2acm
+  make: "dvbs2acm.modulator_acm(initial_modcod=${initial_modcod}, rolloff=${rolloff})"
+
+parameters:
+  - id: initial_modcod
+    label: Initial MODCOD
+    dtype: int
+    default: 4
+
+  - id: rolloff
+    label: Roll-off Factor
+    dtype: real
+    default: 0.20
+
+inputs:
+-   domain: stream
+    dtype: byte
+    label: FECFRAME bits
+
+outputs:
+-   domain: stream
+    dtype: complex
+    label: IQ symbols
+
+documentation: |
+  DVB-S2 Constellation Mapper with ACM (ETSI EN 302 307-1 §5.4)
+
+  Maps FEC-encoded bits to IQ symbols using the modulation scheme
+  indicated by the "modcod" stream tag:
+
+    QPSK   (IDs  1-11): 2 bits/symbol, Gray-coded
+    8PSK   (IDs 12-17): 3 bits/symbol
+    16APSK (IDs 18-23): 4 bits/symbol, 4+12 ring structure
+    32APSK (IDs 24-28): 5 bits/symbol, 4+12+16 ring structure
+
+  Output IQ symbols are normalized to unit average power.
+  Connect to PL Framer for SOF/PLSCODE header insertion.
+
+file_format: 1

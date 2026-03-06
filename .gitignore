@@ -1,0 +1,10 @@
+build_manual/
+__pycache__/
+*.pyc
+*.pyo
+*.so
+*.o
+*.a
+*.egg-info/
+.vscode/
+*.pdf
