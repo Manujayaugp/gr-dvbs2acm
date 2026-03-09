@@ -46,19 +46,11 @@ blocks:
     rotation: 0
     state: enabled
 - name: costas_loop_bw
-  id: variable_qtgui_range
+  id: variable
   parameters:
-    comment: ''
-    gui_hint: 0,3,1,1
-    label: Costas Loop BW
-    min_len: '200'
-    orient: QtCore.Qt.Horizontal
-    rangeType: float
-    start: '0.001'
-    step: '0.001'
-    stop: '0.05'
+    comment: 'Costas loop bandwidth (rad/sample). Typical: 0.005-0.02 for DVB-S2.
+      Lower = more noise rejection, slower acquisition.'
     value: '0.01'
-    widget: counter_slider
   states:
     bus_sink: false
     bus_source: false
