@@ -45,6 +45,27 @@ blocks:
     coordinate: [680, 8]
     rotation: 0
     state: enabled
+- name: costas_loop_bw
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 0,3,1,1
+    label: Costas Loop BW
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0.001'
+    step: '0.001'
+    stop: '0.05'
+    value: '0.01'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 8]
+    rotation: 0
+    state: enabled
 - name: noise_amp
   id: variable
   parameters:
@@ -454,7 +475,7 @@ blocks:
     comment: ''
     grid: 'True'
     gui_hint: 1,1,1,1
-    label1: Received IQ
+    label1: Post-Costas IQ
     label10: ''
     label2: ''
     label3: ''
@@ -475,7 +496,7 @@ blocks:
     marker7: '0'
     marker8: '0'
     marker9: '0'
-    name: '"RX Constellation"'
+    name: '"RX Constellation (Post-Costas Loop)"'
     nconnections: '1'
     size: '2048'
     style1: '0'
@@ -787,14 +808,174 @@ blocks:
     rotation: 0
     state: enabled
 
+- name: digital_costas_loop_cc_0
+  id: digital_costas_loop_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'Carrier phase/freq recovery — 4th-order for QPSK (DVB-S2 base modulation).
+      Corrects residual Doppler + phase noise before PL Sync.'
+    loop_bw: costas_loop_bw
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    order: '4'
+    use_snr: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1200, 392.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_waterfall_sink_x_0
+  id: qtgui_waterfall_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '0'
+    color10: '0'
+    color2: '0'
+    color3: '0'
+    color4: '0'
+    color5: '0'
+    color6: '0'
+    color7: '0'
+    color8: '0'
+    color9: '0'
+    comment: 'LEO Doppler waterfall — watch carrier shift ±188 kHz across the pass
+      (AOS→TCA→LOS visible as chevron pattern)'
+    dynamic_range: '100'
+    fc: '0'
+    fftsize: '2048'
+    freqhalf: 'True'
+    grid: 'True'
+    gui_hint: 2,0,1,2
+    int_max: '10'
+    int_min: '-140'
+    label: Doppler Waterfall
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '"LEO Doppler Waterfall (AOS\u2192TCA\u2192LOS)"'
+    nconnections: '1'
+    showports: 'False'
+    type: complex
+    update_time: '0.10'
+    wintype: window.WIN_BLACKMAN_hARRIS
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1416, 152.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_freq_sink_x_1
+  id: qtgui_freq_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '0.8'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    average: '0.2'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '"blue"'
+    color10: '"dark blue"'
+    color2: '"red"'
+    color3: '"green"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: 'Pre-Costas vs Post-Costas spectrum: red shift = uncorrected Doppler,
+      blue = after carrier recovery'
+    ctrlpanel: 'False'
+    fc: '0'
+    fftsize: '1024'
+    freqhalf: 'True'
+    grid: 'True'
+    gui_hint: 2,2,1,2
+    label: Relative Gain
+    label1: Pre-Costas (raw)
+    label10: ''''''
+    label2: Post-Costas
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''''''
+    label7: ''''''
+    label8: ''''''
+    label9: ''''''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '"Carrier Recovery: Pre vs Post Costas Loop"'
+    nconnections: '2'
+    norm_window: 'False'
+    showports: 'False'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_tag: '""'
+    type: complex
+    units: dB
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    wintype: window.WIN_BLACKMAN_hARRIS
+    ymax: '10'
+    ymin: '-140'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1416, 472.0]
+    rotation: 0
+    state: enabled
+
 connections:
 - [analog_random_source_x_0, '0', dvbs2acm_bb_framer_acm_0, '0']
 - [blocks_throttle2_0, '0', dvbs2acm_leo_channel_0, '0']
-- [channels_channel_model_0, '0', dvbs2acm_pl_sync_acm_0, '0']
+- [channels_channel_model_0, '0', digital_costas_loop_cc_0, '0']
 - [channels_channel_model_0, '0', dvbs2acm_snr_estimator_0, '0']
-- [channels_channel_model_0, '0', qtgui_const_sink_x_0, '0']
 - [channels_channel_model_0, '0', qtgui_freq_sink_x_0, '0']
+- [channels_channel_model_0, '0', qtgui_freq_sink_x_1, '0']
 - [channels_channel_model_0, '0', qtgui_time_sink_x_0, '0']
+- [channels_channel_model_0, '0', qtgui_waterfall_sink_x_0, '0']
+- [digital_costas_loop_cc_0, '0', dvbs2acm_pl_sync_acm_0, '0']
+- [digital_costas_loop_cc_0, '0', qtgui_const_sink_x_0, '0']
+- [digital_costas_loop_cc_0, '0', qtgui_freq_sink_x_1, '1']
 - [dvbs2acm_acm_controller_0, modcod_out, blocks_message_debug_0, print]
 - [dvbs2acm_acm_controller_0, modcod_out, dvbs2acm_bb_framer_acm_0, modcod_in]
 - [dvbs2acm_acm_controller_0, stats_out, blocks_message_debug_0, store]
