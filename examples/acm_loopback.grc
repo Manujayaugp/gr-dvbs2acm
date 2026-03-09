@@ -134,7 +134,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [904, 592.0]
+    coordinate: [1216, 584.0]
     rotation: 0
     state: enabled
 - name: blocks_null_sink_0
@@ -193,7 +193,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1376, 80.0]
+    coordinate: [1568, 64.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_acm_controller_0
@@ -212,12 +212,12 @@ blocks:
     minoutbuf: '0'
     snr_margin_db: '1.0'
     target_ber: 1e-7
-    use_ai: 'False'
+    use_ai: 'True'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [528, 564.0]
+    coordinate: [800, 588.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_acm_feedback_0
@@ -235,7 +235,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [296, 632.0]
+    coordinate: [504, 624.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_bb_framer_acm_0
@@ -271,7 +271,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [472, 420]
+    coordinate: [528, 304.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_fec_decoder_acm_0
@@ -290,7 +290,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [248, 420]
+    coordinate: [160, 424.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_fec_encoder_acm_0
@@ -333,7 +333,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1048, 44.0]
+    coordinate: [1280, 36.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_modulator_acm_0
@@ -368,7 +368,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [768, 96.0]
+    coordinate: [920, 96.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_pl_sync_acm_0
@@ -385,7 +385,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 420]
+    coordinate: [1064, 392.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_snr_estimator_0
@@ -406,7 +406,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [696, 420]
+    coordinate: [664, 400.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_0
@@ -498,7 +498,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1296, 472.0]
+    coordinate: [1408, 440.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_1
@@ -671,7 +671,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1408, 400.0]
+    coordinate: [1416, 296.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -768,7 +768,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1368, 648.0]
+    coordinate: [1480, 568.0]
     rotation: 0
     state: enabled
 

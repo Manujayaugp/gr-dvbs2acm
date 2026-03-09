@@ -173,7 +173,7 @@ class AcmSimulation:
                  use_ai:       bool = False,
                  snr_margin:   float = 0.5,
                  hysteresis:   float = 0.3,
-                 history_len:  int = 8,
+                 history_len:  int = 16,
                  symbol_rate_msps: float = 500.0):
 
         self.use_ai       = use_ai
@@ -186,21 +186,26 @@ class AcmSimulation:
         if use_ai:
             try:
                 self.dqn_agent = DQNAgent(snr_history_len=history_len)
-                self.predictor = SNRPredictor(pred_steps=5)
-                print("[ACM-SIM] DQN agent initialized")
+                self.predictor = SNRPredictor(pred_steps=3)
+                print(f"[ACM-SIM] Dueling DQN+PER agent initialised "
+                      f"(train_steps={self.dqn_agent.train_steps}, "
+                      f"epsilon={self.dqn_agent.epsilon:.3f})")
             except Exception as e:
                 print(f"[ACM-SIM] DQN init failed: {e}, using rule-based")
                 self.use_ai = False
 
         # Simulation state
-        self.snr_history: List[float]    = []
-        self.modcod_history: List[int]   = []
-        self.eff_history: List[float]    = []
-        self.ber_history: List[float]    = []
-        self.fer_history: List[float]    = []
+        self.snr_history:        List[float] = []
+        self.modcod_history:     List[int]   = []
+        self.eff_history:        List[float] = []
+        self.ber_history:        List[float] = []
+        self.fer_history:        List[float] = []
         self.throughput_history: List[float] = []
+        self.loss_history:       List[float] = []
         self.switches: int = 0
         self.current_modcod: int = 4  # QPSK 1/2 default
+        self._prev_state = None
+        self._prev_action_idx = None
 
     def step(self, snr_db: float, ber: float = 1e-7, fer: float = 0.0) -> dict:
         """Process one simulation step (one PLFRAME)."""
@@ -216,14 +221,28 @@ class AcmSimulation:
 
             state = self.dqn_agent.build_state(
                 self.snr_history, self.current_modcod, ber, fer)
+
+            # Store transition from previous step and train
+            if self._prev_state is not None and self._prev_action_idx is not None:
+                reward = self.dqn_agent.compute_reward(
+                    self._prev_action_idx, snr_db, self.current_modcod, fer)
+                from dvbs2acm.acm_controller_ai import Transition
+                self.dqn_agent.push_experience(Transition(
+                    state      = self._prev_state,
+                    action     = self._prev_action_idx,
+                    reward     = reward,
+                    next_state = state,
+                    done       = False,
+                ))
+                # Train every step once buffer is warm
+                loss = self.dqn_agent.train_step()
+                if loss is not None:
+                    self.loss_history.append(loss)
+
             action_idx = self.dqn_agent.select_action(state, eff_snr, self.current_modcod)
             new_modcod = action_idx + 1
-
-            # Store experience
-            if len(self.modcod_history) > 0:
-                reward = self.dqn_agent.compute_reward(
-                    action_idx, snr_db, self.current_modcod, fer)
-                # Online training (simplified — no replay here for demo)
+            self._prev_state      = state
+            self._prev_action_idx = action_idx
         else:
             new_modcod = rule_based_modcod(
                 snr_db, self.current_modcod, self.snr_margin, self.hysteresis)
@@ -319,92 +338,256 @@ class AcmSimulation:
         }
         return stats
 
+    def get_link_availability(self, qef_ber: float = 1e-7) -> float:
+        """Fraction of frames with BER below QEF threshold (link availability %)."""
+        return float(np.mean(np.array(self.ber_history) < qef_ber)) * 100.0
+
     def plot_results(self, snr_trace: np.ndarray,
                      output_file: str = "acm_simulation_results.png"):
-        """Generate comprehensive results plots."""
+        """Generate comprehensive 6-panel results figure."""
         n = min(len(snr_trace), len(self.modcod_history))
-        t = np.arange(n) / 100.0  # Assume 100 fps PLFRAME rate → seconds
+        t = np.arange(n) * 0.1  # 10 Hz update rate → seconds
 
+        algo = 'Dueling DQN+PER' if self.use_ai else 'Rule-Based'
         fig = plt.figure(figsize=(16, 14))
-        fig.suptitle("DVB-S2 ACM Simulation Results\n"
-                     f"Algorithm: {'DQN+LSTM AI' if self.use_ai else 'Rule-Based'} | "
-                     f"Symbol Rate: {self.symbol_rate} Msps",
+        fig.suptitle(f"DVB-S2 ACM — LEO Satellite Channel\n"
+                     f"Algorithm: {algo} | Symbol Rate: {self.symbol_rate} Msps",
                      fontsize=14, fontweight='bold')
+        gs = gridspec.GridSpec(4, 2, figure=fig, hspace=0.45, wspace=0.35)
 
-        gs = gridspec.GridSpec(4, 2, figure=fig, hspace=0.4, wspace=0.3)
-
-        # --- Panel 1: SNR trace + MODCOD thresholds ---
+        # 1: SNR trace
         ax1 = fig.add_subplot(gs[0, :])
-        ax1.plot(t[:n], snr_trace[:n], 'b-', linewidth=0.8, label='Measured SNR')
-        # Mark MODCOD thresholds
-        for mc in MODCOD_TABLE[::4]:  # Every 4th for clarity
-            ax1.axhline(mc['threshold_db'], color='gray', linewidth=0.4, linestyle='--', alpha=0.5)
-        ax1.set_xlabel('Time (s)')
-        ax1.set_ylabel('SNR (dB)')
-        ax1.set_title('SNR Time Series')
-        ax1.legend()
-        ax1.grid(True, alpha=0.3)
+        ax1.plot(t[:n], snr_trace[:n], color='steelblue', linewidth=0.9, label='Channel SNR')
+        for mc in MODCOD_TABLE[::4]:
+            ax1.axhline(mc['threshold_db'], color='gray', linewidth=0.3, linestyle='--', alpha=0.4)
+        ax1.set_xlabel('Time (s)'); ax1.set_ylabel('SNR (dB)')
+        ax1.set_title('LEO Pass SNR Profile (AOS → TCA → LOS)')
+        ax1.legend(); ax1.grid(True, alpha=0.3)
 
-        # --- Panel 2: MODCOD selection ---
+        # 2: MODCOD selection
         ax2 = fig.add_subplot(gs[1, :])
-        ax2.step(t[:n], self.modcod_history[:n], 'r-', linewidth=1.0,
-                 label='Selected MODCOD', where='post')
-        ax2.set_xlabel('Time (s)')
-        ax2.set_ylabel('MODCOD ID')
+        ax2.step(t[:n], self.modcod_history[:n], color='crimson', linewidth=1.0,
+                 where='post', label=f'MODCOD ({self.switches} switches)')
+        ax2.set_xlabel('Time (s)'); ax2.set_ylabel('MODCOD ID')
         ax2.set_yticks(range(1, 29, 3))
-        ax2.set_yticklabels([MODCOD_TABLE[i-1]['name'] for i in range(1, 29, 3)],
-                            fontsize=7)
-        ax2.set_title(f'MODCOD Selection (Total switches: {self.switches})')
-        ax2.legend()
-        ax2.grid(True, alpha=0.3)
+        ax2.set_yticklabels([MODCOD_TABLE[i-1]['name'] for i in range(1, 29, 3)], fontsize=7)
+        ax2.set_title('Adaptive MODCOD Selection')
+        ax2.legend(); ax2.grid(True, alpha=0.3)
 
-        # --- Panel 3: Spectral Efficiency ---
+        # 3: Spectral efficiency
         ax3 = fig.add_subplot(gs[2, 0])
-        ax3.plot(t[:n], self.eff_history[:n], 'g-', linewidth=0.8, label='ACM')
+        ax3.plot(t[:n], self.eff_history[:n], color='forestgreen', linewidth=0.9, label=algo)
         ax3.axhline(get_modcod(4)['spectral_eff'], color='orange', linestyle='--',
-                   label='CCM baseline (QPSK 1/2)')
-        ax3.set_xlabel('Time (s)')
-        ax3.set_ylabel('Spectral Efficiency (bits/sym)')
-        ax3.set_title('Spectral Efficiency')
-        ax3.legend()
-        ax3.grid(True, alpha=0.3)
+                    label='CCM (QPSK 1/2)')
+        ax3.set_xlabel('Time (s)'); ax3.set_ylabel('Spectral Eff. (bits/sym)')
+        ax3.set_title('Spectral Efficiency'); ax3.legend(); ax3.grid(True, alpha=0.3)
 
-        # --- Panel 4: BER ---
+        # 4: BER
         ax4 = fig.add_subplot(gs[2, 1])
-        bers = np.array(self.ber_history[:n])
-        bers = np.clip(bers, 1e-12, 1.0)
-        ax4.semilogy(t[:n], bers, 'm-', linewidth=0.8)
-        ax4.axhline(1e-7, color='red', linestyle='--', label='QEF threshold')
-        ax4.set_xlabel('Time (s)')
-        ax4.set_ylabel('BER')
-        ax4.set_title('Estimated BER')
-        ax4.legend()
-        ax4.grid(True, alpha=0.3)
+        bers = np.clip(self.ber_history[:n], 1e-12, 1.0)
+        ax4.semilogy(t[:n], bers, color='purple', linewidth=0.8)
+        ax4.axhline(1e-7, color='red', linestyle='--', label='QEF (10⁻⁷)')
+        avail = self.get_link_availability()
+        ax4.set_xlabel('Time (s)'); ax4.set_ylabel('BER')
+        ax4.set_title(f'Bit Error Rate  (Link availability: {avail:.1f}%)')
+        ax4.legend(); ax4.grid(True, alpha=0.3)
 
-        # --- Panel 5: Throughput ---
+        # 5: Effective throughput
         ax5 = fig.add_subplot(gs[3, 0])
-        ax5.plot(t[:n], self.throughput_history[:n], 'b-', linewidth=0.8, label='ACM Throughput')
+        ax5.plot(t[:n], self.throughput_history[:n], color='navy', linewidth=0.9,
+                 label=f'{algo} (mean {np.mean(self.throughput_history[:n]):.0f} Mbps)')
         ccm_tp = Dvbs2AcmPerformance.throughput(4, self.symbol_rate)
-        ax5.axhline(ccm_tp, color='orange', linestyle='--',
-                   label=f'CCM baseline ({ccm_tp:.0f} Mbps)')
-        ax5.set_xlabel('Time (s)')
-        ax5.set_ylabel('Throughput (Mbps)')
-        ax5.set_title('Effective Throughput')
-        ax5.legend()
-        ax5.grid(True, alpha=0.3)
+        ax5.axhline(ccm_tp, color='orange', linestyle='--', label=f'CCM ({ccm_tp:.0f} Mbps)')
+        ax5.set_xlabel('Time (s)'); ax5.set_ylabel('Throughput (Mbps)')
+        ax5.set_title('Effective Throughput'); ax5.legend(); ax5.grid(True, alpha=0.3)
 
-        # --- Panel 6: MODCOD distribution pie chart ---
+        # 6: Training loss (DQN) or MODCOD pie (rule-based)
         ax6 = fig.add_subplot(gs[3, 1])
-        dist = self.get_statistics()['modcod_dist']
-        labels = [MODCOD_TABLE[k-1]['name'] for k in sorted(dist.keys())]
-        values = [dist[k] for k in sorted(dist.keys())]
-        ax6.pie(values, labels=labels, autopct='%1.1f%%', startangle=90,
-               textprops={'fontsize': 7})
-        ax6.set_title('MODCOD Usage Distribution')
+        if self.use_ai and self.loss_history:
+            w = max(1, len(self.loss_history) // 100)
+            smooth = np.convolve(self.loss_history, np.ones(w)/w, mode='valid')
+            ax6.plot(smooth, color='darkorange', linewidth=0.9)
+            ax6.set_xlabel('Training Step'); ax6.set_ylabel('TD Loss')
+            ax6.set_title(f'DQN Training Loss  (ε={self.dqn_agent.epsilon:.3f},'
+                          f' steps={self.dqn_agent.train_steps})')
+            ax6.grid(True, alpha=0.3)
+        else:
+            dist   = self.get_statistics()['modcod_dist']
+            labels = [MODCOD_TABLE[k-1]['name'] for k in sorted(dist.keys())]
+            values = [dist[k] for k in sorted(dist.keys())]
+            ax6.pie(values, labels=labels, autopct='%1.1f%%', startangle=90,
+                    textprops={'fontsize': 7})
+            ax6.set_title('MODCOD Usage Distribution')
 
         plt.savefig(output_file, dpi=150, bbox_inches='tight')
         print(f"[ACM-SIM] Results saved to: {output_file}")
         return output_file
+
+
+def run_multipass_training(n_passes: int, snr_trace: np.ndarray,
+                           symbol_rate: float = 500.0,
+                           output_file: str = "acm_multipass_results.png") -> dict:
+    """
+    Train DQN over multiple LEO passes and track learning progress.
+    Each pass re-uses the same SNR trace (same orbital geometry).
+    The DQN model is saved between passes and loaded on the next.
+
+    Returns per-pass statistics for the learning curve plot.
+    """
+    print(f"\n[MULTIPASS] Training DQN over {n_passes} LEO passes")
+    pass_stats = []
+    sim = AcmSimulation(use_ai=True, symbol_rate_msps=symbol_rate)
+
+    for p in range(1, n_passes + 1):
+        # Reset per-pass state but keep DQN weights
+        sim.snr_history        = []
+        sim.modcod_history     = []
+        sim.eff_history        = []
+        sim.ber_history        = []
+        sim.fer_history        = []
+        sim.throughput_history = []
+        sim.loss_history       = []
+        sim.switches           = 0
+        sim.current_modcod     = 4
+        sim._prev_state        = None
+        sim._prev_action_idx   = None
+
+        stats = sim.run_scenario(snr_trace)
+        eps   = sim.dqn_agent.epsilon if sim.use_ai else 1.0
+        avail = sim.get_link_availability()
+        stats.update({'pass': p, 'epsilon': eps, 'link_availability': avail})
+        pass_stats.append(stats)
+
+        print(f"  Pass {p:3d}/{n_passes}: eff={stats['mean_eff']:.3f} b/s/Hz | "
+              f"gain={stats['acm_gain_pct']:+.1f}% | avail={avail:.1f}% | ε={eps:.3f}")
+
+    # Plot learning curve
+    passes      = [s['pass']           for s in pass_stats]
+    mean_effs   = [s['mean_eff']       for s in pass_stats]
+    gains       = [s['acm_gain_pct']   for s in pass_stats]
+    availabilities = [s['link_availability'] for s in pass_stats]
+    ccm_eff     = pass_stats[0]['ccm_eff']
+
+    fig, axes = plt.subplots(3, 1, figsize=(12, 10))
+    fig.suptitle(f'Dueling DQN+PER Learning Curve — {n_passes} LEO Passes\n'
+                 f'DVB-S2 ACM, 500 km X-Band', fontsize=13, fontweight='bold')
+
+    axes[0].plot(passes, mean_effs, 'b-o', markersize=4, label='DQN Mean Efficiency')
+    axes[0].axhline(ccm_eff, color='orange', linestyle='--', label='CCM baseline')
+    rule_sim = AcmSimulation(use_ai=False, symbol_rate_msps=symbol_rate)
+    rule_stats = rule_sim.run_scenario(snr_trace)
+    axes[0].axhline(rule_stats['mean_eff'], color='green', linestyle='--',
+                    label='Rule-Based baseline')
+    axes[0].set_ylabel('Mean Spectral Eff. (bits/sym)')
+    axes[0].set_title('Learning Progress: Spectral Efficiency per Pass')
+    axes[0].legend(); axes[0].grid(True, alpha=0.3)
+
+    axes[1].plot(passes, gains, 'r-o', markersize=4)
+    axes[1].axhline(0, color='gray', linestyle='-', linewidth=0.5)
+    rule_gain = rule_stats['acm_gain_pct']
+    axes[1].axhline(rule_gain, color='green', linestyle='--', label=f'Rule-Based ({rule_gain:.1f}%)')
+    axes[1].set_ylabel('ACM Gain over CCM (%)')
+    axes[1].set_title('Throughput Gain vs CCM Baseline')
+    axes[1].legend(); axes[1].grid(True, alpha=0.3)
+
+    axes[2].plot(passes, availabilities, 'g-o', markersize=4)
+    axes[2].axhline(rule_stats.get('qef_fraction', 0.95) * 100, color='green',
+                    linestyle='--', label='Rule-Based')
+    axes[2].set_xlabel('Pass Number')
+    axes[2].set_ylabel('Link Availability (%)')
+    axes[2].set_title('Link Availability (BER < 10⁻⁷)')
+    axes[2].legend(); axes[2].grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(output_file, dpi=150, bbox_inches='tight')
+    print(f"\n[MULTIPASS] Learning curve saved to: {output_file}")
+    return {'pass_stats': pass_stats, 'rule_stats': rule_stats}
+
+
+def plot_three_way_comparison(snr_trace: np.ndarray,
+                               symbol_rate: float = 500.0,
+                               output_file: str = "acm_comparison.png"):
+    """
+    CCM vs Rule-Based vs Dueling DQN — side-by-side on one LEO pass.
+    This is the key result figure for the research paper.
+    """
+    print("\n[COMPARE] Running 3-way comparison: CCM / Rule-Based / Dueling DQN")
+    n = len(snr_trace)
+    t = np.arange(n) * 0.1
+
+    # CCM — fixed QPSK 1/2 throughout
+    ccm_mc  = get_modcod(4)
+    ccm_eff = [ccm_mc['spectral_eff']] * n
+    ccm_tp  = [Dvbs2AcmPerformance.throughput(4, symbol_rate)] * n
+
+    # Rule-based
+    sim_rule = AcmSimulation(use_ai=False, symbol_rate_msps=symbol_rate)
+    stats_rule = sim_rule.run_scenario(snr_trace)
+
+    # DQN
+    sim_dqn = AcmSimulation(use_ai=True, symbol_rate_msps=symbol_rate)
+    stats_dqn = sim_dqn.run_scenario(snr_trace)
+
+    fig, axes = plt.subplots(3, 1, figsize=(14, 11), sharex=True)
+    fig.suptitle('DVB-S2 ACM — LEO Satellite Channel: CCM vs Rule-Based vs Dueling DQN\n'
+                 f'500 km orbit, X-Band 8.025 GHz, {symbol_rate:.0f} Msps',
+                 fontsize=13, fontweight='bold')
+
+    # Panel 1: SNR + MODCOD overlay
+    ax = axes[0]
+    ax.plot(t, snr_trace, color='steelblue', linewidth=1.0, alpha=0.7, label='Channel SNR', zorder=1)
+    ax2 = ax.twinx()
+    ax2.step(t[:len(sim_rule.modcod_history)], sim_rule.modcod_history,
+             color='green', linewidth=1.0, alpha=0.7, where='post', label='Rule-Based MODCOD')
+    ax2.step(t[:len(sim_dqn.modcod_history)], sim_dqn.modcod_history,
+             color='crimson', linewidth=1.0, alpha=0.8, where='post', label='DQN MODCOD',
+             linestyle='--')
+    ax.set_ylabel('SNR (dB)', color='steelblue')
+    ax2.set_ylabel('MODCOD ID', color='gray')
+    ax2.set_ylim(0, 30)
+    ax.set_title('SNR Profile & MODCOD Selection')
+    lines1, lbl1 = ax.get_legend_handles_labels()
+    lines2, lbl2 = ax2.get_legend_handles_labels()
+    ax.legend(lines1 + lines2, lbl1 + lbl2, loc='upper left', fontsize=8)
+    ax.grid(True, alpha=0.3)
+
+    # Panel 2: Spectral efficiency
+    ax = axes[1]
+    ax.plot(t, ccm_eff, color='gray',    linewidth=1.2, linestyle=':', label=f'CCM QPSK 1/2  (mean {np.mean(ccm_eff):.3f})')
+    ax.plot(t[:len(sim_rule.eff_history)], sim_rule.eff_history,
+            color='forestgreen', linewidth=1.0, label=f'Rule-Based (mean {stats_rule["mean_eff"]:.3f}, gain {stats_rule["acm_gain_pct"]:+.1f}%)')
+    ax.plot(t[:len(sim_dqn.eff_history)], sim_dqn.eff_history,
+            color='crimson', linewidth=1.0, linestyle='--',
+            label=f'Dueling DQN (mean {stats_dqn["mean_eff"]:.3f}, gain {stats_dqn["acm_gain_pct"]:+.1f}%)')
+    ax.set_ylabel('Spectral Efficiency (bits/sym)')
+    ax.set_title('Spectral Efficiency Comparison')
+    ax.legend(fontsize=8); ax.grid(True, alpha=0.3)
+
+    # Panel 3: Effective throughput
+    ax = axes[2]
+    ax.plot(t, ccm_tp, color='gray', linewidth=1.2, linestyle=':',
+            label=f'CCM ({np.mean(ccm_tp):.0f} Mbps)')
+    ax.plot(t[:len(sim_rule.throughput_history)], sim_rule.throughput_history,
+            color='forestgreen', linewidth=1.0,
+            label=f'Rule-Based ({stats_rule["mean_tp_mbps"]:.0f} Mbps avg)')
+    ax.plot(t[:len(sim_dqn.throughput_history)], sim_dqn.throughput_history,
+            color='crimson', linewidth=1.0, linestyle='--',
+            label=f'Dueling DQN ({stats_dqn["mean_tp_mbps"]:.0f} Mbps avg)')
+    ax.set_xlabel('Time (s)  [AOS → TCA → LOS]')
+    ax.set_ylabel('Throughput (Mbps)')
+    ax.set_title('Effective Throughput')
+    ax.legend(fontsize=8); ax.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(output_file, dpi=150, bbox_inches='tight')
+    print(f"[COMPARE] 3-way comparison saved to: {output_file}")
+    print_statistics(stats_rule, "Rule-Based ACM")
+    print_statistics(stats_dqn,  "Dueling DQN ACM")
+    dqn_vs_rule = (stats_dqn['mean_eff'] / stats_rule['mean_eff'] - 1.0) * 100
+    print(f"\n  DQN vs Rule-Based spectral efficiency: {dqn_vs_rule:+.2f}%")
+    print(f"  Rule-Based link availability: {sim_rule.get_link_availability():.1f}%")
+    print(f"  DQN       link availability: {sim_dqn.get_link_availability():.1f}%")
+    return {'ccm': {}, 'rule': stats_rule, 'dqn': stats_dqn}
 
 
 def print_statistics(stats: dict, label: str = "ACM"):
@@ -450,8 +633,12 @@ def main():
                         help="Scenario duration in seconds")
     parser.add_argument("--symbol-rate", type=float, default=500.0,
                         help="Symbol rate in Msps (for X-Band: 500 Msps)")
-    parser.add_argument("--compare",   action="store_true",
-                        help="Compare rule-based vs AI side-by-side")
+    parser.add_argument("--compare",    action="store_true",
+                        help="Compare rule-based vs DQN side-by-side")
+    parser.add_argument("--three-way", action="store_true",
+                        help="3-way comparison: CCM vs Rule-Based vs Dueling DQN")
+    parser.add_argument("--passes",    type=int, default=0,
+                        help="Run N multi-pass DQN training sessions and plot learning curve")
     parser.add_argument("--verbose",   action="store_true")
     parser.add_argument("--output",    default="acm_simulation_results.png")
     args = parser.parse_args()
@@ -480,28 +667,37 @@ def main():
         print(f"[LEO] Pass duration: {len(snr_trace)*0.1:.0f}s, "
               f"SNR range: {snr_trace.min():.1f} to {snr_trace.max():.1f} dB")
 
-    if args.compare:
-        # Run both algorithms and compare
+    if args.passes > 0:
+        run_multipass_training(args.passes, snr_trace,
+                               symbol_rate=args.symbol_rate,
+                               output_file=args.output.replace('.png', '_learning_curve.png'))
+
+    elif args.three_way:
+        plot_three_way_comparison(snr_trace,
+                                  symbol_rate=args.symbol_rate,
+                                  output_file=args.output.replace('.png', '_3way.png'))
+
+    elif args.compare:
         print("\n[COMPARE] Running Rule-Based simulation...")
         sim_rule = AcmSimulation(use_ai=False, symbol_rate_msps=args.symbol_rate)
         stats_rule = sim_rule.run_scenario(snr_trace, args.verbose)
 
-        print("\n[COMPARE] Running DQN+LSTM AI simulation...")
+        print("\n[COMPARE] Running Dueling DQN+PER simulation...")
         sim_ai = AcmSimulation(use_ai=True, symbol_rate_msps=args.symbol_rate)
         stats_ai = sim_ai.run_scenario(snr_trace, args.verbose)
 
         print_statistics(stats_rule, "Rule-Based ACM")
-        print_statistics(stats_ai,   "DQN+LSTM AI ACM")
-
-        gain = stats_ai['mean_eff'] / stats_rule['mean_eff'] - 1.0
-        print(f"AI vs Rule-Based improvement: {gain*100:+.2f}%")
-
-        # Plot comparison
+        print_statistics(stats_ai,   "Dueling DQN+PER ACM")
+        print(f"\n  DQN vs Rule-Based: {(stats_ai['mean_eff']/stats_rule['mean_eff']-1)*100:+.2f}%")
+        print(f"  Rule-Based link availability: {sim_rule.get_link_availability():.1f}%")
+        print(f"  DQN       link availability: {sim_ai.get_link_availability():.1f}%")
         sim_ai.plot_results(snr_trace, args.output)
+
     else:
         sim = AcmSimulation(use_ai=args.use_ai, symbol_rate_msps=args.symbol_rate)
         stats = sim.run_scenario(snr_trace, args.verbose)
-        print_statistics(stats, "DVB-S2 ACM" + (" (DQN+LSTM)" if args.use_ai else " (Rule-Based)"))
+        label = "Dueling DQN+PER ACM" if args.use_ai else "Rule-Based ACM"
+        print_statistics(stats, label)
         sim.plot_results(snr_trace, args.output)
 
 

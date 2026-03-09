@@ -7,16 +7,19 @@ This module implements the Python-side intelligence for MODCOD selection.
 It communicates with the C++ ACM Controller block via ZMQ REQ/REP sockets.
 
 Three AI/ML strategies are implemented:
-  1. Deep Q-Network (DQN): Reinforcement learning agent that learns optimal
-     MODCOD policy by maximizing long-term spectral efficiency while
-     maintaining QoS (target BER < 10^-7).
+  1. Dueling Double DQN with Prioritized Experience Replay (PER):
+     Reinforcement learning agent that learns optimal MODCOD policy by
+     maximising long-term spectral efficiency while maintaining QoS
+     (target BER < 10^-7). Key improvements over vanilla DQN:
+       - Dueling architecture: separate Value + Advantage streams
+       - PER: samples high-TD-error transitions more frequently
+       - N-step returns: better credit assignment over longer horizons
 
-  2. CNN + LSTM SNR Predictor: Supervised learning model that predicts
-     future SNR from a time-series of past measurements, compensating for
-     GEO propagation delay (~560 ms round-trip).
+  2. LSTM SNR Predictor: Predicts future SNR N steps ahead to compensate
+     for ACM loop latency in LEO links (RTT 3–14 ms at 500 km X-band).
 
   3. Rule-Based Baseline: Traditional threshold-based selection with
-     hysteresis. Used as fallback and for DQN reward shaping.
+     hysteresis. Used as fallback and for DQN performance comparison.
 
 Architecture:
   ┌─────────────────────────────────────────────────────────────┐
@@ -140,57 +143,69 @@ def rule_based_modcod(snr_db: float, current: int = 1,
 # ============================================================
 
 if TORCH_AVAILABLE:
-    class DQNNetwork(nn.Module):
+    class DuelingDQNNetwork(nn.Module):
         """
-        Deep Q-Network for MODCOD selection.
+        Dueling Double DQN for MODCOD selection.
+
+        Architecture separates state value V(s) from action advantages A(s,a):
+          Q(s,a) = V(s) + A(s,a) - mean_a[A(s,a)]
+
+        This enables the network to learn which states are valuable
+        independently of which specific action to take — critical when
+        many MODCODs have similar Q-values near SNR thresholds.
 
         State space (input):
-          - SNR history: last H SNR measurements (normalized, dB)
-          - Current MODCOD: one-hot encoded (28 dims)
-          - BER: scalar (log10)
-          - FER: scalar
-          - Δ-SNR trend: slope of recent SNR time series
-          Total state dim = H + 28 + 3
+          - SNR history [H]: last H SNR measurements (normalised)
+          - Current MODCOD one-hot [28]
+          - BER scalar (log10), FER scalar, SNR trend scalar
+          Total: H + 28 + 3
 
-        Action space (output):
-          - Q-values for each MODCOD (28 actions)
-          - Agent selects action = argmax(Q)
-
-        Architecture: 3-layer MLP with BatchNorm + Dropout
+        Uses LayerNorm (not BatchNorm) for stability with small batch sizes.
         """
         def __init__(self, state_dim: int, n_actions: int = 28,
                      hidden_dim: int = 256):
             super().__init__()
-            self.fc1 = nn.Linear(state_dim, hidden_dim)
-            self.bn1 = nn.BatchNorm1d(hidden_dim)
-            self.fc2 = nn.Linear(hidden_dim, hidden_dim)
-            self.bn2 = nn.BatchNorm1d(hidden_dim)
-            self.fc3 = nn.Linear(hidden_dim, hidden_dim // 2)
-            self.out = nn.Linear(hidden_dim // 2, n_actions)
-            self.dropout = nn.Dropout(p=0.1)
+            # Shared feature extractor
+            self.feature = nn.Sequential(
+                nn.Linear(state_dim, hidden_dim),
+                nn.LayerNorm(hidden_dim),
+                nn.ReLU(),
+                nn.Dropout(0.1),
+                nn.Linear(hidden_dim, hidden_dim),
+                nn.LayerNorm(hidden_dim),
+                nn.ReLU(),
+            )
+            # Value stream: V(s) → scalar
+            self.value_stream = nn.Sequential(
+                nn.Linear(hidden_dim, hidden_dim // 2),
+                nn.ReLU(),
+                nn.Linear(hidden_dim // 2, 1)
+            )
+            # Advantage stream: A(s,a) → n_actions
+            self.advantage_stream = nn.Sequential(
+                nn.Linear(hidden_dim, hidden_dim // 2),
+                nn.ReLU(),
+                nn.Linear(hidden_dim // 2, n_actions)
+            )
 
         def forward(self, x):
-            x = F.relu(self.bn1(self.fc1(x)))
-            x = self.dropout(x)
-            x = F.relu(self.bn2(self.fc2(x)))
-            x = self.dropout(x)
-            x = F.relu(self.fc3(x))
-            return self.out(x)
+            features  = self.feature(x)
+            value     = self.value_stream(features)
+            advantage = self.advantage_stream(features)
+            # Q = V + (A - mean(A))  →  removes identifiability issue
+            return value + advantage - advantage.mean(dim=1, keepdim=True)
 
     class SNRPredictorLSTM(nn.Module):
         """
-        LSTM-based SNR Predictor for delay compensation.
+        LSTM-based SNR Predictor for LEO ACM loop latency compensation.
 
-        Predicts future SNR T steps ahead to compensate for
-        GEO round-trip propagation delay (~560 ms).
+        Predicts future SNR T steps ahead to compensate for the
+        ACM loop latency in LEO links (RTT: 3–14 ms at 500 km X-band).
+        The fast-changing SNR during AOS/LOS transitions makes prediction
+        critical for avoiding unnecessary MODCOD switches.
 
         Input:  sequence of past SNR measurements [batch, seq_len, 1]
-        Output: predicted SNR at t+T [batch, 1]
-
-        Trained on:
-          - Historical satellite SNR time series (synthetic + real)
-          - Rain fade channel models (ITU-R P.618)
-          - Doppler variation (LEO orbit simulation)
+        Output: predicted SNR at t+T [batch, pred_steps]
         """
         def __init__(self, input_dim: int = 1, hidden_dim: int = 64,
                      num_layers: int = 2, pred_steps: int = 10):
@@ -204,9 +219,8 @@ if TORCH_AVAILABLE:
             )
 
         def forward(self, x):
-            # x: [batch, seq, 1]
             out, _ = self.lstm(x)
-            return self.fc(out[:, -1, :])  # Last timestep → predictions
+            return self.fc(out[:, -1, :])
 
 
 # ============================================================
@@ -222,23 +236,110 @@ class Transition:
     done:       bool
 
 
-class ReplayBuffer:
+class _SumTree:
     """
-    Prioritized Experience Replay buffer for DQN training.
-    Stores (state, action, reward, next_state, done) transitions.
+    Binary sum-tree for O(log n) priority sampling.
+    Leaf nodes store priorities; internal nodes store sums.
     """
-    def __init__(self, capacity: int = 10000):
-        self.buffer: Deque[Transition] = collections.deque(maxlen=capacity)
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.tree     = np.zeros(2 * capacity - 1, dtype=np.float64)
+        self.data     = [None] * capacity
+        self.n_entries = 0
+        self._write   = 0
 
-    def push(self, transition: Transition):
-        self.buffer.append(transition)
+    def _propagate(self, idx: int, delta: float):
+        parent = (idx - 1) // 2
+        self.tree[parent] += delta
+        if parent != 0:
+            self._propagate(parent, delta)
 
-    def sample(self, batch_size: int) -> List[Transition]:
-        indices = np.random.choice(len(self.buffer), batch_size, replace=False)
-        return [self.buffer[i] for i in indices]
+    def _retrieve(self, idx: int, s: float) -> int:
+        left, right = 2 * idx + 1, 2 * idx + 2
+        if left >= len(self.tree):
+            return idx
+        return self._retrieve(left, s) if s <= self.tree[left] \
+               else self._retrieve(right, s - self.tree[left])
+
+    @property
+    def total(self) -> float:
+        return float(self.tree[0])
+
+    def add(self, priority: float, data):
+        idx = self._write + self.capacity - 1
+        self.data[self._write] = data
+        self.update(idx, priority)
+        self._write = (self._write + 1) % self.capacity
+        self.n_entries = min(self.n_entries + 1, self.capacity)
+
+    def update(self, idx: int, priority: float):
+        self._propagate(idx, priority - self.tree[idx])
+        self.tree[idx] = priority
+
+    def get(self, s: float):
+        idx      = self._retrieve(0, s)
+        data_idx = idx - self.capacity + 1
+        return idx, float(self.tree[idx]), self.data[data_idx]
+
+
+class PrioritizedReplayBuffer:
+    """
+    Prioritized Experience Replay (PER) — Schaul et al. 2016.
+
+    Samples transitions with probability proportional to |TD error|^alpha,
+    corrected by importance-sampling weights (beta annealed 0.4 → 1.0).
+    High-error transitions are replayed more often, accelerating learning
+    for rare but informative events (e.g. LEO pass edge conditions).
+    """
+    def __init__(self, capacity: int = 50000,
+                 alpha: float = 0.6,
+                 beta_start: float = 0.4,
+                 beta_end: float = 1.0,
+                 beta_steps: int = 20000):
+        self._tree        = _SumTree(capacity)
+        self.capacity     = capacity
+        self.alpha        = alpha
+        self.beta         = beta_start
+        self._beta_inc    = (beta_end - beta_start) / beta_steps
+        self._max_priority = 1.0
+
+    def push(self, transition: 'Transition'):
+        self._tree.add(self._max_priority ** self.alpha, transition)
+
+    def sample(self, batch_size: int):
+        """Returns (transitions, tree_indices, IS_weights)."""
+        batch, idxs, weights = [], [], []
+        segment = self._tree.total / batch_size
+        self.beta = min(1.0, self.beta + self._beta_inc)
+
+        # Min non-zero priority for IS weight normalisation
+        min_p = max(
+            np.min(self._tree.tree[self._tree.capacity - 1:
+                                   self._tree.capacity - 1 + self._tree.n_entries]),
+            1e-8)
+        max_w = (min_p / self._tree.total * len(self)) ** (-self.beta)
+
+        for i in range(batch_size):
+            s = np.random.uniform(segment * i, segment * (i + 1))
+            idx, priority, data = self._tree.get(s)
+            if data is None:
+                continue
+            prob = priority / self._tree.total
+            w    = (prob * len(self)) ** (-self.beta) / max_w
+            batch.append(data)
+            idxs.append(idx)
+            weights.append(w)
+
+        return batch, idxs, np.array(weights, dtype=np.float32)
+
+    def update_priorities(self, idxs: List[int], td_errors: np.ndarray):
+        for idx, err in zip(idxs, td_errors):
+            p = (float(abs(err)) + 1e-6) ** self.alpha
+            self._max_priority = max(self._max_priority, p)
+            self._tree.update(idx, p)
 
     def __len__(self) -> int:
-        return len(self.buffer)
+        return self._tree.n_entries
 
 
 # ============================================================
@@ -247,62 +348,72 @@ class ReplayBuffer:
 
 class DQNAgent:
     """
-    Deep Q-Network Agent for cognitive MODCOD selection.
+    Dueling Double DQN with Prioritized Experience Replay for MODCOD selection.
 
-    Reward function:
-      r(a) = η(a) × (1 - I_fail) - λ × I_switch
-      where:
-        η(a)   = spectral efficiency of selected MODCOD a (bits/sym)
-        I_fail = 1 if FER > threshold (link failure penalty)
-        I_switch = 1 if MODCOD changed (switching cost)
-        λ      = switching penalty coefficient
+    Enhancements over vanilla DQN:
+      1. Dueling architecture  — separate V(s) and A(s,a) streams
+      2. Double DQN           — decouples action selection from evaluation
+      3. PER                  — prioritises high-TD-error transitions
+      4. N-step returns       — reduces bias/variance trade-off (n=3)
 
-    This reward maximizes throughput while penalizing:
-      - Link failures (MODCOD too aggressive for current SNR)
-      - Excessive switching (ping-pong instability)
+    Reward:
+      r = η(a) × σ(margin) − 5·FER − λ·I_switch
+        η(a)   = spectral efficiency (bits/sym) of selected MODCOD
+        σ(·)   = sigmoid of SNR margin above MODCOD threshold
+        λ      = switching penalty (prevents ping-pong)
 
-    Training: Online learning from live link statistics.
-              Model saved/loaded from disk for persistence.
+    Training: online from live link metrics, background thread at 10 Hz.
+              Model checkpointed to disk every 500 train steps.
     """
 
     def __init__(self,
                  snr_history_len: int = 16,
                  gamma: float = 0.95,
-                 lr: float = 1e-4,
+                 lr: float = 3e-4,
                  epsilon_start: float = 1.0,
                  epsilon_end: float = 0.05,
-                 epsilon_decay: float = 0.995,
+                 epsilon_decay: float = 0.9985,
                  batch_size: int = 64,
-                 target_update_freq: int = 100,
+                 target_update_freq: int = 200,
+                 n_step: int = 3,
                  switch_penalty: float = 0.05,
                  model_path: str = "dqn_acm_model.pt"):
 
-        self.snr_history_len = snr_history_len
-        self.gamma           = gamma
-        self.epsilon         = epsilon_start
-        self.epsilon_end     = epsilon_end
-        self.epsilon_decay   = epsilon_decay
-        self.batch_size      = batch_size
+        self.snr_history_len    = snr_history_len
+        self.gamma              = gamma
+        self.epsilon            = epsilon_start
+        self.epsilon_end        = epsilon_end
+        self.epsilon_decay      = epsilon_decay
+        self.batch_size         = batch_size
         self.target_update_freq = target_update_freq
-        self.switch_penalty  = switch_penalty
-        self.model_path      = model_path
+        self.n_step             = n_step
+        self.switch_penalty     = switch_penalty
+        self.model_path         = model_path
 
         self.n_actions = NUM_MODCODS
-        # State: SNR history + current MODCOD one-hot + BER + FER + SNR trend
         self.state_dim = snr_history_len + NUM_MODCODS + 3
 
-        self.steps        = 0
-        self.train_steps  = 0
-        self.replay_buf   = ReplayBuffer(capacity=50000)
+        self.steps       = 0
+        self.train_steps = 0
+        self.replay_buf  = PrioritizedReplayBuffer(capacity=50000)
+
+        # N-step buffer: deque of (state, action, reward, next_state, done)
+        self._nstep_buf: collections.deque = collections.deque(maxlen=n_step)
+
+        # Training metrics for plotting
+        self.loss_log:     List[float] = []
+        self.epsilon_log:  List[float] = []
+        self.reward_log:   List[float] = []
 
         if TORCH_AVAILABLE:
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            self.policy_net = DQNNetwork(self.state_dim, self.n_actions).to(self.device)
-            self.target_net = DQNNetwork(self.state_dim, self.n_actions).to(self.device)
+            self.policy_net = DuelingDQNNetwork(self.state_dim, self.n_actions).to(self.device)
+            self.target_net = DuelingDQNNetwork(self.state_dim, self.n_actions).to(self.device)
             self.target_net.load_state_dict(self.policy_net.state_dict())
             self.target_net.eval()
-            self.optimizer = optim.Adam(self.policy_net.parameters(), lr=lr)
-            self.loss_fn = nn.SmoothL1Loss()
+            self.optimizer = optim.Adam(self.policy_net.parameters(), lr=lr,
+                                        weight_decay=1e-5)
+            self.loss_fn = nn.SmoothL1Loss(reduction='none')
 
             if os.path.exists(model_path):
                 self._load_model(model_path)
@@ -388,51 +499,88 @@ class DQNAgent:
 
         return int(np.argmax(q_values))
 
-    def push_experience(self, transition: Transition):
-        """Store experience in replay buffer."""
-        self.replay_buf.push(transition)
+    def push_experience(self, transition: 'Transition'):
+        """
+        Accumulate into N-step buffer then push to PER buffer.
+        N-step return: R = Σ γ^k r_{t+k} + γ^n V(s_{t+n})
+        """
+        self._nstep_buf.append(transition)
+        if len(self._nstep_buf) < self.n_step:
+            return
+
+        # Compute N-step discounted return
+        n_reward = sum(self.gamma ** k * self._nstep_buf[k].reward
+                       for k in range(self.n_step))
+        first = self._nstep_buf[0]
+        last  = self._nstep_buf[-1]
+        n_transition = Transition(
+            state      = first.state,
+            action     = first.action,
+            reward     = n_reward,
+            next_state = last.next_state,
+            done       = last.done,
+        )
+        self.replay_buf.push(n_transition)
+        self.reward_log.append(n_reward)
 
     def train_step(self) -> Optional[float]:
         """
-        Perform one gradient descent step on a mini-batch.
-        Returns loss value for monitoring.
+        One gradient step with PER importance-sampling weights.
+        Updates TD-error priorities after each step.
+        Returns loss for monitoring.
         """
         if not TORCH_AVAILABLE or len(self.replay_buf) < self.batch_size:
             return None
 
         self.policy_net.train()
-        batch = self.replay_buf.sample(self.batch_size)
+        batch, tree_idxs, is_weights = self.replay_buf.sample(self.batch_size)
+        if len(batch) < self.batch_size // 2:
+            return None
 
-        states      = torch.FloatTensor(np.stack([t.state for t in batch])).to(self.device)
-        actions     = torch.LongTensor([t.action for t in batch]).to(self.device)
-        rewards     = torch.FloatTensor([t.reward for t in batch]).to(self.device)
-        next_states = torch.FloatTensor(np.stack([t.next_state for t in batch])).to(self.device)
-        dones       = torch.FloatTensor([float(t.done) for t in batch]).to(self.device)
+        states      = torch.FloatTensor(np.stack([t.state      for t in batch])).to(self.device)
+        actions     = torch.LongTensor( [t.action               for t in batch]).to(self.device)
+        rewards     = torch.FloatTensor([t.reward               for t in batch]).to(self.device)
+        next_states = torch.FloatTensor(np.stack([t.next_state  for t in batch])).to(self.device)
+        dones       = torch.FloatTensor([float(t.done)          for t in batch]).to(self.device)
+        weights_t   = torch.FloatTensor(is_weights).to(self.device)
 
         # Current Q-values
         current_q = self.policy_net(states).gather(1, actions.unsqueeze(1)).squeeze(1)
 
-        # Target Q-values (Double DQN)
+        # Double DQN target: select action with policy_net, evaluate with target_net
         with torch.no_grad():
             next_actions = self.policy_net(next_states).argmax(1)
-            next_q = self.target_net(next_states).gather(1, next_actions.unsqueeze(1)).squeeze(1)
-            target_q = rewards + self.gamma * next_q * (1.0 - dones)
+            next_q       = self.target_net(next_states).gather(
+                               1, next_actions.unsqueeze(1)).squeeze(1)
+            target_q = rewards + (self.gamma ** self.n_step) * next_q * (1.0 - dones)
 
-        loss = self.loss_fn(current_q, target_q)
+        # PER-weighted loss
+        td_errors = (target_q - current_q).detach().cpu().numpy()
+        element_loss = self.loss_fn(current_q, target_q)      # per-element
+        loss = (weights_t * element_loss).mean()
 
         self.optimizer.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), 1.0)
         self.optimizer.step()
 
-        self.train_steps += 1
+        # Update priorities in PER tree
+        self.replay_buf.update_priorities(tree_idxs, td_errors)
 
-        # Periodically update target network
+        self.train_steps += 1
+        loss_val = float(loss.item())
+        self.loss_log.append(loss_val)
+        self.epsilon_log.append(self.epsilon)
+
+        # Soft-update target network (Polyak averaging τ=0.005)
         if self.train_steps % self.target_update_freq == 0:
-            self.target_net.load_state_dict(self.policy_net.state_dict())
+            tau = 0.005
+            for p, tp in zip(self.policy_net.parameters(),
+                             self.target_net.parameters()):
+                tp.data.copy_(tau * p.data + (1 - tau) * tp.data)
             self._save_model(self.model_path)
 
-        return float(loss.item())
+        return loss_val
 
     def _save_model(self, path: str):
         if TORCH_AVAILABLE:
@@ -442,16 +590,23 @@ class DQNAgent:
                 'optimizer':    self.optimizer.state_dict(),
                 'epsilon':      self.epsilon,
                 'train_steps':  self.train_steps,
+                'loss_log':     self.loss_log[-5000:],
+                'epsilon_log':  self.epsilon_log[-5000:],
+                'reward_log':   self.reward_log[-5000:],
             }, path)
 
     def _load_model(self, path: str):
         if TORCH_AVAILABLE:
-            checkpoint = torch.load(path, map_location=self.device)
+            checkpoint = torch.load(path, map_location=self.device,
+                                    weights_only=False)
             self.policy_net.load_state_dict(checkpoint['policy_state'])
             self.target_net.load_state_dict(checkpoint['target_state'])
             self.optimizer.load_state_dict(checkpoint['optimizer'])
-            self.epsilon    = checkpoint.get('epsilon', self.epsilon_end)
+            self.epsilon     = checkpoint.get('epsilon',     self.epsilon_end)
             self.train_steps = checkpoint.get('train_steps', 0)
+            self.loss_log    = checkpoint.get('loss_log',    [])
+            self.epsilon_log = checkpoint.get('epsilon_log', [])
+            self.reward_log  = checkpoint.get('reward_log',  [])
 
 
 # ============================================================
@@ -460,17 +615,15 @@ class DQNAgent:
 
 class SNRPredictor:
     """
-    Predicts future SNR to compensate for GEO propagation delay.
+    LSTM-based SNR predictor for LEO ACM loop latency compensation.
 
-    GEO Delay Compensation:
-      - GEO round-trip delay ≈ 560 ms
-      - At 1 Hz SNR reporting: must predict 0.56 frames ahead
-      - At typical DVB-S2 frame rates (~100 fps): ~56 frames
+    LEO Latency Context:
+      - RTT at 500 km X-band: 3.3 ms (TCA) to 13.6 ms (horizon)
+      - At 10 Hz ACM update rate: predict 1–2 steps ahead is sufficient
+      - Fast SNR transitions at AOS/LOS make prediction especially valuable
 
-    The predictor uses an LSTM trained on:
-      - Synthetic ITU-R rain fade channel (log-normal fading)
-      - AWGN with Doppler shift (LEO scenarios)
-      - Recorded USRP measurements (when available)
+    The predictor is trained online on the live SNR time series from the
+    LEO pass, adapting to the specific orbital geometry in real time.
     """
 
     def __init__(self, seq_len: int = 32, pred_steps: int = 10,
@@ -548,7 +701,7 @@ class AcmAIEngine:
                  snr_history_len: int = 16,
                  use_dqn:       bool = True,
                  use_predictor: bool = True,
-                 propagation_delay_frames: int = 56,
+                 propagation_delay_frames: int = 3,
                  log_level:     int = logging.INFO):
 
         logging.basicConfig(level=log_level,
@@ -738,8 +891,8 @@ if __name__ == "__main__":
                         help="Disable DQN, use rule-based only")
     parser.add_argument("--no-pred", action="store_true",
                         help="Disable LSTM SNR predictor")
-    parser.add_argument("--delay",   type=int, default=56,
-                        help="Propagation delay in frames (GEO=56 at typical rates)")
+    parser.add_argument("--delay",   type=int, default=3,
+                        help="ACM loop latency in frames (LEO ~3 frames at 10 Hz)")
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
