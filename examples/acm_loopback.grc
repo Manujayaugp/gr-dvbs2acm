@@ -45,6 +45,30 @@ blocks:
     coordinate: [680, 8]
     rotation: 0
     state: enabled
+- name: samps_per_sym
+  id: variable
+  parameters:
+    comment: Oversampling rate — 2 samples per symbol for RRC pulse shaping
+    value: '2'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1160, 8]
+    rotation: 0
+    state: enabled
+- name: rrc_taps
+  id: variable
+  parameters:
+    comment: Root-Raised-Cosine filter taps (rolloff=0.20, 45 taps)
+    value: firdes.root_raised_cosine(1.0, samps_per_sym, 1.0, 0.20, 45)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1300, 8]
+    rotation: 0
+    state: enabled
 - name: noise_amp
   id: variable
   parameters:
@@ -180,7 +204,7 @@ blocks:
     maximum: '0.1'
     maxoutbuf: '0'
     minoutbuf: '0'
-    samples_per_second: samp_rate
+    samples_per_second: samp_rate * samps_per_sym
     type: complex
     vlen: '1'
   states:
@@ -216,21 +240,22 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    bandwidth: '0.01'
     comment: "Frequency-Locked Loop (FLL) \u2014 modulation-agnostic Doppler correction.\n\
-      Works for ALL DVB-S2 MODCODs (QPSK/8PSK/16APSK/32APSK).\n\
-      Locks on spectral band-edges (rolloff region), not the constellation.\n\
-      PL Sync handles residual fine phase recovery via SOF + pilots."
+      Works for ALL DVB-S2 MODCODs (QPSK/8PSK/16APSK/32APSK).\nLocks on spectral band-edges\
+      \ (rolloff region), not the constellation.\nPL Sync handles residual fine phase\
+      \ recovery via SOF + pilots."
     filter_size: '45'
     maxoutbuf: '0'
     minoutbuf: '0'
     rolloff: '0.20'
-    samps_per_sym: '2'
+    samps_per_sym: samps_per_sym
+    type: cc
+    w: '0.01'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1200, 392.0]
+    coordinate: [1024, 368.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_acm_controller_0
@@ -362,7 +387,7 @@ blocks:
     noise_temp_k: '150.0'
     rain_rate_mm_hr: rain_rate
     rx_gain_dbi: '40.0'
-    sample_rate: samp_rate
+    sample_rate: samp_rate * samps_per_sym
     tx_gain_dbi: '35.0'
     tx_power_dbw: '20.0'
     update_period_ms: '100.0'
@@ -422,7 +447,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1064, 392.0]
+    coordinate: [1016, 232.0]
     rotation: 0
     state: enabled
 - name: dvbs2acm_snr_estimator_0
@@ -648,7 +673,7 @@ blocks:
     autoscale: 'False'
     average: '0.1'
     axislabels: 'True'
-    bw: samp_rate
+    bw: samp_rate * samps_per_sym
     color1: '"blue"'
     color10: '"dark blue"'
     color2: '"red"'
@@ -729,7 +754,7 @@ blocks:
     autoscale: 'False'
     average: '0.2'
     axislabels: 'True'
-    bw: samp_rate
+    bw: samp_rate * samps_per_sym
     color1: '"blue"'
     color10: '"dark blue"'
     color2: '"red"'
@@ -849,7 +874,7 @@ blocks:
     name: '"TX IQ Waveform"'
     nconnections: '1'
     size: '1024'
-    srate: samp_rate
+    srate: samp_rate * samps_per_sym
     stemplot: 'False'
     style1: '1'
     style10: '1'
@@ -906,7 +931,7 @@ blocks:
     alpha8: '1.0'
     alpha9: '1.0'
     axislabels: 'True'
-    bw: samp_rate
+    bw: samp_rate * samps_per_sym
     color1: '0'
     color10: '0'
     color2: '0'
@@ -953,6 +978,145 @@ blocks:
     rotation: 0
     state: enabled
 
+- name: filter_interp_fir_filter_xxx_0
+  id: filter_interp_fir_filter_xxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'TX RRC pulse shaping — interpolates by 2, applies root-raised-cosine
+      (rolloff=0.20). Limits spectral occupancy to symbol rate × (1+rolloff).'
+    interp: samps_per_sym
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_delay: '0'
+    taps: rrc_taps
+    type: ccf
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1080, 96.0]
+    rotation: 0
+    state: enabled
+- name: digital_pfb_clock_sync_xxx_0
+  id: digital_pfb_clock_sync_xxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'RX matched RRC filter + symbol timing recovery (polyphase filterbank).
+      Input: 2 sps  |  Output: 1 sps (1 clean sample per symbol).
+      After this block the constellation shows standard DVB-S2 points.'
+    filter_size: '32'
+    init_phase: '16'
+    max_rate_deviation: '1.5'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    osps: '1'
+    sps: samps_per_sym
+    taps: rrc_taps
+    type: ccf
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [864, 368.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_const_sink_x_2
+  id: qtgui_const_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'True'
+    axislabels: 'True'
+    color1: '"blue"'
+    color10: '"dark blue"'
+    color2: '"red"'
+    color3: '"green"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: 'DVB-S2 recovered symbol constellation after RRC matched filter +
+      timing recovery. Should show QPSK (4 pts), 8PSK (8 pts), 16APSK (16 pts)
+      or 32APSK (32 pts) depending on current MODCOD selected by ACM/DQN.'
+    grid: 'True'
+    gui_hint: 1,2,1,2
+    label1: Recovered Symbols
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    marker1: '0'
+    marker10: '0'
+    marker2: '0'
+    marker3: '0'
+    marker4: '0'
+    marker5: '0'
+    marker6: '0'
+    marker7: '0'
+    marker8: '0'
+    marker9: '0'
+    name: '"DVB-S2 Recovered Constellation (Post-Timing-Recovery)"'
+    nconnections: '1'
+    size: '4096'
+    style1: '0'
+    style10: '0'
+    style2: '0'
+    style3: '0'
+    style4: '0'
+    style5: '0'
+    style6: '0'
+    style7: '0'
+    style8: '0'
+    style9: '0'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: '""'
+    type: complex
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    xmax: '2'
+    xmin: '-2'
+    ymax: '2'
+    ymin: '-2'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1080, 480.0]
+    rotation: 0
+    state: enabled
+
 connections:
 - [analog_random_source_x_0, '0', dvbs2acm_bb_framer_acm_0, '0']
 - [blocks_throttle2_0, '0', dvbs2acm_leo_channel_0, '0']
@@ -962,9 +1126,11 @@ connections:
 - [channels_channel_model_0, '0', qtgui_freq_sink_x_1, '0']
 - [channels_channel_model_0, '0', qtgui_time_sink_x_0, '0']
 - [channels_channel_model_0, '0', qtgui_waterfall_sink_x_0, '0']
-- [digital_fll_band_edge_cc_0, '0', dvbs2acm_pl_sync_acm_0, '0']
+- [digital_fll_band_edge_cc_0, '0', digital_pfb_clock_sync_xxx_0, '0']
 - [digital_fll_band_edge_cc_0, '0', qtgui_const_sink_x_0, '0']
 - [digital_fll_band_edge_cc_0, '0', qtgui_freq_sink_x_1, '1']
+- [digital_pfb_clock_sync_xxx_0, '0', dvbs2acm_pl_sync_acm_0, '0']
+- [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_2, '0']
 - [dvbs2acm_acm_controller_0, modcod_out, blocks_message_debug_0, print]
 - [dvbs2acm_acm_controller_0, modcod_out, dvbs2acm_bb_framer_acm_0, modcod_in]
 - [dvbs2acm_acm_controller_0, stats_out, blocks_message_debug_0, store]
@@ -977,7 +1143,8 @@ connections:
 - [dvbs2acm_leo_channel_0, '0', channels_channel_model_0, '0']
 - [dvbs2acm_modulator_acm_0, '0', dvbs2acm_pl_framer_acm_0, '0']
 - [dvbs2acm_modulator_acm_0, '0', qtgui_const_sink_x_1, '0']
-- [dvbs2acm_pl_framer_acm_0, '0', blocks_throttle2_0, '0']
+- [dvbs2acm_pl_framer_acm_0, '0', filter_interp_fir_filter_xxx_0, '0']
+- [filter_interp_fir_filter_xxx_0, '0', blocks_throttle2_0, '0']
 - [dvbs2acm_pl_sync_acm_0, '0', dvbs2acm_demodulator_acm_0, '0']
 - [dvbs2acm_pl_sync_acm_0, '0', qtgui_freq_sink_x_0, '1']
 - [dvbs2acm_snr_estimator_0, snr_out, dvbs2acm_acm_feedback_0, snr_in]
