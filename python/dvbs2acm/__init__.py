@@ -75,7 +75,7 @@ except ImportError:
     from .acm_controller_py  import acm_controller
     from .bb_framer_acm_py   import bb_framer_acm
     from .snr_estimator_py   import snr_estimator
-    from .fec_encoder_acm_py import fec_encoder_acm
+    from .fec_encoder_acm_py import fec_encoder_acm, encode_frame, kbch_for_modcod
     from .modulator_acm_py   import modulator_acm
     from .pl_framer_acm_py   import pl_framer_acm
     from .pl_sync_acm_py     import pl_sync_acm

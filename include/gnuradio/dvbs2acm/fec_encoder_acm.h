@@ -16,11 +16,14 @@
  *   - Systematic, shortened binary BCH code
  *   - t-error correcting: t = 8, 10, or 12 depending on code rate
  *   - Generator polynomials from ETSI EN 302 307-1 Annex A
+ *   - Python fallback: gr-dtv dvb_bch_bb (spec-compliant)
  *
  * LDPC Inner Code (§5.2.2):
  *   - Irregular Repeat-Accumulate (IRA) structure
  *   - Codeword length: 64800 (normal) or 16200 (short) bits
  *   - Parity-check matrices from ETSI EN 302 307-1 Annex B/C
+ *   - Python fallback: gr-dtv dvb_ldpc_bb (spec-compliant)
+ *   - All 28 MODCODs supported; sub-flowgraphs cached per MODCOD
  */
 
 #include <gnuradio/block.h>

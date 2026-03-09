@@ -35,8 +35,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 from dvbs2acm.modcod_table import MODCOD_TABLE, get_modcod, snr_to_modcod
 from dvbs2acm.leo_channel_model import LeoChannelModel, LeoOrbitParams
 from dvbs2acm.acm_controller_ai import (
-    AcmAIEngine, DQNAgent, SNRPredictor, rule_based_modcod
+    AcmAIEngine, DQNAgent, SNRPredictor, rule_based_modcod, Transition
 )
+from dvbs2acm.fec_encoder_acm_py import kbch_for_modcod
 
 
 # ============================================================
@@ -63,9 +64,9 @@ class Dvbs2AcmPerformance:
         return float(max(ber, 1e-12))
 
     @staticmethod
-    def compute_fer(ber: float, frame_bits: int = 64800) -> float:
-        """Compute Frame Error Rate from BER and frame length."""
-        return 1.0 - (1.0 - ber) ** frame_bits
+    def compute_fer(ber: float, modcod_id: int = 4) -> float:
+        """Compute Frame Error Rate from BER using real LDPC codeword length (64800 bits)."""
+        return 1.0 - (1.0 - ber) ** 64800
 
     @staticmethod
     def throughput(modcod_id: int, symbol_rate_msps: float = 500.0) -> float:
@@ -226,7 +227,6 @@ class AcmSimulation:
             if self._prev_state is not None and self._prev_action_idx is not None:
                 reward = self.dqn_agent.compute_reward(
                     self._prev_action_idx, snr_db, self.current_modcod, fer)
-                from dvbs2acm.acm_controller_ai import Transition
                 self.dqn_agent.push_experience(Transition(
                     state      = self._prev_state,
                     action     = self._prev_action_idx,
@@ -265,6 +265,8 @@ class AcmSimulation:
         else:
             est_ber = 1e-10  # QEF
 
+        # Use real LDPC codeword length (64800) and info block length from encoder
+        kbch    = kbch_for_modcod(new_modcod)
         est_fer = 1.0 - (1.0 - est_ber) ** 64800
 
         # Throughput
@@ -617,7 +619,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="DVB-S2 ACM Loopback Simulation")
     parser.add_argument("--scenario", choices=["sweep", "rain_fade", "leo"],
-                        default="sweep", help="Channel scenario")
+                        default="leo", help="Channel scenario (default: leo)")
     parser.add_argument("--altitude", type=float, default=500.0,
                         help="LEO orbital altitude in km (default: 500)")
     parser.add_argument("--rain-rate", type=float, default=5.0,
@@ -694,11 +696,23 @@ def main():
         sim_ai.plot_results(snr_trace, args.output)
 
     else:
-        sim = AcmSimulation(use_ai=args.use_ai, symbol_rate_msps=args.symbol_rate)
-        stats = sim.run_scenario(snr_trace, args.verbose)
-        label = "Dueling DQN+PER ACM" if args.use_ai else "Rule-Based ACM"
-        print_statistics(stats, label)
-        sim.plot_results(snr_trace, args.output)
+        # Default: always run Rule-Based vs Dueling DQN side-by-side comparison
+        print("\n[COMPARE] Running Rule-Based simulation...")
+        sim_rule = AcmSimulation(use_ai=False, symbol_rate_msps=args.symbol_rate)
+        stats_rule = sim_rule.run_scenario(snr_trace, args.verbose)
+
+        print("\n[COMPARE] Running Dueling DQN+PER simulation...")
+        sim_ai = AcmSimulation(use_ai=True, symbol_rate_msps=args.symbol_rate)
+        stats_ai = sim_ai.run_scenario(snr_trace, args.verbose)
+
+        print_statistics(stats_rule, "Rule-Based ACM")
+        print_statistics(stats_ai,   "Dueling DQN+PER ACM")
+        dqn_vs_rule = (stats_ai['mean_eff'] / stats_rule['mean_eff'] - 1) * 100
+        print(f"\n  DQN vs Rule-Based efficiency: {dqn_vs_rule:+.2f}%")
+        print(f"  Tip: run with --passes 20 to train DQN over 20 LEO passes and see it converge.")
+        print(f"  Rule-Based link availability: {sim_rule.get_link_availability():.1f}%")
+        print(f"  DQN       link availability:  {sim_ai.get_link_availability():.1f}%")
+        sim_ai.plot_results(snr_trace, args.output)
 
 
 if __name__ == "__main__":

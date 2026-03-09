@@ -291,7 +291,7 @@ class acm_loopback(gr.top_block, Qt.QWidget):
         self.dvbs2acm_demodulator_acm_0 = dvbs2acm.demodulator_acm(initial_modcod=4, noise_var=0.1)
         self.dvbs2acm_bb_framer_acm_0 = dvbs2acm.bb_framer_acm(frame_size=dvbs2acm.FrameSize.NORMAL, stream_type=dvbs2acm.StreamType.TRANSPORT, pilots=True, initial_modcod=4)
         self.dvbs2acm_acm_feedback_0 = dvbs2acm.acm_feedback(report_period_ms=100.0, snr_alpha=0.1, ber_alpha=0.05)
-        self.dvbs2acm_acm_controller_0 = dvbs2acm.acm_controller(acm_mode=dvbs2acm.AcmMode.VCM, initial_modcod=4, target_ber=(1e-7), snr_margin_db=1.0, hysteresis_db=0.3, history_len=16, use_ai=False, ai_socket="tcp://localhost:5557", frame_size=dvbs2acm.FrameSize.NORMAL)
+        self.dvbs2acm_acm_controller_0 = dvbs2acm.acm_controller(acm_mode=dvbs2acm.AcmMode.ACM, initial_modcod=4, target_ber=(1e-7), snr_margin_db=1.0, hysteresis_db=0.3, history_len=16, use_ai=True, ai_socket="tcp://localhost:5557", frame_size=dvbs2acm.FrameSize.NORMAL)
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_amp,
             frequency_offset=0.0,
@@ -301,6 +301,7 @@ class acm_loopback(gr.top_block, Qt.QWidget):
             block_tags=False)
         self.blocks_throttle2_0 = blocks.throttle( gr.sizeof_gr_complex*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
+        self.blocks_message_debug_1 = blocks.message_debug(True, gr.log_levels.info)
         self.blocks_message_debug_0 = blocks.message_debug(True, gr.log_levels.info)
         self.analog_random_source_x_0 = blocks.vector_source_b(list(map(int, numpy.random.randint(0, 255, 188000))), True)
 
@@ -308,8 +309,8 @@ class acm_loopback(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.dvbs2acm_acm_controller_0, 'stats_out'), (self.blocks_message_debug_0, 'store'))
         self.msg_connect((self.dvbs2acm_acm_controller_0, 'modcod_out'), (self.blocks_message_debug_0, 'print'))
+        self.msg_connect((self.dvbs2acm_acm_controller_0, 'stats_out'), (self.blocks_message_debug_0, 'store'))
         self.msg_connect((self.dvbs2acm_acm_controller_0, 'modcod_out'), (self.dvbs2acm_bb_framer_acm_0, 'modcod_in'))
         self.msg_connect((self.dvbs2acm_acm_feedback_0, 'feedback_out'), (self.dvbs2acm_acm_controller_0, 'snr_in'))
         self.msg_connect((self.dvbs2acm_fec_decoder_acm_0, 'ber_out'), (self.dvbs2acm_acm_feedback_0, 'ber_in'))

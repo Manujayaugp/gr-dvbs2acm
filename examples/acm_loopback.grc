@@ -137,6 +137,21 @@ blocks:
     coordinate: [1216, 584.0]
     rotation: 0
     state: enabled
+- name: blocks_message_debug_1
+  id: blocks_message_debug
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Prints LEO channel state (SNR, elevation, Doppler, RTT) to console
+    en_uvec: 'True'
+    log_level: info
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1568, 200.0]
+    rotation: 0
+    state: enabled
 - name: blocks_null_sink_0
   id: blocks_null_sink
   parameters:
@@ -199,7 +214,7 @@ blocks:
 - name: dvbs2acm_acm_controller_0
   id: dvbs2acm_acm_controller
   parameters:
-    acm_mode: dvbs2acm.AcmMode.VCM
+    acm_mode: dvbs2acm.AcmMode.ACM
     affinity: ''
     ai_socket: '"tcp://localhost:5557"'
     alias: ''
@@ -790,6 +805,7 @@ connections:
 - [dvbs2acm_fec_decoder_acm_0, ber_out, dvbs2acm_acm_feedback_0, ber_in]
 - [dvbs2acm_fec_encoder_acm_0, '0', dvbs2acm_modulator_acm_0, '0']
 - [dvbs2acm_leo_channel_0, '0', channels_channel_model_0, '0']
+- [dvbs2acm_leo_channel_0, channel_state, blocks_message_debug_1, print]
 - [dvbs2acm_modulator_acm_0, '0', dvbs2acm_pl_framer_acm_0, '0']
 - [dvbs2acm_modulator_acm_0, '0', qtgui_const_sink_x_1, '0']
 - [dvbs2acm_pl_framer_acm_0, '0', blocks_throttle2_0, '0']

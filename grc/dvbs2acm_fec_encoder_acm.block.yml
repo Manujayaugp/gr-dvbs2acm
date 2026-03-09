@@ -39,15 +39,20 @@ outputs:
 documentation: |
   DVB-S2 FEC Encoder with ACM (ETSI EN 302 307-1 §5.3)
 
-  Performs BCH outer coding followed by LDPC inner coding.
-  Code parameters (kbch, nbch, kldpc, nldpc) are selected per
-  MODCOD stream tag on the input.
+  Performs spec-compliant BCH outer coding + LDPC inner coding using
+  gr-dtv (dvb_bch_bb → dvb_ldpc_bb). All 28 MODCODs supported.
 
-  MODCOD tag → BCH t-correction + LDPC code rate
-    QPSK 1/2  (ID 4):  kbch=32208, nldpc=64800, rate=1/2
-    8PSK 3/4  (ID 14): kbch=48408, nldpc=64800, rate=3/4
-    32APSK 9/10 (ID 28): kbch=58192, nldpc=64800, rate=9/10
+  ACM operation: reads 'modcod' stream tag on the input and switches
+  BCH/LDPC parameters per-frame automatically. Sub-flowgraphs are
+  cached per MODCOD so switching overhead is minimal.
 
-  Output: coded bits ready for interleaving + modulation.
+  MODCOD → kbch info bits in, 64800 coded bits out
+    QPSK  1/4  (ID  1): kbch=16008, parity=48792
+    QPSK  1/2  (ID  4): kbch=32208, parity=32592
+    8PSK  3/4  (ID 14): kbch=48408, parity=16392
+    16APSK 2/3 (ID 18): kbch=43040, parity=21760
+    32APSK 9/10(ID 28): kbch=58192, parity= 6608
+
+  Requires: gr-dtv (included with GNU Radio 3.10+)
 
 file_format: 1
