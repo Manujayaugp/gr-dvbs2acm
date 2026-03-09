@@ -45,19 +45,6 @@ blocks:
     coordinate: [680, 8]
     rotation: 0
     state: enabled
-- name: costas_loop_bw
-  id: variable
-  parameters:
-    comment: 'Costas loop bandwidth (rad/sample). Typical: 0.005-0.02 for DVB-S2.
-      Lower = more noise rejection, slower acquisition.'
-    value: '0.01'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1000, 8]
-    rotation: 0
-    state: enabled
 - name: noise_amp
   id: variable
   parameters:
@@ -807,7 +794,7 @@ blocks:
     alias: ''
     comment: 'Carrier phase/freq recovery — 4th-order for QPSK (DVB-S2 base modulation).
       Corrects residual Doppler + phase noise before PL Sync.'
-    loop_bw: costas_loop_bw
+    loop_bw: '0.01'
     maxoutbuf: '0'
     minoutbuf: '0'
     order: '4'
