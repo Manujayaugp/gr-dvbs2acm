@@ -584,12 +584,20 @@
 % ── GNU Radio Demo — Video slide ─────────────────────────────
 \begin{frame}[shrink=8]{GNU Radio Software Loopback Demo}
 \begin{center}
-  \href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{%
-    \includegraphics[width=0.80\textwidth]{grc_poster_frame.png}}\\[0.3em]
+  % Video embedded in PDF — uses Acrobat's native H.264 player (no Flash)
+  \includemedia[
+    width=0.80\textwidth,
+    height=0.45\textwidth,
+    activate=onclick,
+    addresource=grc_screen_record.mp4,
+    passcontext
+  ]{\includegraphics[width=0.80\textwidth]{grc_poster_frame.png}}{grc_screen_record.mp4}
+  \\[0.3em]
+  {\small\textbf{Click image to play inline}\enspace{\scriptsize(Adobe Acrobat Reader)}}\\[0.15em]
   \href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{%
     \textcolor{NUSorange}{\large$\blacktriangleright$}\enspace
-    \textbf{\textcolor{NUSorange}{Click image or here — watch full-screen on NUS OneDrive}}}\\[0.15em]
-  {\scriptsize\textcolor{NUSgray}{Works in Edge, Chrome, phone — any browser}}
+    \textbf{\textcolor{NUSorange}{Or watch full-screen on NUS OneDrive}}}\\[0.1em]
+  {\scriptsize\textcolor{NUSgray}{(Edge, Chrome, phone — any browser)}}
 \end{center}
 \end{frame}
 
