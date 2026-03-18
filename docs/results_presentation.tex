@@ -15,6 +15,7 @@
 \usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,calc}
 \usepackage{hyperref}
 \usepackage{multimedia}
+\usepackage{media9}
 \usepackage[draft=false]{qrcode}
 \usepackage{colortbl}
 \usepackage{multirow}
@@ -580,18 +581,29 @@
   \end{column}
 \end{columns}
 \end{frame}
-% ── GNU Radio Demo Placeholder ───────────────────────────────
+% ── GNU Radio Demo — Embedded Video ──────────────────────────
 \begin{frame}[shrink=10]{GNU Radio Software Loopback Demo}
 \begin{columns}[T]
-  \begin{column}{0.55\textwidth}
+  \begin{column}{0.58\textwidth}
     \begin{center}
-      \qrcode[height=3.2cm]{https://nusu-my.sharepoint.com/:f:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}\\[0.4em]
-      {\small\textbf{Scan QR code to watch the demo video}}\\[0.3em]
-      {\footnotesize\textcolor{NUSgray}{or click: }}%
-      \href{https://nusu-my.sharepoint.com/:f:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{\textcolor{NUSorange}{\textbf{NUS OneDrive — grc\_screen\_record.mkv}}}
+      % Video embedded in PDF — click to play in Adobe Acrobat Reader
+      \includemedia[
+        width=\linewidth,
+        height=0.5625\linewidth,  % 16:9 aspect ratio
+        activate=onclick,
+        addresource=grc_screen_record.mp4,
+        flashvars={
+          src=grc_screen_record.mp4
+          &autoPlay=false
+          &loop=false
+        },
+        passcontext
+      ]{\includegraphics[width=\linewidth]{grc_poster_frame.png}}{VPlayer.swf}
+      \\[0.3em]
+      {\scriptsize\textcolor{NUSgray}{Click video to play $\cdot$ H.264 MP4 embedded $\cdot$ Adobe Acrobat Reader}}
     \end{center}
   \end{column}
-  \begin{column}{0.42\textwidth}
+  \begin{column}{0.39\textwidth}
     \vspace{0.5em}
     \textbf{Current setup:} Random source $\to$ full signal chain $\to$ AWGN channel (no USRP yet)
 
