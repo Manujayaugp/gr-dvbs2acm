@@ -15,6 +15,7 @@
 \usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,calc}
 \usepackage{hyperref}
 \usepackage{multimedia}
+\usepackage[draft=false]{qrcode}
 \usepackage{colortbl}
 \usepackage{multirow}
 \usepackage[most]{tcolorbox}
@@ -584,21 +585,10 @@
 \begin{columns}[T]
   \begin{column}{0.55\textwidth}
     \begin{center}
-      % Inline video — plays in Adobe Acrobat Reader
-      \movie[width=0.98\linewidth, height=0.55\linewidth,
-             poster, showcontrols, borderwidth=1pt]{%
-        \begin{tikzpicture}
-          \node[rectangle, draw=NUSblue, fill=NUSblue!8, rounded corners=4pt,
-                minimum width=7.4cm, minimum height=4.15cm] {};
-          \node[font=\normalsize\bfseries, NUSblue] at (0,0.5) {GNU Radio ACM Demo};
-          \node[font=\small, NUSgray] at (0,0) {Click to play (Adobe Acrobat Reader)};
-          \node[font=\tiny, NUSgray] at (0,-0.5) {\texttt{grc\_screen\_record.mp4}};
-        \end{tikzpicture}%
-      }{grc_screen_record.mp4}\\[0.3em]
-      % Backup — OneDrive link for other PDF viewers
-      \scriptsize\textcolor{NUSgray}{No Acrobat? $\to$\enskip}%
-      \href{https://nusu-my.sharepoint.com/:f:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{%
-        \textcolor{NUSorange}{$\blacktriangleright$ Watch on NUS OneDrive}}
+      \qrcode[height=3.2cm]{https://nusu-my.sharepoint.com/:f:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}\\[0.4em]
+      {\small\textbf{Scan QR code to watch the demo video}}\\[0.3em]
+      {\footnotesize\textcolor{NUSgray}{or click: }}%
+      \href{https://nusu-my.sharepoint.com/:f:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{\textcolor{NUSorange}{\textbf{NUS OneDrive — grc\_screen\_record.mkv}}}
     \end{center}
   \end{column}
   \begin{column}{0.42\textwidth}
