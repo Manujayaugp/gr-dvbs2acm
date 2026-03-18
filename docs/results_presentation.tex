@@ -584,14 +584,20 @@
 % ── GNU Radio Demo — Video slide ─────────────────────────────
 \begin{frame}[shrink=8]{GNU Radio Software Loopback Demo}
 \begin{center}
-  % Video embedded in PDF — uses Acrobat's native H.264 player (no Flash)
+  % Video embedded in PDF — VPlayer.swf plays MP4 inline in Adobe Acrobat Reader
   \includemedia[
     width=0.80\textwidth,
     height=0.45\textwidth,
     activate=onclick,
     addresource=grc_screen_record.mp4,
+    addresource=VPlayer.swf,
+    flashvars={
+      src=grc_screen_record.mp4
+      &autoPlay=false
+      &loop=false
+    },
     passcontext
-  ]{\includegraphics[width=0.80\textwidth]{grc_poster_frame.png}}{grc_screen_record.mp4}
+  ]{\includegraphics[width=0.80\textwidth]{grc_poster_frame.png}}{VPlayer.swf}
   \\[0.3em]
   {\small\textbf{Click image to play inline}\enspace{\scriptsize(Adobe Acrobat Reader)}}\\[0.15em]
   \href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{%
