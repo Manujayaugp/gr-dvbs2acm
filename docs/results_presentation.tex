@@ -14,6 +14,7 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,calc}
 \usepackage{hyperref}
+\usepackage{multimedia}
 \usepackage{colortbl}
 \usepackage{multirow}
 \usepackage[most]{tcolorbox}
@@ -583,19 +584,10 @@
 \begin{columns}[T]
   \begin{column}{0.55\textwidth}
     \begin{center}
-    \begin{tikzpicture}
-      \draw[NUSblue!30, fill=NUSlightgray, rounded corners=8pt, line width=1.5pt]
-        (0,0) rectangle (8,4.5);
-      \node[font=\Large, NUSgray] at (4,2.8) {\textbf{[Screen Recording]}};
-      \node[font=\small, NUSgray, align=center] at (4,2.0)
-        {GNU Radio Companion};
-      \node[font=\small, NUSgray, align=center] at (4,1.5)
-        {\texttt{acm\_loopback.grc}};
-      \node[font=\footnotesize, NUSgray, align=center] at (4,0.7)
-        {Constellation display $\cdot$ SNR trace\\MODCOD switching live};
-      \draw[NUSorange, line width=1pt, dashed, rounded corners=4pt]
-        (0.3,0.3) rectangle (7.7,4.2);
-    \end{tikzpicture}
+      \movie[externalviewer,poster,borderwidth=1pt,label=grc_demo]{%
+        \includegraphics[width=\textwidth]{grc_demo_thumb.png}%
+      }{../screen records/grc_screen_record.mkv}\\[0.3em]
+      {\footnotesize\textit{Click image to play $\cdot$ \texttt{grc\_screen\_record.mkv}}}
     \end{center}
   \end{column}
   \begin{column}{0.42\textwidth}
