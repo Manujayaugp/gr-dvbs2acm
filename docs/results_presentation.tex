@@ -203,9 +203,9 @@
 \end{frame}
 
 % ── DQN Architecture ─── MOVED TO SLIDE 4 ────────────────────
-\begin{frame}[shrink=5,fragile]{AI/ML Engine: Dueling Double DQN}
+\begin{frame}[shrink=10,fragile]{AI/ML Engine: Dueling Double DQN}
 \begin{columns}[T]
-  \begin{column}{0.38\textwidth}
+  \begin{column}{0.30\textwidth}
     \begin{alertblock}{Why Reinforcement Learning?}
       \small
       ACM is a \textbf{sequential decision problem} — the controller must
@@ -219,8 +219,9 @@
       function $Q^*(s,a)$ using a deep neural network.
     \end{alertblock}
   \end{column}
-  \begin{column}{0.60\textwidth}
+  \begin{column}{0.68\textwidth}
     \begin{center}
+    \resizebox{0.98\linewidth}{!}{%
     \begin{tikzpicture}[xscale=0.95, yscale=0.88,
         box/.style={rectangle, draw=#1!80, fill=#1!15, rounded corners=3pt,
                     minimum width=1.6cm, minimum height=0.55cm,
@@ -265,7 +266,7 @@
       \node[font=\tiny, NUSgray]   at (3.3, 1.4)  {Feature extraction};
       \node[font=\tiny, NUSblue]   at (7.65, 1.75) {Value stream};
       \node[font=\tiny, NUSorange] at (7.65,-1.75) {Advantage stream};
-    \end{tikzpicture}
+    \end{tikzpicture}}% end resizebox
     \end{center}
     \vspace{0.3em}
     \begin{columns}[T]
