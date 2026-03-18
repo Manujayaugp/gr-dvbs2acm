@@ -80,7 +80,7 @@
 \normalsize Simulation \& GNU Radio Hardware Results}
 \author[Pasindu Manujaya]{Pasindu Manujaya}
 \institute[NUS]{National University of Singapore}
-\date{March 2026}
+\date{2026}
 
 %% ============================================================
 \begin{document}
@@ -192,7 +192,7 @@
     \end{alertblock}
     \vspace{0.4em}
     \begin{resultbox}{Use when}
-      \small Validating the signal chain, demonstrating the live system, preparing for USRP B200 hardware (IoV March 2026).
+      \small Validating the signal chain, demonstrating the live system, and preparing for USRP B200 hardware deployment.
     \end{resultbox}
   \end{column}
 \end{columns}
@@ -581,34 +581,47 @@
   \end{column}
 \end{columns}
 \end{frame}
-% ── GNU Radio Demo — Embedded Video ──────────────────────────
-\begin{frame}[shrink=4]{GNU Radio Software Loopback Demo}
-\begin{columns}[T]
-  \begin{column}{0.56\textwidth}
-    \begin{center}
-      \movie[width=\linewidth, height=0.5625\linewidth,
-             poster, showcontrols]{%
-        \includegraphics[width=\linewidth]{grc_poster_frame.png}%
-      }{grc_screen_record.mp4}\\[0.2em]
-      {\tiny\textcolor{NUSgray}{\textbf{Option 1:} Click above (Acrobat Reader)\quad
-        \textbf{Option 2:}\enskip\href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{\textcolor{NUSorange}{\textbf{$\blacktriangleright$ OneDrive full-screen}}}}}
-    \end{center}
-  \end{column}
-  \begin{column}{0.41\textwidth}
-    \small\textbf{Setup:} Random source $\to$ full IQ signal chain $\to$ AWGN channel
-    \vspace{0.3em}
+% ── GNU Radio Demo — Video slide ─────────────────────────────
+\begin{frame}[shrink=8]{GNU Radio Software Loopback Demo}
+\begin{center}
+  \movie[width=0.82\textwidth, height=0.461\textwidth,
+         poster, showcontrols]{%
+    \includegraphics[width=0.82\textwidth]{grc_poster_frame.png}%
+  }{grc_screen_record.mp4}\\[0.3em]
+  \small\textbf{Click above to play}\enspace{\scriptsize(Adobe Acrobat Reader)}
+  \quad\textbullet\quad
+  \href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{%
+    \textcolor{NUSorange}{\textbf{$\blacktriangleright$\enspace Watch full-screen on NUS OneDrive}}}\\[0.1em]
+  {\scriptsize\textcolor{NUSgray}{(works in any browser — Edge, Chrome, phone)}}
+\end{center}
+\end{frame}
 
+% ── GNU Radio Demo — Content slide ───────────────────────────
+\begin{frame}[shrink=18]{GNU Radio Software Loopback Demo — What It Shows}
+\begin{columns}[T]
+  \begin{column}{0.54\textwidth}
+    \textbf{Current setup:}\\
+    Random source $\to$ full IQ signal chain $\to$ AWGN channel (no USRP yet)
+
+    \vspace{0.6em}
     \textbf{What the video shows:}
-    \begin{enumerate}\small
-      \item GRC flowgraph — TX, channel, RX, ACM controller
+    \begin{enumerate}
+      \item GRC flowgraph — TX chain, AWGN channel, RX chain, ACM controller
       \item Execution starts — QPSK constellation appears
-      \item Noise increases — MODCOD steps down\\(32APSK $\to$ 16APSK $\to$ 8PSK $\to$ QPSK)
+      \item AWGN noise increases — MODCOD steps down\\
+            (32APSK $\to$ 16APSK $\to$ 8PSK $\to$ QPSK)
       \item Noise reduces — link recovers to high-order MODCOD
     \end{enumerate}
-    \vspace{0.3em}
+  \end{column}
+  \begin{column}{0.43\textwidth}
     \begin{keybox}{Key point}
-      \scriptsize Full BCH+LDPC FEC, Pilot-MMSE SNR estimation, PLSCODE signalling — all working. Constellation changes \textit{automatically}.
+      Full BCH+LDPC FEC, real Pilot-MMSE SNR estimation, and PLSCODE signalling — all working in software loopback. Constellation changes \textit{automatically} with no manual intervention.
     \end{keybox}
+
+    \vspace{0.6em}
+    \begin{resultbox}{Next step}
+      Connect USRP B200 hardware and run \texttt{acm\_loopback.grc} over a real X-Band link for hardware validation.
+    \end{resultbox}
   \end{column}
 \end{columns}
 \end{frame}
@@ -702,7 +715,7 @@
 
     \vspace{0.5em}
     \begin{keybox}{Next step}
-      \small Connect USRP B200 hardware and run \texttt{acm\_loopback.grc} over a real X-Band link for IoV validation (March 2026).
+      \small Connect USRP B200 hardware and run \texttt{acm\_loopback.grc} over a real X-Band link for hardware validation.
     \end{keybox}
   \end{column}
 \end{columns}
