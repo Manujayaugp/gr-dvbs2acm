@@ -584,20 +584,21 @@
 \begin{columns}[T]
   \begin{column}{0.55\textwidth}
     \begin{center}
-      \begin{tikzpicture}
-        \node[rectangle, draw=NUSblue, fill=NUSblue!8, rounded corners=6pt,
-              minimum width=7.5cm, minimum height=4.2cm, line width=1.5pt] (box) {};
-        \node[font=\large\bfseries, NUSblue] at (0, 0.9) {GNU Radio ACM Demo};
-        \node[font=\normalsize, NUSgray, align=center] at (0, 0.2)
-          {MODCOD switching live on software loopback};
-        \node[font=\small, NUSgray] at (0,-0.35) {32APSK $\to$ 16APSK $\to$ 8PSK $\to$ QPSK};
-        \node[rectangle, draw=NUSorange, fill=NUSorange, rounded corners=4pt,
-              minimum width=4.2cm, minimum height=0.75cm] (btn) at (0,-1.1) {};
-        \node[font=\small\bfseries, white] at (0,-1.1)
-          {\href{https://nusu-my.sharepoint.com/:f:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{$\blacktriangleright$\enskip Watch Demo Video}};
-        \node[font=\tiny, NUSgray] at (0,-1.75)
-          {NUS OneDrive $\cdot$ \texttt{grc\_screen\_record.mkv}};
-      \end{tikzpicture}
+      % Inline video — plays in Adobe Acrobat Reader
+      \movie[width=0.98\linewidth, height=0.55\linewidth,
+             poster, showcontrols, borderwidth=1pt]{%
+        \begin{tikzpicture}
+          \node[rectangle, draw=NUSblue, fill=NUSblue!8, rounded corners=4pt,
+                minimum width=7.4cm, minimum height=4.15cm] {};
+          \node[font=\normalsize\bfseries, NUSblue] at (0,0.5) {GNU Radio ACM Demo};
+          \node[font=\small, NUSgray] at (0,0) {Click to play (Adobe Acrobat Reader)};
+          \node[font=\tiny, NUSgray] at (0,-0.5) {\texttt{grc\_screen\_record.mp4}};
+        \end{tikzpicture}%
+      }{grc_screen_record.mp4}\\[0.3em]
+      % Backup — OneDrive link for other PDF viewers
+      \scriptsize\textcolor{NUSgray}{No Acrobat? $\to$\enskip}%
+      \href{https://nusu-my.sharepoint.com/:f:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{%
+        \textcolor{NUSorange}{$\blacktriangleright$ Watch on NUS OneDrive}}
     \end{center}
   \end{column}
   \begin{column}{0.42\textwidth}
