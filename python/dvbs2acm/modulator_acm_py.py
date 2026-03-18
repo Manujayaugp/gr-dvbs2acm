@@ -66,9 +66,10 @@ class modulator_acm(gr.basic_block):
         gr.basic_block.__init__(self,
             name="dvbs2acm_modulator_acm",
             in_sig=[np.uint8], out_sig=[np.complex64])
-        self.current_modcod = int(initial_modcod)
-        self.rolloff        = rolloff
-        self._in_buf        = bytearray()
+        self.current_modcod  = int(initial_modcod)
+        self._pending_modcod = None   # deferred switch applied at frame boundary
+        self.rolloff         = rolloff
+        self._in_buf         = bytearray()
 
         # Guarantee output buffer always fits the largest possible frame (QPSK: 32400 syms)
         self.set_output_multiple(_MAX_SYMS_PER_FRAME)
@@ -76,9 +77,26 @@ class modulator_acm(gr.basic_block):
     def general_work(self, input_items, output_items):
         in0, out0 = input_items[0], output_items[0]
 
+        # Store incoming MODCOD tag but do NOT apply yet — the buffer still
+        # holds bits that were encoded for the *current* MODCOD.  Applying the
+        # new constellation mapping immediately would scatter those bits across
+        # the wrong symbol positions (e.g. QPSK bits mapped as 16APSK).
         tags = self.get_tags_in_window(0, 0, len(in0), pmt.intern("modcod"))
         if tags:
-            self.current_modcod = int(pmt.to_python(tags[-1].value))
+            self._pending_modcod = int(pmt.to_python(tags[-1].value))
+
+        self._in_buf.extend(bytes(in0))
+        self.consume(0, len(in0))
+
+        # Wait until we have a complete LDPC codeword before mapping
+        if len(self._in_buf) < _NLDPC:
+            return 0
+
+        # Apply any pending MODCOD switch at the frame boundary so the new
+        # constellation is used only for bits that were encoded with it.
+        if self._pending_modcod is not None and self._pending_modcod != self.current_modcod:
+            self.current_modcod  = self._pending_modcod
+            self._pending_modcod = None
             offset = self.nitems_written(0)
             self.add_item_tag(0, offset, pmt.intern("modcod"),
                               pmt.from_long(self.current_modcod))
@@ -86,14 +104,6 @@ class modulator_acm(gr.basic_block):
 
         modcod_id = self.current_modcod
         mod_name  = _MODCOD_MOD.get(modcod_id, "QPSK")
-        bps       = _MOD_BPS[mod_name]
-
-        self._in_buf.extend(bytes(in0))
-        self.consume(0, len(in0))
-
-        # Process exactly one full LDPC codeword at a time
-        if len(self._in_buf) < _NLDPC:
-            return 0
 
         bits    = np.frombuffer(bytes(self._in_buf[:_NLDPC]), dtype=np.uint8)
         self._in_buf = self._in_buf[_NLDPC:]

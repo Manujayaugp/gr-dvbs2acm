@@ -1,0 +1,94 @@
+id: dvbs2acm_orbit_visualizer
+label: DVB-S2 Orbit Visualizer
+category: '[DVB-S2 ACM]/Visualization'
+
+templates:
+  imports: import dvbs2acm
+  make: >
+    dvbs2acm.orbit_visualizer(
+        title=${title},
+        pass_inclination_deg=${pass_inclination_deg},
+        gs_lat_deg=${gs_lat_deg},
+        gs_lon_deg=${gs_lon_deg},
+        altitude_km=${altitude_km})
+
+parameters:
+  - id: title
+    label: Window Title
+    dtype: string
+    default: '"DVB-S2 ACM — LEO Pass Visualizer"'
+
+  - id: pass_inclination_deg
+    label: Pass Azimuth Offset (deg)
+    dtype: float
+    default: 0.0
+    # 0° = South→North vertical pass (default)
+    # 45° = SE→NW pass, 90° = E→W equatorial pass
+
+  - id: gs_lat_deg
+    label: Ground Station Latitude (deg)
+    dtype: float
+    default: 0.0
+    # Latitude of the ground station (used for subsatellite-point calculation
+    # and footprint circle on the Ground Track map).
+    # Positive = North, negative = South.
+
+  - id: gs_lon_deg
+    label: Ground Station Longitude (deg)
+    dtype: float
+    default: 0.0
+    # Longitude of the ground station.
+    # Positive = East, negative = West.
+
+  - id: altitude_km
+    label: Orbital Altitude (km)
+    dtype: float
+    default: 500.0
+    # Satellite orbital altitude. Must match the leo_channel altitude_km
+    # parameter so the footprint circle is correctly sized.
+
+inputs:
+- domain: message
+  id: channel_state_in
+  optional: false
+  # Connect to dvbs2acm_leo_channel.channel_state
+
+- domain: message
+  id: modcod_in
+  optional: true
+  # Connect to acm_controller.modcod_out
+  # Enables MODCOD-coloured trail and switch history.
+
+documentation: |
+  DVB-S2 ACM Orbit Visualizer
+
+  Opens a real-time floating two-tab window:
+
+  Tab 1 — Sky View
+    Polar sky plot (North at top, zenith at centre, horizon at outer ring):
+      - Dashed arc: predicted full pass trajectory
+      - Coloured trail: past satellite positions, coloured by active MODCOD
+          QPSK=green  8PSK=blue  16APSK=amber  32APSK=red
+      - Bright dot: current satellite position with elevation label
+      - Status panel: MODCOD name, elevation, SNR, RTT, rain, Doppler
+      - MODCOD history bar with AOS / TCA / LOS markers
+
+  Tab 2 — Ground Track
+    Equirectangular world map:
+      - Ocean background + simplified continent outlines
+      - Lat/lon graticule (every 30°)
+      - Dashed line: predicted pass ground track
+      - Coloured trail: actual subsatellite track, coloured by MODCOD
+      - Bright dot: current subsatellite point with lat/lon label
+      - Semi-transparent circle: satellite visibility footprint
+      - Yellow diamond: ground station position
+      - Pass timeline bar with MODCOD history at the bottom
+
+  Sync: A 100 ms QTimer guarantees display updates every 100 ms regardless
+  of message burst timing, keeping the window in sync with GRC console output.
+
+  Connections:
+    dvbs2acm_leo_channel.channel_state  →  orbit_visualizer.channel_state_in
+    acm_controller.modcod_out           →  orbit_visualizer.modcod_in
+
+file_format: 1

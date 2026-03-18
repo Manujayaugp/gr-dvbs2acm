@@ -37,7 +37,7 @@ parameters:
   - id: hysteresis_db
     label: Hysteresis (dB)
     dtype: real
-    default: 0.3
+    default: 0.5
 
   - id: history_len
     label: SNR History Length
@@ -68,6 +68,9 @@ inputs:
 -   domain: message
     id: snr_in
     optional: false
+-   domain: message
+    id: channel_state_in
+    optional: true
 
 outputs:
 -   domain: message

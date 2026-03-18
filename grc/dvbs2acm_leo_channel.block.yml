@@ -15,7 +15,10 @@ templates:
         noise_temp_k=${noise_temp_k},
         rain_rate_mm_hr=${rain_rate_mm_hr},
         min_elevation_deg=${min_elevation_deg},
-        update_period_ms=${update_period_ms})
+        update_period_ms=${update_period_ms},
+        snr_offset_db=${snr_offset_db},
+        time_acceleration=${time_acceleration},
+        fading_coherence_s=${fading_coherence_s})
 
 parameters:
   - id: sample_rate
@@ -68,6 +71,37 @@ parameters:
     dtype: float
     default: 100.0
 
+  - id: time_acceleration
+    label: Time Acceleration
+    dtype: float
+    default: 10.0
+    # Wall-clock multiplier: 1 sim-second passes per (1/accel) real seconds.
+    # Python FEC blocks run ~0.04x real-time; without acceleration the
+    # 9.2-min LEO pass would take ~4 hours.
+    # 10  → ~55 wall-seconds per pass  (realistic sweep, recommended)
+    # 30  → ~18 wall-seconds per pass  (faster demo)
+    # 60  → ~9 wall-seconds per pass   (quick demo, more fading noise)
+
+  - id: fading_coherence_s
+    label: Fading Coherence Time (sim-s)
+    dtype: float
+    default: 30.0
+    # AR(1) decorrelation time for Rician fading in simulation-seconds.
+    # Controls how quickly the small-scale fading varies between channel updates.
+    # 30  → smooth, slowly-varying fading (real LEO X-band, recommended)
+    # 10  → moderate fading variation
+    # 5   → fast fading (exercises ACM hysteresis more aggressively)
+    # 120 → near-deterministic FSPL-dominated channel (no visible fading)
+
+  - id: snr_offset_db
+    label: SNR Offset (dB)
+    dtype: float
+    default: 0.0
+    # Shifts both IQ amplitude and reported SNR.
+    # 0.0 = raw link budget. With correlated AR(1) fading the channel sweeps
+    # smoothly from low SNR at AOS/LOS to peak at TCA.
+    # Set negative (e.g. -5) to exercise low QPSK modes; set positive for 32APSK dwell.
+
 inputs:
 - domain: stream
   dtype: complex
@@ -79,8 +113,12 @@ outputs:
   label: IQ out
 - domain: message
   id: channel_state
-  label: Channel State
   optional: true
+- domain: message
+  id: snr_out
+  optional: true
+  # snr_estimator-compatible dict: {snr_db, lock_status, method}
+  # Connect to acm_feedback.snr_in as a direct physics-based SNR path.
 
 documentation: |
   LEO Satellite Channel Model (DVB-S2 ACM Research)

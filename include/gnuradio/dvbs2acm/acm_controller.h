@@ -67,7 +67,8 @@ public:
     );
 
     // Message port names
-    static const pmt::pmt_t PORT_SNR_IN;        // Input: SNR measurement from RX
+    static const pmt::pmt_t PORT_SNR_IN;             // Input: SNR measurement from RX (snr_estimator fmt)
+    static const pmt::pmt_t PORT_CHANNEL_STATE_IN;   // Input: physics-based channel state (leo_channel fmt)
     static const pmt::pmt_t PORT_MODCOD_OUT;    // Output: selected MODCOD to TX chain
     static const pmt::pmt_t PORT_STATS_OUT;     // Output: link quality statistics
 

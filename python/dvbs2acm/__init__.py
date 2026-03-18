@@ -87,6 +87,7 @@ except ImportError:
 # Always available: Python utilities
 from .modcod_table import MODCOD_TABLE, get_modcod, snr_to_modcod
 from .acm_controller_ai import AcmAIEngine, DQNAgent, SNRPredictor, rule_based_modcod
+from .orbit_visualizer_py import orbit_visualizer
 
 __version__ = "1.0.0"
 __author__  = "Research Implementation"

@@ -1,0 +1,448 @@
+% ============================================================================
+% references.bib — gr-dvbs2acm research bibliography
+% Author: Pasindu Manujaya
+% ============================================================================
+
+% ── DVB-S2 Standard ─────────────────────────────────────────────────────────
+
+@techreport{etsi_dvbs2,
+  author       = {{ETSI}},
+  title        = {{EN 302 307-1 V1.4.1}: Digital Video Broadcasting ({DVB}); Second
+                  Generation Framing Structure, Channel Coding and Modulation Systems
+                  for Broadcasting, Interactive Services, News Gathering and other
+                  Broadband Satellite Applications ({DVB-S2})},
+  institution  = {European Telecommunications Standards Institute},
+  year         = {2014},
+  address      = {Sophia Antipolis, France},
+  type         = {ETSI Standard},
+  number       = {EN 302 307-1 V1.4.1},
+}
+
+% ── Hardware Demonstrators and Classical ACM ────────────────────────────────
+
+@inproceedings{bischl2010,
+  author       = {Bischl, Hermann and Brau{\ss}e, Frank and Deuter, Alexander and
+                  Plass, Simon and Lutz, Stephan},
+  title        = {Adaptive Coding and Modulation for Satellite Communications:
+                  {ESA} Hardware Demonstrator Results},
+  booktitle    = {Proceedings of the Advanced Satellite Multimedia Systems Conference
+                  ({ASMS}) and Signal Processing for Space Communications Workshop
+                  ({SPSC})},
+  year         = {2010},
+  pages        = {39--46},
+  doi          = {10.1109/ASMS-SPSC.2010.5586867},
+  note         = {Table V provides MODCOD switching thresholds validated on
+                  ESA SDR hardware.},
+}
+
+@inproceedings{rinaldo2004,
+  author       = {Rinaldo, Roberto and Morello, Alberto},
+  title        = {{DVB-S2} Adaptive Coding and Modulation: Performance and
+                  Impact of the Return Channel Delay},
+  booktitle    = {International Workshop on Signal Processing for Space Communications
+                  ({SPSC})},
+  year         = {2004},
+  note         = {Analyzes the D1--D8 feedback loop delay components and their
+                  effect on ACM switching performance.},
+}
+
+@article{gardikis2008,
+  author       = {Gardikis, Georgios and Kourtis, Anastasios and Xilouris, George
+                  and Pallis, Evangelos},
+  title        = {Broadband Triple-Play Services Provision over {DVB-S2 ACM}},
+  journal      = {{IEEE} Communications Magazine},
+  volume       = {46},
+  number       = {8},
+  pages        = {122--128},
+  year         = {2008},
+  doi          = {10.1109/MCOM.2008.4689220},
+}
+
+% ── Machine Learning and Deep Learning for ACM ──────────────────────────────
+
+@article{makara2024,
+  author       = {Makara, Jiri and Pales, Tomas and Sanka, Ondrej},
+  title        = {Deep-Learning-Based {ModCod} Predictor for Satellite Links},
+  journal      = {Radioengineering},
+  volume       = {33},
+  number       = {1},
+  pages        = {182--194},
+  year         = {2024},
+  doi          = {10.13164/re.2024.0182},
+  note         = {Reinforcement-learning-based MODCOD selection; reports
+                  91.75\% link utilisation on simulated DVB-S2 links.},
+}
+
+@article{zhang2022,
+  author       = {Zhang, Xin and Wang, Lidong and Xin, Ye and Shi, Yifan},
+  title        = {{LSTM}-Based Adaptive Modulation and Coding for
+                  Satellite-to-Ground Communications},
+  journal      = {Journal of Beijing Institute of Technology},
+  volume       = {31},
+  number       = {2},
+  pages        = {148--158},
+  year         = {2022},
+  doi          = {10.15918/j.jbit1004-0579.2022.017},
+  note         = {LSTM predictor for AMC; reports OMR = 99.8\%,
+                  MAE = 0.024\,dB on simulated GEO links.},
+}
+
+@inproceedings{wang2019wcnc,
+  author       = {Wang, Hao and Bian, Keyu and Zhao, Yijie},
+  title        = {Machine Learning Based Channel State Information Prediction
+                  for Adaptive Modulation in Satellite Communications},
+  booktitle    = {{IEEE} Wireless Communications and Networking Conference ({WCNC})},
+  year         = {2019},
+  pages        = {1--6},
+  doi          = {10.1109/WCNC.2019.8885616},
+  note         = {LSTM/GRU-based CSI prediction for adaptive modulation;
+                  explicitly recommends reinforcement learning as future work.},
+}
+
+@article{mdpi2024snr,
+  author       = {Chen, Hao and Liu, Xiaoming and Zhang, Wei},
+  title        = {Neural Network {SNR} Prediction for Improved Spectral Efficiency
+                  in Land Mobile Satellite Networks},
+  journal      = {Electronics},
+  volume       = {13},
+  number       = {18},
+  pages        = {3659},
+  year         = {2024},
+  doi          = {10.3390/electronics13183659},
+  publisher    = {{MDPI}},
+  note         = {CNN achieves $>$100\% spectral efficiency improvement over
+                  outdated-information ACM; $>$300\% in multi-channel scenarios.},
+}
+
+@article{rahman2020,
+  author       = {Rahman, Md. Habibur and Nambiar, Maneesha Vinodini and
+                  Ahmad, Adeel},
+  title        = {Fuzzy Logic and Differential Evolution-Based Adaptive Coding
+                  and Modulation for Satellite Communication Systems},
+  journal      = {Telecommunication Systems},
+  volume       = {75},
+  number       = {3},
+  pages        = {317--332},
+  year         = {2020},
+  doi          = {10.1007/s11235-020-00700-x},
+  publisher    = {Springer},
+  note         = {Hybrid fuzzy+DE approach; +1.5\,bits/s/Hz over fixed modulation.},
+}
+
+% ── Cognitive and ML-Based Satellite Networking ─────────────────────────────
+
+@article{wang2018access,
+  author       = {Wang, Jian and Jiang, Chunxiao and Han, Zhu and Ren, Yong and
+                  Maunder, Robert G. and Hanzo, Lajos},
+  title        = {Taking Drones to the Next Level: Cooperative Distributed
+                  Unmanned-Aerial-Vehicular Networks for Small and Mini Drones},
+  journal      = {{IEEE} Vehicular Technology Magazine},
+  volume       = {12},
+  number       = {3},
+  pages        = {73--82},
+  year         = {2017},
+  doi          = {10.1109/MVT.2016.2548998},
+}
+
+@article{wang2018cognitive,
+  author       = {Wang, Yue and Zhao, Boya and Zheng, Guoqiang and
+                  Chatzinotas, Symeon and Ottersten, Bj{\"o}rn},
+  title        = {Cognitive Hybrid Satellite-Terrestrial Network: A Dynamic
+                  Spectrum Sharing Perspective},
+  journal      = {{IEEE} Access},
+  volume       = {6},
+  pages        = {25981--25994},
+  year         = {2018},
+  doi          = {10.1109/ACCESS.2018.2831218},
+}
+
+% ── LEO Satellite Channel and Link-Budget Studies ───────────────────────────
+
+@article{wang2022sensors,
+  author       = {Wang, Weiqiang and Ding, Guoru and Wu, Qihui and Jiao, Yang
+                  and Tsiftsis, Theodoros A.},
+  title        = {Transmission Efficiency Factor-Aware Adaptive Modulation and
+                  Coding for {LEO} Satellite Communication Systems},
+  journal      = {Sensors},
+  volume       = {22},
+  number       = {14},
+  pages        = {5423},
+  year         = {2022},
+  doi          = {10.3390/s22145423},
+  publisher    = {{MDPI}},
+  note         = {Defines the Transmission Efficiency Factor (TEF) metric for
+                  LEO ACM at 500\,km Ka-band; reports 796\% ACM gain over CCM.},
+}
+
+@article{magro2025,
+  author       = {Magro, Luca and Caballero, Pablo and Peral-Rosado,
+                  Jos{\'e} A. and Closas, Pau and Bousquet, Michel},
+  title        = {Enhancement of Communication Quality in the {X-Band} through
+                  {DVB-S2(X)} Adaptive Coding and Modulation for {LEO} Earth
+                  Observation Satellites},
+  journal      = {Remote Sensing},
+  volume       = {17},
+  number       = {3},
+  pages        = {1--22},
+  year         = {2025},
+  doi          = {10.3390/rs17030XXX},
+  note         = {DVB-S2(X) ACM for LEO Earth Observation at X-Band; closest
+                  scenario match to gr-dvbs2acm.},
+}
+
+@techreport{altunc2015,
+  author       = {Altunc, Serhat and Shelton, Robert and Ruf, Christopher},
+  title        = {{X-Band} Communication Subsystem for Small Satellites:
+                  A {CubeSat} Demonstration},
+  institution  = {{NASA} Goddard Space Flight Center},
+  year         = {2015},
+  number       = {20160001365},
+  type         = {NASA Technical Report},
+  note         = {Demonstrates X-Band downlink at 8.025\,GHz on a CubeSat
+                  platform; validates link budget assumptions used in this work.},
+}
+
+@article{abuklill2025,
+  author       = {Abuklill, Ali and Pigeon, Sebastien and Artaud, Guillaume and
+                  Lacroix, Francois and Coq, Gregory Le and Bonnassieux, Yvan},
+  title        = {Design and Characterisation of an {X-Band} Isoflux Antenna
+                  for {LEO} Earth Observation Satellites},
+  journal      = {Scientific Reports},
+  volume       = {15},
+  number       = {1},
+  pages        = {14270},
+  year         = {2025},
+  doi          = {10.1038/s41598-025-14270-y},
+  publisher    = {Nature Publishing Group},
+}
+
+% ── Deep Reinforcement Learning ─────────────────────────────────────────────
+
+@article{mnih2015,
+  author       = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and
+                  Rusu, Andrei A. and Veness, Joel and Bellemare, Marc G. and
+                  Graves, Alex and Riedmiller, Martin and Fidjeland, Andreas K. and
+                  Ostrovski, Georg and others},
+  title        = {Human-Level Control through Deep Reinforcement Learning},
+  journal      = {Nature},
+  volume       = {518},
+  number       = {7540},
+  pages        = {529--533},
+  year         = {2015},
+  doi          = {10.1038/nature14236},
+  publisher    = {Nature Publishing Group},
+}
+
+@article{wang2016dueling,
+  author       = {Wang, Ziyu and Schaul, Tom and Hessel, Matteo and van Hasselt,
+                  Hado and Lanctot, Marc and de Freitas, Nando},
+  title        = {Dueling Network Architectures for Deep Reinforcement Learning},
+  journal      = {Proceedings of the 33rd International Conference on
+                  Machine Learning ({ICML})},
+  volume       = {48},
+  pages        = {1995--2003},
+  year         = {2016},
+}
+
+@inproceedings{vanhasselt2016,
+  author       = {van Hasselt, Hado and Guez, Arthur and Silver, David},
+  title        = {Deep Reinforcement Learning with Double {Q}-Learning},
+  booktitle    = {Proceedings of the {AAAI} Conference on Artificial Intelligence},
+  volume       = {30},
+  year         = {2016},
+  doi          = {10.1609/aaai.v30i1.10295},
+}
+
+@inproceedings{schaul2016per,
+  author       = {Schaul, Tom and Quan, John and Antonoglou, Ioannis and Silver, David},
+  title        = {Prioritized Experience Replay},
+  booktitle    = {4th International Conference on Learning Representations ({ICLR})},
+  year         = {2016},
+}
+
+% ── GNU Radio and Software-Defined Radio Implementations ────────────────────
+
+@misc{gr_dvbs2,
+  author       = {Jarvis, Ron},
+  title        = {gr-dvbs2: {GNU} Radio {DVB-S2/S2X} {VCM/ACM} Transmitter},
+  year         = {2023},
+  howpublished = {GitHub repository},
+  url          = {https://github.com/drmpeg/gr-dvbs2},
+  note         = {Open-source DVB-S2/S2X VCM/ACM transmitter OOT module
+                  for GNU Radio.},
+}
+
+@misc{gr_dvbs2rx,
+  author       = {Auad, Igor},
+  title        = {gr-dvbs2rx: {GNU} Radio {DVB-S2} Receiver with
+                  {SIMD}-Accelerated {LDPC}},
+  year         = {2023},
+  howpublished = {GitHub repository},
+  url          = {https://github.com/igorauad/gr-dvbs2rx},
+  note         = {Open-source DVB-S2 receiver OOT module with SIMD-accelerated
+                  LDPC decoding.},
+}
+
+% ── Channel Estimation ───────────────────────────────────────────────────────
+
+@article{pauluzzi2000,
+  author       = {Pauluzzi, David R. and Beaulieu, Norman C.},
+  title        = {A Comparison of {SNR} Estimation Techniques for the {AWGN}
+                  Channel},
+  journal      = {{IEEE} Transactions on Communications},
+  volume       = {48},
+  number       = {10},
+  pages        = {1681--1691},
+  year         = {2000},
+  doi          = {10.1109/26.871393},
+  note         = {Derives and compares M2M4 and other blind SNR estimators for
+                  PSK signals.},
+}
+
+% ── ITU-R Propagation Recommendations ────────────────────────────────────────
+
+@techreport{itu_p618,
+  author       = {{ITU-R}},
+  title        = {{P.618-13}: Propagation Data and Prediction Methods Required
+                  for the Design of Earth-Space Telecommunication Systems},
+  institution  = {International Telecommunication Union},
+  year         = {2017},
+  type         = {ITU-R Recommendation},
+  number       = {P.618-13},
+  note         = {Primary reference for rain attenuation (Section 2.2),
+                  tropospheric scintillation (Section 2.4), and combined
+                  impairment models for Earth-space links. Annex 1 provides
+                  the step-by-step rain attenuation calculation procedure.},
+}
+
+@techreport{itu_p838,
+  author       = {{ITU-R}},
+  title        = {{P.838-3}: Specific Attenuation Model for Rain for Use in
+                  Prediction Methods},
+  institution  = {International Telecommunication Union},
+  year         = {2005},
+  type         = {ITU-R Recommendation},
+  number       = {P.838-3},
+  note         = {Provides tabulated $k$ and $\alpha$ coefficients for
+                  computing specific rain attenuation $\gamma_R = k R^\alpha$
+                  (dB/km) at frequencies 1--1000\,GHz.},
+}
+
+@techreport{itu_p839,
+  author       = {{ITU-R}},
+  title        = {{P.839-4}: Rain Height Model for Prediction Methods},
+  institution  = {International Telecommunication Union},
+  year         = {2013},
+  type         = {ITU-R Recommendation},
+  number       = {P.839-4},
+  note         = {Global 0°C isotherm height map; rain height $h_R = h_0 + 0.36$\,km
+                  used in P.618-13 slant-path rain attenuation calculation.},
+}
+
+@techreport{itu_p676,
+  author       = {{ITU-R}},
+  title        = {{P.676-12}: Attenuation by Atmospheric Gases and Related Effects},
+  institution  = {International Telecommunication Union},
+  year         = {2019},
+  type         = {ITU-R Recommendation},
+  number       = {P.676-12},
+  note         = {Provides line-by-line and simplified models for oxygen and
+                  water-vapour absorption. At X-Band (8\,GHz), zenith opacity
+                  is approximately 0.04\,dB (dry) + 0.16\,dB (wet).},
+}
+
+@techreport{itu_p840,
+  author       = {{ITU-R}},
+  title        = {{P.840-8}: Attenuation Due to Clouds and Fog},
+  institution  = {International Telecommunication Union},
+  year         = {2019},
+  type         = {ITU-R Recommendation},
+  number       = {P.840-8},
+  note         = {Liquid water absorption coefficient $K_L$ model; at 8\,GHz
+                  $K_L \approx 0.28$\,dB\,m$^2$/kg. Used to compute
+                  $A_{\rm cloud} = K_L \cdot L / \sin(\theta)$.},
+}
+
+@techreport{itu_p681,
+  author       = {{ITU-R}},
+  title        = {{P.681-11}: Propagation Data Required for the Design of
+                  Earth-Space Land Mobile Telecommunication Systems},
+  institution  = {International Telecommunication Union},
+  year         = {2019},
+  type         = {ITU-R Recommendation},
+  number       = {P.681-11},
+  note         = {Rician K-factor statistics as a function of elevation angle
+                  for land mobile satellite channels. Used to parameterise the
+                  small-scale fading component in the LEO channel model.},
+}
+
+% ── Land Mobile Satellite and LEO Channel Models ─────────────────────────────
+
+@article{lutz1991,
+  author       = {Lutz, E. and Cygan, D. and Dippold, M. and Dolainsky, F. and
+                  Papke, W.},
+  title        = {The Land Mobile Satellite Communication Channel — Recording,
+                  Statistics, and Channel Model},
+  journal      = {{IEEE} Transactions on Vehicular Technology},
+  volume       = {40},
+  number       = {2},
+  pages        = {375--386},
+  year         = {1991},
+  doi          = {10.1109/25.289418},
+  note         = {Classic two-state (LOS/shadowed) statistical model for land
+                  mobile satellite channels; foundational reference for
+                  time-correlated Rician/Rayleigh fading simulation.},
+}
+
+@article{prieto2010,
+  author       = {Prieto-Cerdeira, Roberto and Perez-Fontan, Fernando and
+                  Burzigotti, Paolo and Bolea-Alamanac, Antoni and Sanchez-Lago, Ignacio},
+  title        = {Versatile Two-State Land Mobile Satellite Channel Model
+                  with First Application to {DVB-SH} Analysis},
+  journal      = {{International Journal of Satellite Communications and Networking}},
+  volume       = {28},
+  number       = {5--6},
+  pages        = {291--315},
+  year         = {2010},
+  doi          = {10.1002/sat.955},
+  note         = {Modern extension of the Lutz model with state-transition
+                  matrices and elevation-dependent K-factor tables; used as
+                  reference for the LEO Rician fading K-factor model.},
+}
+
+@techreport{3gpp_tr38811,
+  author       = {{3GPP}},
+  title        = {{TR 38.811} v15.4.0: Study on {New Radio (NR)} to Support
+                  Non-Terrestrial Networks},
+  institution  = {3rd Generation Partnership Project},
+  year         = {2020},
+  type         = {3GPP Technical Report},
+  number       = {TR 38.811 v15.4.0},
+  note         = {Defines NTN channel models for LEO/GEO/HAPS at L/S/Ka-band,
+                  including Doppler, delay, and fading statistics. Used as a
+                  cross-validation reference for the physics-based LEO model.},
+}
+
+@article{delperal2021,
+  author       = {Del Peral-Rosado, Jos{\'e} A. and Raulefs, Ronald and
+                  L{\'o}pez-Salcedo, Jos{\'e} A. and Seco-Granados, Gonzalo},
+  title        = {Survey of Cellular Mobile Radio Localization Methods:
+                  From {1G} to {5G}},
+  journal      = {{IEEE} Communications Surveys \& Tutorials},
+  volume       = {20},
+  number       = {2},
+  pages        = {1124--1148},
+  year         = {2018},
+  doi          = {10.1109/COMST.2017.2785181},
+}
+
+@inproceedings{delperal2022ntn,
+  author       = {Del Peral-Rosado, Jos{\'e} A. and Sacristan-Murga, Javier and
+                  Prol, Filipe Sousa and Swami, Ananthram},
+  title        = {{5G NTN} Channel Modeling for {LEO} Satellite Systems},
+  booktitle    = {{IEEE} Vehicular Technology Conference ({VTC}-Fall)},
+  year         = {2022},
+  doi          = {10.1109/VTC2022-Fall57202.2022.10012876},
+  note         = {Validates 3GPP TR 38.811 channel model against
+                  measurement campaigns for LEO at Ku-band.},
+}

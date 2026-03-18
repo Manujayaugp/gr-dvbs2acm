@@ -18,9 +18,10 @@ namespace gr {
 namespace dvbs2acm {
 
 // Static port names
-const pmt::pmt_t acm_controller::PORT_SNR_IN     = pmt::intern("snr_in");
-const pmt::pmt_t acm_controller::PORT_MODCOD_OUT = pmt::intern("modcod_out");
-const pmt::pmt_t acm_controller::PORT_STATS_OUT  = pmt::intern("stats_out");
+const pmt::pmt_t acm_controller::PORT_SNR_IN            = pmt::intern("snr_in");
+const pmt::pmt_t acm_controller::PORT_CHANNEL_STATE_IN  = pmt::intern("channel_state_in");
+const pmt::pmt_t acm_controller::PORT_MODCOD_OUT        = pmt::intern("modcod_out");
+const pmt::pmt_t acm_controller::PORT_STATS_OUT         = pmt::intern("stats_out");
 
 const pmt::pmt_t acm_controller::TAG_MODCOD      = pmt::intern("modcod");
 const pmt::pmt_t acm_controller::TAG_FRAME_SIZE  = pmt::intern("frame_size");
@@ -77,12 +78,16 @@ acm_controller_impl::acm_controller_impl(
 {
     // Register message ports
     message_port_register_in(PORT_SNR_IN);
+    message_port_register_in(PORT_CHANNEL_STATE_IN);
     message_port_register_out(PORT_MODCOD_OUT);
     message_port_register_out(PORT_STATS_OUT);
 
-    // Bind SNR input handler
+    // Bind message handlers
     set_msg_handler(PORT_SNR_IN,
         [this](pmt::pmt_t msg) { handle_snr_msg(msg); });
+    // channel_state_in: physics-based SNR from leo_channel (snr_db + pass metadata)
+    set_msg_handler(PORT_CHANNEL_STATE_IN,
+        [this](pmt::pmt_t msg) { handle_channel_state_msg(msg); });
 
     // Pre-fill SNR history with a conservative value
     d_snr_history.assign(history_len, get_modcod(initial_modcod).min_snr_db + 0.5);
@@ -193,6 +198,30 @@ void acm_controller_impl::handle_snr_msg(pmt::pmt_t msg)
 
     d_total_frames++;
     publish_stats();
+}
+
+void acm_controller_impl::handle_channel_state_msg(pmt::pmt_t msg)
+{
+    // Extract physics-based SNR from leo_channel channel_state dict and
+    // forward to the main SNR handler with lock_status=true.
+    // This is the primary SNR path in simulation (GRC loopback).
+    if (!pmt::is_dict(msg)) return;
+
+    pmt::pmt_t snr_val = pmt::dict_ref(msg, pmt::intern("snr_db"), pmt::PMT_NIL);
+    if (pmt::is_null(snr_val)) return;
+
+    // Optionally log pass metadata for situational awareness
+    double el = pmt::to_double(
+        pmt::dict_ref(msg, pmt::intern("elevation_deg"), pmt::from_double(0.0)));
+    GR_LOG_DEBUG(d_logger,
+        "channel_state: SNR=" + std::to_string(pmt::to_double(snr_val))
+        + " dB, el=" + std::to_string(el) + " deg");
+
+    // Build snr_in-compatible message and dispatch
+    pmt::pmt_t snr_msg = pmt::make_dict();
+    snr_msg = pmt::dict_add(snr_msg, pmt::intern("snr_db"),      snr_val);
+    snr_msg = pmt::dict_add(snr_msg, pmt::intern("lock_status"), pmt::PMT_T);
+    handle_snr_msg(snr_msg);
 }
 
 uint8_t acm_controller_impl::compute_modcod_with_hysteresis(

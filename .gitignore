@@ -8,3 +8,18 @@ __pycache__/
 *.egg-info/
 .vscode/
 *.pdf
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.nav
+*.snm
+*.vrb
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.listing
+texput.log

@@ -1,72 +1,151 @@
-\contentsline {chapter}{\numberline {1}Introduction and Motivation}{3}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Background}{3}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Research Objectives}{3}{section.1.2}%
-\contentsline {section}{\numberline {1.3}Standard Overview: DVB-S2 MODCOD}{4}{section.1.3}%
-\contentsline {chapter}{\numberline {2}System Architecture}{5}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Overall Block Diagram}{5}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Signal Flow and Data Types}{6}{section.2.2}%
-\contentsline {section}{\numberline {2.3}ACM Stream Tag Protocol}{6}{section.2.3}%
-\contentsline {chapter}{\numberline {3}GNU Radio Implementation}{7}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Module Structure}{7}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Frame Buffer Management: \texttt {set\_output\_multiple}}{8}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Block Implementations}{8}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}BB Framer ACM (\texttt {bb\_framer\_acm\_py.py})}{8}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}FEC Encoder ACM (\texttt {fec\_encoder\_acm\_py.py})}{9}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Modulator ACM (\texttt {modulator\_acm\_py.py})}{9}{subsection.3.3.3}%
-\contentsline {subsection}{\numberline {3.3.4}PL Framer ACM (\texttt {pl\_framer\_acm\_py.py})}{9}{subsection.3.3.4}%
-\contentsline {subsection}{\numberline {3.3.5}PL Sync ACM (\texttt {pl\_sync\_acm\_py.py})}{10}{subsection.3.3.5}%
-\contentsline {subsection}{\numberline {3.3.6}SNR Estimator (\texttt {snr\_estimator\_py.py})}{10}{subsection.3.3.6}%
-\contentsline {subsection}{\numberline {3.3.7}Demodulator ACM (\texttt {demodulator\_acm\_py.py})}{10}{subsection.3.3.7}%
-\contentsline {subsection}{\numberline {3.3.8}FEC Decoder ACM (\texttt {fec\_decoder\_acm\_py.py})}{10}{subsection.3.3.8}%
-\contentsline {subsection}{\numberline {3.3.9}ACM Feedback (\texttt {acm\_feedback\_py.py})}{11}{subsection.3.3.9}%
-\contentsline {subsection}{\numberline {3.3.10}ACM Controller (\texttt {acm\_controller\_py.py})}{11}{subsection.3.3.10}%
-\contentsline {chapter}{\numberline {4}AI/ML Cognitive Engine}{12}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Architecture Overview}{12}{section.4.1}%
-\contentsline {section}{\numberline {4.2}State Representation}{12}{section.4.2}%
-\contentsline {section}{\numberline {4.3}DQN Architecture}{12}{section.4.3}%
-\contentsline {section}{\numberline {4.4}LSTM Channel Predictor}{13}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Reward Function}{13}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Training Schedule}{13}{section.4.6}%
-\contentsline {chapter}{\numberline {5}GNU Radio Companion Flowgraph}{14}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Loopback Flowgraph (\texttt {examples/acm\_loopback.grc})}{14}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Qt GUI Panels}{14}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Channel Model Parameters}{15}{section.5.3}%
-\contentsline {chapter}{\numberline {6}Simulation Results}{16}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Rule-Based ACM Behaviour}{16}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Comparative Performance}{16}{section.6.2}%
-\contentsline {section}{\numberline {6.3}MODCOD Distribution Over SNR}{17}{section.6.3}%
-\contentsline {chapter}{\numberline {7}Build System and Deployment}{18}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Build Script (\texttt {build.sh})}{18}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Environment Variables}{18}{section.7.2}%
-\contentsline {section}{\numberline {7.3}System Requirements}{19}{section.7.3}%
-\contentsline {chapter}{\numberline {8}Key Engineering Challenges and Solutions}{20}{chapter.8}%
-\contentsline {section}{\numberline {8.1}GNU Radio Scheduler Deadlock}{20}{section.8.1}%
-\contentsline {section}{\numberline {8.2}GRC YAML Folded Scalar Bug}{20}{section.8.2}%
-\contentsline {section}{\numberline {8.3}Python Module Discovery}{20}{section.8.3}%
-\contentsline {section}{\numberline {8.4}Message Port Flooding}{21}{section.8.4}%
-\contentsline {section}{\numberline {8.5}Unconnected Message Output Ports}{21}{section.8.5}%
-\contentsline {chapter}{\numberline {9}LEO Satellite Channel Model}{22}{chapter.9}%
-\contentsline {section}{\numberline {9.1}LEO Channel Characteristics}{22}{section.9.1}%
-\contentsline {section}{\numberline {9.2}Physics-Based Pass Model}{22}{section.9.2}%
-\contentsline {subsection}{\numberline {9.2.1}Orbital Mechanics}{22}{subsection.9.2.1}%
-\contentsline {subsection}{\numberline {9.2.2}Doppler Shift and Rate}{23}{subsection.9.2.2}%
-\contentsline {subsection}{\numberline {9.2.3}Free-Space Path Loss}{23}{subsection.9.2.3}%
-\contentsline {subsection}{\numberline {9.2.4}Rain Attenuation (ITU-R P.618-13)}{23}{subsection.9.2.4}%
-\contentsline {subsection}{\numberline {9.2.5}Tropospheric Scintillation and Rician Fading}{24}{subsection.9.2.5}%
-\contentsline {section}{\numberline {9.3}Simulated Pass: 500 km Orbit at X-Band}{24}{section.9.3}%
-\contentsline {section}{\numberline {9.4}ACM Implications for LEO}{24}{section.9.4}%
-\contentsline {subsection}{\numberline {9.4.1}Faster ACM Loop}{24}{subsection.9.4.1}%
-\contentsline {subsection}{\numberline {9.4.2}Doppler Pre-Compensation}{25}{subsection.9.4.2}%
-\contentsline {subsection}{\numberline {9.4.3}Dynamic SNR Range}{25}{subsection.9.4.3}%
-\contentsline {subsection}{\numberline {9.4.4}Pass-Aware Scheduling}{25}{subsection.9.4.4}%
-\contentsline {chapter}{\numberline {10}Future Work}{26}{chapter.10}%
-\contentsline {section}{\numberline {10.1}Short Term}{26}{section.10.1}%
-\contentsline {section}{\numberline {10.2}Medium Term}{26}{section.10.2}%
-\contentsline {section}{\numberline {10.3}Long Term}{26}{section.10.3}%
-\contentsline {chapter}{\numberline {11}Conclusion}{28}{chapter.11}%
-\contentsline {chapter}{\numberline {A}MODCOD Reference Table (All 28 MODCODs)}{29}{appendix.A}%
-\contentsline {chapter}{\numberline {B}File Listing}{30}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Python Block Files}{30}{section.B.1}%
-\contentsline {section}{\numberline {B.2}GRC YAML Block Descriptors}{30}{section.B.2}%
-\contentsline {section}{\numberline {B.3}C++ Source Files (Compiled)}{30}{section.B.3}%
-\contentsline {chapter}{\numberline {C}Glossary}{31}{appendix.C}%
+\contentsline {chapter}{\numberline {1}Introduction and Motivation}{5}{chapter.1}%
+\contentsline {section}{\numberline {1.1}What is DVB-S2 and Why Does It Matter?}{5}{section.1.1}%
+\contentsline {section}{\numberline {1.2}The Challenge: LEO Satellite Links}{5}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Why AI/ML for ACM Control?}{6}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Background: Core Concepts for New Readers}{7}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Research Objectives}{9}{section.1.5}%
+\contentsline {section}{\numberline {1.6}DVB-S2 MODCOD Table}{9}{section.1.6}%
+\contentsline {chapter}{\numberline {2}Related Work}{11}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Classical ACM for Satellite Communications}{11}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Machine Learning for Adaptive Modulation and Coding}{11}{section.2.2}%
+\contentsline {section}{\numberline {2.3}LEO Satellite Communications and Link Adaptation}{12}{section.2.3}%
+\contentsline {section}{\numberline {2.4}GNU Radio Implementations}{12}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Positioning This Work}{12}{section.2.5}%
+\contentsline {chapter}{\numberline {3}System Architecture}{14}{chapter.3}%
+\contentsline {section}{\numberline {3.1}High-Level Design}{14}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Data Types and Frame Sizes Along the Signal Chain}{15}{section.3.2}%
+\contentsline {section}{\numberline {3.3}The ACM Stream Tag Protocol}{15}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Physical Layer: DVB-S2 Frame Structure}{16}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Overview of the DVB-S2 Frame}{16}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}The PL Header (90 symbols)}{16}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}$K_\text {BCH}$: Information Bits per Frame}{17}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Data Slots (90 symbols each)}{18}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}Pilot Blocks (36 symbols)}{19}{subsection.4.1.4}%
+\contentsline {subsection}{\numberline {4.1.5}Gold Code Scrambling}{19}{subsection.4.1.5}%
+\contentsline {chapter}{\numberline {5}GNU Radio Implementation}{20}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Module Structure}{20}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Frame-Aligned Buffer Management}{21}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Transmit Chain Blocks}{22}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}BB Framer ACM (\texttt {bb\_framer\_acm\_py.py})}{22}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}FEC Encoder ACM (\texttt {fec\_encoder\_acm\_py.py})}{22}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Modulator ACM (\texttt {modulator\_acm\_py.py})}{23}{subsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.3.4}PL Framer ACM (\texttt {pl\_framer\_acm\_py.py})}{23}{subsection.5.3.4}%
+\contentsline {section}{\numberline {5.4}Receive Chain Blocks}{24}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}PL Sync ACM (\texttt {pl\_sync\_acm\_py.py}) --- Carrier Recovery and Frame Synchronisation}{24}{subsection.5.4.1}%
+\contentsline {subsubsection}{Problem 1: Spinning Constellation (Frequency Offset)}{24}{subsection.5.4.1}%
+\contentsline {subsubsection}{Problem 2: Frame Boundary Detection (SOF Correlation)}{24}{lstnumber.5.3.10}%
+\contentsline {subsubsection}{Problem 3: Pilot-Aided Phase Tracking}{25}{equation.5.4.6}%
+\contentsline {subsubsection}{M{\"u}ller \& Mueller Timing Error Detector}{25}{equation.5.4.8}%
+\contentsline {subsubsection}{PLSCODE Decoding}{26}{equation.5.4.9}%
+\contentsline {subsubsection}{Carrier Tracking Loop Parameters}{26}{equation.5.4.10}%
+\contentsline {subsection}{\numberline {5.4.2}SNR Estimator (\texttt {snr\_estimator\_py.py})}{26}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}Demodulator ACM (\texttt {demodulator\_acm\_py.py})}{27}{subsection.5.4.3}%
+\contentsline {subsection}{\numberline {5.4.4}FEC Decoder ACM (\texttt {fec\_decoder\_acm\_py.py})}{27}{subsection.5.4.4}%
+\contentsline {subsubsection}{Stage 1: Encoder-Guided LDPC Decoder (Min-Sum Bit-Flipping)}{28}{subsection.5.4.4}%
+\contentsline {subsubsection}{Stage 2: BCH Outer Decoder}{29}{lstnumber.5.4.13}%
+\contentsline {subsubsection}{Performance Metrics}{29}{Item.29}%
+\contentsline {subsection}{\numberline {5.4.5}ACM Feedback (\texttt {acm\_feedback\_py.py})}{29}{subsection.5.4.5}%
+\contentsline {subsection}{\numberline {5.4.6}ACM Controller (\texttt {acm\_controller\_py.py})}{29}{subsection.5.4.6}%
+\contentsline {chapter}{\numberline {6}AI/ML Cognitive Engine}{31}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Motivation: Why Reinforcement Learning?}{31}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}The Limitation of Rule-Based ACM}{31}{subsection.6.1.1}%
+\contentsline {subsection}{\numberline {6.1.2}Formulating ACM as a Markov Decision Process}{32}{subsection.6.1.2}%
+\contentsline {subsection}{\numberline {6.1.3}Why Deep Q-Learning?}{32}{subsection.6.1.3}%
+\contentsline {section}{\numberline {6.2}System Architecture}{34}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Process Isolation via ZMQ}{34}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Threading Model}{35}{subsection.6.2.2}%
+\contentsline {section}{\numberline {6.3}State Representation}{35}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Dueling Deep Q-Network Architecture}{37}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Q-Value Function and Optimal Policy}{37}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}Dueling Architecture}{38}{subsection.6.4.2}%
+\contentsline {subsection}{\numberline {6.4.3}Feasibility-Guided Exploration}{39}{subsection.6.4.3}%
+\contentsline {subsection}{\numberline {6.4.4}Double DQN: Eliminating Over-Estimation Bias}{39}{subsection.6.4.4}%
+\contentsline {subsection}{\numberline {6.4.5}N-Step Returns}{40}{subsection.6.4.5}%
+\contentsline {subsection}{\numberline {6.4.6}Prioritized Experience Replay}{41}{subsection.6.4.6}%
+\contentsline {subsection}{\numberline {6.4.7}Loss Function and Optimisation}{41}{subsection.6.4.7}%
+\contentsline {subsection}{\numberline {6.4.8}Cosine Annealing Learning Rate Schedule}{42}{subsection.6.4.8}%
+\contentsline {subsection}{\numberline {6.4.9}Decision Confidence: Q-Gap}{42}{subsection.6.4.9}%
+\contentsline {section}{\numberline {6.5}CNN+LSTM Channel Predictor}{43}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}The Loop Latency Problem}{43}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}CNN+LSTM Architecture}{43}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}Online Training on Live Passes}{44}{subsection.6.5.3}%
+\contentsline {section}{\numberline {6.6}Reward Function Design}{44}{section.6.6}%
+\contentsline {subsection}{\numberline {6.6.1}Design Principles}{44}{subsection.6.6.1}%
+\contentsline {subsection}{\numberline {6.6.2}Reward Function}{44}{subsection.6.6.2}%
+\contentsline {subsection}{\numberline {6.6.3}Reward Examples}{45}{subsection.6.6.3}%
+\contentsline {section}{\numberline {6.7}Offline Pre-Training and Deployment Workflow}{46}{section.6.7}%
+\contentsline {subsection}{\numberline {6.7.1}Offline Pre-Training}{46}{subsection.6.7.1}%
+\contentsline {subsection}{\numberline {6.7.2}Two-Terminal Deployment in GNU Radio}{46}{subsection.6.7.2}%
+\contentsline {section}{\numberline {6.8}Rule-Based vs DQN Policy: Expected Behaviour}{47}{section.6.8}%
+\contentsline {section}{\numberline {6.9}Training Schedule and Hyperparameters}{48}{section.6.9}%
+\contentsline {section}{\numberline {6.10}Complete Online Training Procedure}{49}{section.6.10}%
+\contentsline {section}{\numberline {6.11}Second-by-Second Walkthrough: 10 Seconds of Live Operation}{51}{section.6.11}%
+\contentsline {subsection}{\numberline {6.11.1}What Happens When the Predictor Is Wrong?}{52}{subsection.6.11.1}%
+\contentsline {chapter}{\numberline {7}LEO Satellite Channel Model}{53}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Overview and Importance}{53}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Orbital Mechanics and Pass Geometry}{53}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Free-Space Path Loss}{54}{section.7.3}%
+\contentsline {section}{\numberline {7.4}Doppler Shift}{54}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Atmospheric Attenuation}{54}{section.7.5}%
+\contentsline {subsection}{\numberline {7.5.1}Rain Attenuation (ITU-R P.618-13 + P.838-3 + P.839-4)}{54}{subsection.7.5.1}%
+\contentsline {subsection}{\numberline {7.5.2}Atmospheric Gas Absorption (ITU-R P.676-12)}{55}{subsection.7.5.2}%
+\contentsline {subsection}{\numberline {7.5.3}Cloud and Fog Attenuation (ITU-R P.840-8)}{55}{subsection.7.5.3}%
+\contentsline {subsection}{\numberline {7.5.4}Tropospheric Scintillation (ITU-R P.618-13 §2.4)}{55}{subsection.7.5.4}%
+\contentsline {section}{\numberline {7.6}Rician Fading}{56}{section.7.6}%
+\contentsline {section}{\numberline {7.7}Channel Model Parameters Summary}{56}{section.7.7}%
+\contentsline {chapter}{\numberline {8}GNU Radio Companion Flowgraph}{57}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Overview: What the Flowgraph Does}{57}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Step-by-Step Signal Flow}{58}{section.8.2}%
+\contentsline {subsection}{\numberline {8.2.1}Step 1: Data Generation (Random Source)}{58}{subsection.8.2.1}%
+\contentsline {subsection}{\numberline {8.2.2}Step 2: Baseband Framing (BB Framer)}{58}{subsection.8.2.2}%
+\contentsline {subsection}{\numberline {8.2.3}Step 3: FEC Encoding (FEC Encoder)}{59}{subsection.8.2.3}%
+\contentsline {subsection}{\numberline {8.2.4}Step 4: Constellation Mapping (Modulator)}{59}{subsection.8.2.4}%
+\contentsline {subsection}{\numberline {8.2.5}Step 5: Physical Layer Framing (PL Framer)}{60}{subsection.8.2.5}%
+\contentsline {subsection}{\numberline {8.2.6}Step 6: Rate Limiting (Throttle)}{60}{subsection.8.2.6}%
+\contentsline {subsection}{\numberline {8.2.7}Step 7: Channel Model}{60}{subsection.8.2.7}%
+\contentsline {paragraph}{Physics-based ACM mode (default).}{61}{equation.8.2.2}%
+\contentsline {paragraph}{Manual AWGN mode (for hardware testing).}{61}{equation.8.2.2}%
+\contentsline {subsection}{\numberline {8.2.8}Step 8: Physical Layer Synchronisation (PL Sync)}{61}{subsection.8.2.8}%
+\contentsline {subsection}{\numberline {8.2.9}Step 9: SNR Estimation (SNR Estimator)}{62}{subsection.8.2.9}%
+\contentsline {subsection}{\numberline {8.2.10}Step 10: Soft-Decision Demodulation (Demodulator)}{63}{subsection.8.2.10}%
+\contentsline {subsection}{\numberline {8.2.11}Step 11: FEC Decoding (FEC Decoder)}{63}{subsection.8.2.11}%
+\contentsline {subsection}{\numberline {8.2.12}Step 12: ACM Feedback and Control Loop}{63}{subsection.8.2.12}%
+\contentsline {section}{\numberline {8.3}Qt GUI Tabs: What to Look For}{64}{section.8.3}%
+\contentsline {subsection}{\numberline {8.3.1}Tab 0 --- Control}{65}{subsection.8.3.1}%
+\contentsline {subsection}{\numberline {8.3.2}Tab 1 --- Constellations}{65}{subsection.8.3.2}%
+\contentsline {subsection}{\numberline {8.3.3}Tab 2 --- Spectrum}{65}{subsection.8.3.3}%
+\contentsline {subsection}{\numberline {8.3.4}Tab 3 --- Time / Waterfall}{66}{subsection.8.3.4}%
+\contentsline {section}{\numberline {8.4}Complete Port Connection Table}{67}{section.8.4}%
+\contentsline {section}{\numberline {8.5}How to Run the Flowgraph}{67}{section.8.5}%
+\contentsline {subsection}{\numberline {8.5.1}Expected Startup Sequence}{68}{subsection.8.5.1}%
+\contentsline {subsection}{\numberline {8.5.2}Common Issues and Diagnostics}{69}{subsection.8.5.2}%
+\contentsline {chapter}{\numberline {9}Simulation Results}{70}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Simulation Setup}{70}{section.9.1}%
+\contentsline {section}{\numberline {9.2}Scenario 1: Full SNR Sweep}{71}{section.9.2}%
+\contentsline {paragraph}{Note on GRC flowgraph SNR offset.}{72}{table.caption.26}%
+\contentsline {section}{\numberline {9.3}Scenario 2: LEO Pass at 500~km}{73}{section.9.3}%
+\contentsline {section}{\numberline {9.4}Scenario 3: Rain Fade Event}{74}{section.9.4}%
+\contentsline {section}{\numberline {9.5}MODCOD Selection Curve}{76}{section.9.5}%
+\contentsline {section}{\numberline {9.6}Transmission Efficiency Factor (TEF) Summary}{76}{section.9.6}%
+\contentsline {section}{\numberline {9.7}ACM Controller Console Output Format}{77}{section.9.7}%
+\contentsline {section}{\numberline {9.8}FEC Decoder Performance}{78}{section.9.8}%
+\contentsline {chapter}{\numberline {10}Engineering Challenges and Solutions}{79}{chapter.10}%
+\contentsline {section}{\numberline {10.1}GNU Radio Scheduler and Frame Size Mismatch}{79}{section.10.1}%
+\contentsline {section}{\numberline {10.2}Spinning Constellation (Doppler Frequency Offset)}{79}{section.10.2}%
+\contentsline {section}{\numberline {10.3}FLL Band-Edge Filter at 1 Sample/Symbol}{80}{section.10.3}%
+\contentsline {section}{\numberline {10.4}GRC YAML Folded Scalar Bug}{80}{section.10.4}%
+\contentsline {section}{\numberline {10.5}Python Module Discovery by GRC}{80}{section.10.5}%
+\contentsline {section}{\numberline {10.6}Message Port Flooding}{81}{section.10.6}%
+\contentsline {chapter}{\numberline {11}Build System and Deployment}{82}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Build Script (\texttt {build.sh})}{82}{section.11.1}%
+\contentsline {section}{\numberline {11.2}Usage}{83}{section.11.2}%
+\contentsline {section}{\numberline {11.3}System Requirements}{83}{section.11.3}%
+\contentsline {chapter}{\numberline {12}Conclusions and Future Work}{84}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Summary of Contributions}{84}{section.12.1}%
+\contentsline {section}{\numberline {12.2}Current Limitations}{85}{section.12.2}%
+\contentsline {section}{\numberline {12.3}Development Roadmap}{85}{section.12.3}%
+\contentsline {section}{\numberline {12.4}Future Work}{86}{section.12.4}%
+\contentsline {paragraph}{Near-term (Q2 2025):}{86}{section.12.4}%
+\contentsline {paragraph}{Medium-term (Q3--Q4 2025):}{86}{section.12.4}%
+\contentsline {paragraph}{Long-term (Q1 2026):}{86}{section.12.4}%
+\contentsline {chapter}{\numberline {A}Glossary of Terms and Acronyms}{87}{appendix.A}%

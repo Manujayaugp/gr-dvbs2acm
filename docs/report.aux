@@ -1,146 +1,403 @@
 \relax 
+\providecommand\zref@newlabel[2]{}
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\@writefile{toc}{\contentsline {chapter}{\numberline {1}Introduction and Motivation}{3}{chapter.1}\protected@file@percent }
+\citation{etsi_dvbs2}
+\@writefile{toc}{\contentsline {chapter}{\numberline {1}Introduction and Motivation}{5}{chapter.1}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {1.1}Background}{3}{section.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {1.2}Research Objectives}{3}{section.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {1.3}Standard Overview: DVB-S2 MODCOD}{4}{section.1.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1.1}{\ignorespaces DVB-S2 MODCOD Summary (Normal Frames, ETSI EN 302 307-1)}}{4}{table.caption.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1.1}What is DVB-S2 and Why Does It Matter?}{5}{section.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1.2}The Challenge: LEO Satellite Links}{5}{section.1.2}\protected@file@percent }
+\citation{mnih2015}
+\citation{zhang2022}
+\@writefile{lot}{\contentsline {table}{\numberline {1.1}{\ignorespaces Comparison of LEO vs. GEO satellite link characteristics}}{6}{table.caption.2}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{tab:modcod_summary}{{1.1}{4}{DVB-S2 MODCOD Summary (Normal Frames, ETSI EN 302 307-1)}{table.caption.2}{}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {2}System Architecture}{5}{chapter.2}\protected@file@percent }
+\newlabel{tab:leo_vs_geo}{{1.1}{6}{Comparison of LEO vs. GEO satellite link characteristics}{table.caption.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {1.3}Why AI/ML for ACM Control?}{6}{section.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1.4}Background: Core Concepts for New Readers}{7}{section.1.4}\protected@file@percent }
+\newlabel{sec:background}{{1.4}{7}{Background: Core Concepts for New Readers}{section.1.4}{}}
+\citation{etsi_dvbs2}
+\citation{etsi_dvbs2}
+\citation{etsi_dvbs2,bischl2010}
+\citation{etsi_dvbs2,bischl2010}
+\@writefile{toc}{\contentsline {section}{\numberline {1.5}Research Objectives}{9}{section.1.5}\protected@file@percent }
+\newlabel{sec:research_obj}{{1.5}{9}{Research Objectives}{section.1.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {1.6}DVB-S2 MODCOD Table}{9}{section.1.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1.2}{\ignorespaces Complete DVB-S2 MODCOD table (Normal Frames, ETSI EN~302~307-1 Table~12~\cite  {etsi_dvbs2,bischl2010}). $\eta $: spectral efficiency (bits/s/Hz). SNR$_{\min }$: quasi-error-free threshold per ETSI. Threshold: SNR$_{\min }$ + 0.5\,dB margin applied by the ACM controller (\texttt  {modcod\_table.py}).}}{10}{table.caption.3}\protected@file@percent }
+\newlabel{tab:modcod_full}{{1.2}{10}{Complete DVB-S2 MODCOD table (Normal Frames, ETSI EN~302~307-1 Table~12~\cite {etsi_dvbs2,bischl2010}). $\eta $: spectral efficiency (bits/s/Hz). SNR$_{\min }$: quasi-error-free threshold per ETSI. Threshold: SNR$_{\min }$ + 0.5\,dB margin applied by the ACM controller (\texttt {modcod\_table.py})}{table.caption.3}{}}
+\citation{etsi_dvbs2}
+\citation{rinaldo2004}
+\citation{gardikis2008}
+\citation{bischl2010}
+\citation{makara2024}
+\citation{zhang2022}
+\citation{wang2019wcnc}
+\@writefile{toc}{\contentsline {chapter}{\numberline {2}Related Work}{11}{chapter.2}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {2.1}Overall Block Diagram}{5}{section.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces DVB-S2 ACM System — GNU Radio block diagram}}{5}{figure.caption.3}\protected@file@percent }
-\newlabel{fig:block_diagram}{{2.1}{5}{DVB-S2 ACM System — GNU Radio block diagram}{figure.caption.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {2.2}Signal Flow and Data Types}{6}{section.2.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Inter-block signal types and frame parameters}}{6}{table.caption.4}\protected@file@percent }
-\newlabel{tab:signal_flow}{{2.1}{6}{Inter-block signal types and frame parameters}{table.caption.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {2.3}ACM Stream Tag Protocol}{6}{section.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {3}GNU Radio Implementation}{7}{chapter.3}\protected@file@percent }
+\newlabel{ch:related_work}{{2}{11}{Related Work}{chapter.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.1}Classical ACM for Satellite Communications}{11}{section.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.2}Machine Learning for Adaptive Modulation and Coding}{11}{section.2.2}\protected@file@percent }
+\citation{mdpi2024snr}
+\citation{rahman2020}
+\citation{wang2022sensors}
+\citation{magro2025}
+\citation{altunc2015}
+\citation{gr_dvbs2}
+\citation{gr_dvbs2rx}
+\citation{bischl2010}
+\citation{zhang2022}
+\citation{makara2024}
+\citation{wang2019wcnc}
+\citation{wang2022sensors}
+\citation{magro2025}
+\@writefile{toc}{\contentsline {section}{\numberline {2.3}LEO Satellite Communications and Link Adaptation}{12}{section.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.4}GNU Radio Implementations}{12}{section.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.5}Positioning This Work}{12}{section.2.5}\protected@file@percent }
+\citation{itu_p618}
+\citation{itu_p838}
+\citation{itu_p839}
+\citation{itu_p676}
+\citation{itu_p840}
+\citation{itu_p681}
+\citation{3gpp_tr38811}
+\citation{lutz1991}
+\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Comparison of related ACM systems}}{13}{table.caption.4}\protected@file@percent }
+\newlabel{tab:related_work}{{2.1}{13}{Comparison of related ACM systems}{table.caption.4}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {3}System Architecture}{14}{chapter.3}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {3.1}Module Structure}{7}{section.3.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.1}{\ignorespaces Module directory structure}}{7}{lstlisting.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.2}Frame Buffer Management: \texttt  {set\_output\_multiple}}{8}{section.3.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.2}{\ignorespaces Official GNU Radio frame-aligned output using set\_output\_multiple}}{8}{lstlisting.3.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces set\_output\_multiple values per block}}{8}{table.caption.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.3}Block Implementations}{8}{section.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}BB Framer ACM (\texttt  {bb\_framer\_acm\_py.py})}{8}{subsection.3.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}FEC Encoder ACM (\texttt  {fec\_encoder\_acm\_py.py})}{9}{subsection.3.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}Modulator ACM (\texttt  {modulator\_acm\_py.py})}{9}{subsection.3.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.4}PL Framer ACM (\texttt  {pl\_framer\_acm\_py.py})}{9}{subsection.3.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.5}PL Sync ACM (\texttt  {pl\_sync\_acm\_py.py})}{10}{subsection.3.3.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.6}SNR Estimator (\texttt  {snr\_estimator\_py.py})}{10}{subsection.3.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.7}Demodulator ACM (\texttt  {demodulator\_acm\_py.py})}{10}{subsection.3.3.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.8}FEC Decoder ACM (\texttt  {fec\_decoder\_acm\_py.py})}{10}{subsection.3.3.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.9}ACM Feedback (\texttt  {acm\_feedback\_py.py})}{11}{subsection.3.3.9}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.3}{\ignorespaces Feedback message structure}}{11}{lstlisting.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.10}ACM Controller (\texttt  {acm\_controller\_py.py})}{11}{subsection.3.3.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {4}AI/ML Cognitive Engine}{12}{chapter.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}High-Level Design}{14}{section.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces DVB-S2 ACM system --- complete GNU Radio block diagram. Blue = TX chain, Red = RX chain, Green = ACM control, Orange = channel model.}}{14}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:block_diagram}{{3.1}{14}{DVB-S2 ACM system --- complete GNU Radio block diagram. Blue = TX chain, Red = RX chain, Green = ACM control, Orange = channel model}{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}Data Types and Frame Sizes Along the Signal Chain}{15}{section.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces Signal types, frame sizes, and data rates along the DVB-S2 ACM chain}}{15}{table.caption.6}\protected@file@percent }
+\newlabel{tab:signal_flow}{{3.1}{15}{Signal types, frame sizes, and data rates along the DVB-S2 ACM chain}{table.caption.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}The ACM Stream Tag Protocol}{15}{section.3.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces Stream tags propagated through the DVB-S2 ACM chain}}{15}{table.caption.7}\protected@file@percent }
+\newlabel{tab:tags}{{3.2}{15}{Stream tags propagated through the DVB-S2 ACM chain}{table.caption.7}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {4}Physical Layer: DVB-S2 Frame Structure}{16}{chapter.4}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{sec:ai_engine}{{4}{12}{AI/ML Cognitive Engine}{chapter.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4.1}Architecture Overview}{12}{section.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces AI/ML engine internal architecture}}{12}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:ai_arch}{{4.1}{12}{AI/ML engine internal architecture}{figure.caption.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4.2}State Representation}{12}{section.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.3}DQN Architecture}{12}{section.4.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.1}{\ignorespaces DQN network architecture}}{12}{lstlisting.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.4}LSTM Channel Predictor}{13}{section.4.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.2}{\ignorespaces LSTM predictor architecture}}{13}{lstlisting.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.5}Reward Function}{13}{section.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.6}Training Schedule}{13}{section.4.6}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4.1}{\ignorespaces DQN hyperparameters}}{13}{table.caption.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {5}GNU Radio Companion Flowgraph}{14}{chapter.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.1}Overview of the DVB-S2 Frame}{16}{section.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces DVB-S2 Physical Layer frame structure. One pilot block follows every 16 data slots (when pilots are enabled).}}{16}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:pl_frame}{{4.1}{16}{DVB-S2 Physical Layer frame structure. One pilot block follows every 16 data slots (when pilots are enabled)}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.1}The PL Header (90 symbols)}{16}{subsection.4.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.2}$K_\text  {BCH}$: Information Bits per Frame}{17}{subsection.4.1.2}\protected@file@percent }
+\newlabel{sec:kbch}{{4.1.2}{17}{\texorpdfstring {$K_\text {BCH}$}{K\_BCH}: Information Bits per Frame}{subsection.4.1.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4.1}{\ignorespaces $K_\text  {BCH}$ values for Normal Frames ($N_\text  {LDPC}=64\,800$) per ETSI EN~302~307-1 Table~5a.}}{18}{table.caption.9}\protected@file@percent }
+\newlabel{tab:kbch}{{4.1}{18}{$K_\text {BCH}$ values for Normal Frames ($N_\text {LDPC}=64\,800$) per ETSI EN~302~307-1 Table~5a}{table.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.3}Data Slots (90 symbols each)}{18}{subsection.4.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.4}Pilot Blocks (36 symbols)}{19}{subsection.4.1.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.5}Gold Code Scrambling}{19}{subsection.4.1.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {5}GNU Radio Implementation}{20}{chapter.5}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {5.1}Loopback Flowgraph (\texttt  {examples/acm\_loopback.grc})}{14}{section.5.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces ACM loopback flowgraph structure}}{14}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:grc_flow}{{5.1}{14}{ACM loopback flowgraph structure}{figure.caption.8}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.2}Qt GUI Panels}{14}{section.5.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces Qt GUI widgets in the loopback flowgraph}}{14}{table.caption.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.3}Channel Model Parameters}{15}{section.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {6}Simulation Results}{16}{chapter.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.1}Module Structure}{20}{section.5.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.1}{\ignorespaces Module directory structure}}{20}{lstlisting.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.2}Frame-Aligned Buffer Management}{21}{section.5.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.2}{\ignorespaces Frame-aligned buffer pattern using set\_output\_multiple}}{21}{lstlisting.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces \texttt  {set\_output\_multiple} values per block}}{21}{table.caption.10}\protected@file@percent }
+\newlabel{tab:som}{{5.1}{21}{\texttt {set\_output\_multiple} values per block}{table.caption.10}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.3}Transmit Chain Blocks}{22}{section.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.1}BB Framer ACM (\texttt  {bb\_framer\_acm\_py.py})}{22}{subsection.5.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.2}FEC Encoder ACM (\texttt  {fec\_encoder\_acm\_py.py})}{22}{subsection.5.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.3}Modulator ACM (\texttt  {modulator\_acm\_py.py})}{23}{subsection.5.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.4}PL Framer ACM (\texttt  {pl\_framer\_acm\_py.py})}{23}{subsection.5.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.4}Receive Chain Blocks}{24}{section.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.1}PL Sync ACM (\texttt  {pl\_sync\_acm\_py.py}) --- Carrier Recovery and Frame Synchronisation}{24}{subsection.5.4.1}\protected@file@percent }
+\newlabel{sec:pl_sync}{{5.4.1}{24}{PL Sync ACM (\texttt {pl\_sync\_acm\_py.py}) --- Carrier Recovery and Frame Synchronisation}{subsection.5.4.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Problem 1: Spinning Constellation (Frequency Offset)}{24}{subsection.5.4.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.3}{\ignorespaces Per-sample frequency and phase correction}}{24}{lstlisting.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Problem 2: Frame Boundary Detection (SOF Correlation)}{24}{lstnumber.5.3.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Problem 3: Pilot-Aided Phase Tracking}{25}{equation.5.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{M{\"u}ller \& Mueller Timing Error Detector}{25}{equation.5.4.8}\protected@file@percent }
+\citation{pauluzzi2000}
+\@writefile{toc}{\contentsline {subsubsection}{PLSCODE Decoding}{26}{equation.5.4.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Carrier Tracking Loop Parameters}{26}{equation.5.4.10}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.2}{\ignorespaces PL Sync carrier tracking loop parameters}}{26}{table.caption.11}\protected@file@percent }
+\newlabel{tab:pll_params}{{5.2}{26}{PL Sync carrier tracking loop parameters}{table.caption.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.2}SNR Estimator (\texttt  {snr\_estimator\_py.py})}{26}{subsection.5.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.3}Demodulator ACM (\texttt  {demodulator\_acm\_py.py})}{27}{subsection.5.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.4}FEC Decoder ACM (\texttt  {fec\_decoder\_acm\_py.py})}{27}{subsection.5.4.4}\protected@file@percent }
+\newlabel{sec:fec_decoder}{{5.4.4}{27}{FEC Decoder ACM (\texttt {fec\_decoder\_acm\_py.py})}{subsection.5.4.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Stage 1: Encoder-Guided LDPC Decoder (Min-Sum Bit-Flipping)}{28}{subsection.5.4.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.4}{\ignorespaces Encoder-guided LDPC bit-flipping decoder (core loop)}}{28}{lstlisting.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Stage 2: BCH Outer Decoder}{29}{lstnumber.5.4.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Performance Metrics}{29}{Item.29}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.3}{\ignorespaces FEC decoder performance metrics}}{29}{table.caption.12}\protected@file@percent }
+\newlabel{tab:fec_metrics}{{5.3}{29}{FEC decoder performance metrics}{table.caption.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.5}ACM Feedback (\texttt  {acm\_feedback\_py.py})}{29}{subsection.5.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.6}ACM Controller (\texttt  {acm\_controller\_py.py})}{29}{subsection.5.4.6}\protected@file@percent }
+\newlabel{sec:acm_controller}{{5.4.6}{29}{ACM Controller (\texttt {acm\_controller\_py.py})}{subsection.5.4.6}{}}
+\newlabel{eq:upgrade}{{5.19}{29}{ACM Controller (\texttt {acm\_controller\_py.py})}{equation.5.4.19}{}}
+\newlabel{eq:downgrade}{{5.20}{29}{ACM Controller (\texttt {acm\_controller\_py.py})}{equation.5.4.20}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.5}{\ignorespaces MODCOD switch console output format (UP/DOWN arrows shown as ASCII)}}{30}{lstlisting.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {6}AI/ML Cognitive Engine}{31}{chapter.6}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {6.1}Rule-Based ACM Behaviour}{16}{section.6.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {6.1}{\ignorespaces Observed MODCOD switching sequence}}{16}{lstlisting.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6.2}Comparative Performance}{16}{section.6.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6.1}{\ignorespaces Rule-based vs DQN ACM performance (rain fade scenario, 60s)}}{16}{table.caption.10}\protected@file@percent }
-\newlabel{tab:perf_comparison}{{6.1}{16}{Rule-based vs DQN ACM performance (rain fade scenario, 60s)}{table.caption.10}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6.3}MODCOD Distribution Over SNR}{17}{section.6.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces MODCOD selection as a function of SNR — rule-based vs DQN}}{17}{figure.caption.11}\protected@file@percent }
-\newlabel{fig:modcod_vs_snr}{{6.1}{17}{MODCOD selection as a function of SNR — rule-based vs DQN}{figure.caption.11}{}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {7}Build System and Deployment}{18}{chapter.7}\protected@file@percent }
+\newlabel{ch:ai}{{6}{31}{AI/ML Cognitive Engine}{chapter.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.1}Motivation: Why Reinforcement Learning?}{31}{section.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1.1}The Limitation of Rule-Based ACM}{31}{subsection.6.1.1}\protected@file@percent }
+\citation{mnih2015}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1.2}Formulating ACM as a Markov Decision Process}{32}{subsection.6.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1.3}Why Deep Q-Learning?}{32}{subsection.6.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.2}System Architecture}{34}{section.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2.1}Process Isolation via ZMQ}{34}{subsection.6.2.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6.1}{\ignorespaces ZMQ protocol: state request and MODCOD response}}{34}{lstlisting.6.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces AI/ML cognitive engine architecture. Solid arrows: real-time inference paths. Dashed arrows: training paths. The Dueling DQN receives a 52-dimensional state including LEO orbital geometry features. Training uses Prioritized Experience Replay (PER) with a SumTree. The CNN+LSTM predictor trains online on live SNR history. The target network is updated by Polyak soft averaging ($\tau = 0.005$).}}{35}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:ai_arch}{{6.1}{35}{AI/ML cognitive engine architecture. Solid arrows: real-time inference paths. Dashed arrows: training paths. The Dueling DQN receives a 52-dimensional state including LEO orbital geometry features. Training uses Prioritized Experience Replay (PER) with a SumTree. The CNN+LSTM predictor trains online on live SNR history. The target network is updated by Polyak soft averaging ($\tau = 0.005$)}{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2.2}Threading Model}{35}{subsection.6.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.3}State Representation}{35}{section.6.3}\protected@file@percent }
+\newlabel{sec:state}{{6.3}{35}{State Representation}{section.6.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6.1}{\ignorespaces State vector components (52 dimensions) and their roles}}{36}{table.caption.14}\protected@file@percent }
+\newlabel{tab:state}{{6.1}{36}{State vector components (52 dimensions) and their roles}{table.caption.14}{}}
+\citation{wang2016dueling}
+\@writefile{toc}{\contentsline {section}{\numberline {6.4}Dueling Deep Q-Network Architecture}{37}{section.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.1}Q-Value Function and Optimal Policy}{37}{subsection.6.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.2}Dueling Architecture}{38}{subsection.6.4.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6.2}{\ignorespaces Dueling DQN architecture (PyTorch)}}{38}{lstlisting.6.2}\protected@file@percent }
+\citation{vanhasselt2016}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.3}Feasibility-Guided Exploration}{39}{subsection.6.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.4}Double DQN: Eliminating Over-Estimation Bias}{39}{subsection.6.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.5}N-Step Returns}{40}{subsection.6.4.5}\protected@file@percent }
+\newlabel{sec:nstep}{{6.4.5}{40}{N-Step Returns}{subsection.6.4.5}{}}
+\citation{schaul2016per}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.6}Prioritized Experience Replay}{41}{subsection.6.4.6}\protected@file@percent }
+\newlabel{sec:per}{{6.4.6}{41}{Prioritized Experience Replay}{subsection.6.4.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.7}Loss Function and Optimisation}{41}{subsection.6.4.7}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6.3}{\ignorespaces DQN training step: PER sampling, Double DQN target, Huber loss, cosine LR}}{41}{lstlisting.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.8}Cosine Annealing Learning Rate Schedule}{42}{subsection.6.4.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.9}Decision Confidence: Q-Gap}{42}{subsection.6.4.9}\protected@file@percent }
+\citation{zhang2022,mdpi2024snr}
+\citation{wang2019wcnc}
+\@writefile{toc}{\contentsline {section}{\numberline {6.5}CNN+LSTM Channel Predictor}{43}{section.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.1}The Loop Latency Problem}{43}{subsection.6.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.2}CNN+LSTM Architecture}{43}{subsection.6.5.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6.4}{\ignorespaces CNN+LSTM SNR predictor (PyTorch)}}{43}{lstlisting.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.3}Online Training on Live Passes}{44}{subsection.6.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.6}Reward Function Design}{44}{section.6.6}\protected@file@percent }
+\newlabel{sec:reward}{{6.6}{44}{Reward Function Design}{section.6.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6.1}Design Principles}{44}{subsection.6.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6.2}Reward Function}{44}{subsection.6.6.2}\protected@file@percent }
+\newlabel{sec:reward_formula}{{6.6.2}{44}{Reward Function}{subsection.6.6.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6.3}Reward Examples}{45}{subsection.6.6.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.2}{\ignorespaces Reward values for representative ACM scenarios}}{45}{table.caption.15}\protected@file@percent }
+\newlabel{tab:reward_examples}{{6.2}{45}{Reward values for representative ACM scenarios}{table.caption.15}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.7}Offline Pre-Training and Deployment Workflow}{46}{section.6.7}\protected@file@percent }
+\newlabel{sec:pretrain}{{6.7}{46}{Offline Pre-Training and Deployment Workflow}{section.6.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.1}Offline Pre-Training}{46}{subsection.6.7.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6.5}{\ignorespaces Offline DQN pre-training command}}{46}{lstlisting.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.2}Two-Terminal Deployment in GNU Radio}{46}{subsection.6.7.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6.6}{\ignorespaces Two-terminal deployment procedure}}{46}{lstlisting.6.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.8}Rule-Based vs DQN Policy: Expected Behaviour}{47}{section.6.8}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.3}{\ignorespaces Rule-based vs DQN MODCOD selection across representative LEO scenarios}}{47}{table.caption.16}\protected@file@percent }
+\newlabel{tab:policy_compare}{{6.3}{47}{Rule-based vs DQN MODCOD selection across representative LEO scenarios}{table.caption.16}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.9}Training Schedule and Hyperparameters}{48}{section.6.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.4}{\ignorespaces Complete hyperparameter table for the DQN + CNN+LSTM system}}{48}{table.caption.17}\protected@file@percent }
+\newlabel{tab:hyper}{{6.4}{48}{Complete hyperparameter table for the DQN + CNN+LSTM system}{table.caption.17}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.10}Complete Online Training Procedure}{49}{section.6.10}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6.2}{\ignorespaces Online DQN training procedure (10 Hz background loop). Teal = I/O with GNU Radio, blue = state processing, orange = decisions, purple = neural network training. Dashed bypass (right): skip DQN weight update until 500 transitions are collected. Dashed loop-back (left): return to top after each 100 ms step.}}{50}{figure.caption.18}\protected@file@percent }
+\newlabel{alg:training}{{6.2}{50}{Online DQN training procedure (10 Hz background loop). Teal = I/O with GNU Radio, blue = state processing, orange = decisions, purple = neural network training. Dashed bypass (right): skip DQN weight update until 500 transitions are collected. Dashed loop-back (left): return to top after each 100 ms step}{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.11}Second-by-Second Walkthrough: 10 Seconds of Live Operation}{51}{section.6.11}\protected@file@percent }
+\newlabel{sec:walkthrough}{{6.11}{51}{Second-by-Second Walkthrough: 10 Seconds of Live Operation}{section.6.11}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6.5}{\ignorespaces Second-by-second decision trace: SNR rising 12$\to $17\,dB approaching TCA. DQN anticipates the rising channel and upshifts one step ahead of the rule-based threshold table in most time steps.}}{51}{table.caption.19}\protected@file@percent }
+\newlabel{tab:walkthrough}{{6.5}{51}{Second-by-second decision trace: SNR rising 12$\to $17\,dB approaching TCA. DQN anticipates the rising channel and upshifts one step ahead of the rule-based threshold table in most time steps}{table.caption.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.11.1}What Happens When the Predictor Is Wrong?}{52}{subsection.6.11.1}\protected@file@percent }
+\citation{itu_p618,itu_p838,itu_p839,itu_p676,itu_p840,itu_p681}
+\citation{lutz1991}
+\citation{3gpp_tr38811}
+\citation{magro2025,altunc2015,wang2022sensors}
+\@writefile{toc}{\contentsline {chapter}{\numberline {7}LEO Satellite Channel Model}{53}{chapter.7}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {7.1}Build Script (\texttt  {build.sh})}{18}{section.7.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {7.1}{\ignorespaces Key sections of build.sh}}{18}{lstlisting.7.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7.2}Environment Variables}{18}{section.7.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {7.2}{\ignorespaces Required environment variables}}{18}{lstlisting.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7.3}System Requirements}{19}{section.7.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7.1}{\ignorespaces Software dependencies}}{19}{table.caption.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {8}Key Engineering Challenges and Solutions}{20}{chapter.8}\protected@file@percent }
+\newlabel{chap:channel}{{7}{53}{LEO Satellite Channel Model}{chapter.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.1}Overview and Importance}{53}{section.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7.2}Orbital Mechanics and Pass Geometry}{53}{section.7.2}\protected@file@percent }
+\citation{itu_p618}
+\citation{itu_p838}
+\citation{itu_p839}
+\@writefile{toc}{\contentsline {section}{\numberline {7.3}Free-Space Path Loss}{54}{section.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7.4}Doppler Shift}{54}{section.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7.5}Atmospheric Attenuation}{54}{section.7.5}\protected@file@percent }
+\newlabel{sec:atm_atten}{{7.5}{54}{Atmospheric Attenuation}{section.7.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5.1}Rain Attenuation (ITU-R P.618-13 + P.838-3 + P.839-4)}{54}{subsection.7.5.1}\protected@file@percent }
+\citation{itu_p676}
+\citation{itu_p840}
+\citation{itu_p618}
+\citation{itu_p681}
+\citation{lutz1991}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5.2}Atmospheric Gas Absorption (ITU-R P.676-12)}{55}{subsection.7.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5.3}Cloud and Fog Attenuation (ITU-R P.840-8)}{55}{subsection.7.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5.4}Tropospheric Scintillation (ITU-R P.618-13 §2.4)}{55}{subsection.7.5.4}\protected@file@percent }
+\citation{3gpp_tr38811}
+\@writefile{toc}{\contentsline {section}{\numberline {7.6}Rician Fading}{56}{section.7.6}\protected@file@percent }
+\newlabel{sec:rician}{{7.6}{56}{Rician Fading}{section.7.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.7}Channel Model Parameters Summary}{56}{section.7.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7.1}{\ignorespaces LEO channel model: impairment summary per ITU-R standard (500\,km orbit, X-Band 8.025\,GHz, 5\,mm/hr rain, mid-latitude station)}}{56}{table.caption.20}\protected@file@percent }
+\newlabel{tab:leo_params}{{7.1}{56}{LEO channel model: impairment summary per ITU-R standard (500\,km orbit, X-Band 8.025\,GHz, 5\,mm/hr rain, mid-latitude station)}{table.caption.20}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {8}GNU Radio Companion Flowgraph}{57}{chapter.8}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {8.1}GNU Radio Scheduler Deadlock}{20}{section.8.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.2}GRC YAML Folded Scalar Bug}{20}{section.8.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.3}Python Module Discovery}{20}{section.8.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.4}Message Port Flooding}{21}{section.8.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8.5}Unconnected Message Output Ports}{21}{section.8.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {9}LEO Satellite Channel Model}{22}{chapter.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.1}Overview: What the Flowgraph Does}{57}{section.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.2}Step-by-Step Signal Flow}{58}{section.8.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8.1}{\ignorespaces ACM loopback flowgraph (serpentine layout). Solid arrows = IQ/bit stream connections. Dashed arrows = message-port connections (PMT). Dotted = GUI tap connections. See Section~\ref {sec:gui_panels} for GUI panel descriptions.}}{58}{figure.caption.21}\protected@file@percent }
+\newlabel{fig:grc_flow}{{8.1}{58}{ACM loopback flowgraph (serpentine layout). Solid arrows = IQ/bit stream connections. Dashed arrows = message-port connections (PMT). Dotted = GUI tap connections. See Section~\ref {sec:gui_panels} for GUI panel descriptions}{figure.caption.21}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.1}Step 1: Data Generation (Random Source)}{58}{subsection.8.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.2}Step 2: Baseband Framing (BB Framer)}{58}{subsection.8.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.3}Step 3: FEC Encoding (FEC Encoder)}{59}{subsection.8.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.4}Step 4: Constellation Mapping (Modulator)}{59}{subsection.8.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.5}Step 5: Physical Layer Framing (PL Framer)}{60}{subsection.8.2.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.6}Step 6: Rate Limiting (Throttle)}{60}{subsection.8.2.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.7}Step 7: Channel Model}{60}{subsection.8.2.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Physics-based ACM mode (default).}{61}{equation.8.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Manual AWGN mode (for hardware testing).}{61}{equation.8.2.2}\protected@file@percent }
+\newlabel{eq:snr_offset}{{8.3}{61}{Manual AWGN mode (for hardware testing)}{equation.8.2.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.8}Step 8: Physical Layer Synchronisation (PL Sync)}{61}{subsection.8.2.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.9}Step 9: SNR Estimation (SNR Estimator)}{62}{subsection.8.2.9}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8.1}{\ignorespaces SNR Estimator output message format}}{63}{lstlisting.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.10}Step 10: Soft-Decision Demodulation (Demodulator)}{63}{subsection.8.2.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.11}Step 11: FEC Decoding (FEC Decoder)}{63}{subsection.8.2.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2.12}Step 12: ACM Feedback and Control Loop}{63}{subsection.8.2.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.3}Qt GUI Tabs: What to Look For}{64}{section.8.3}\protected@file@percent }
+\newlabel{sec:gui_panels}{{8.3}{64}{Qt GUI Tabs: What to Look For}{section.8.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3.1}Tab 0 --- Control}{65}{subsection.8.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3.2}Tab 1 --- Constellations}{65}{subsection.8.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3.3}Tab 2 --- Spectrum}{65}{subsection.8.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3.4}Tab 3 --- Time / Waterfall}{66}{subsection.8.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8.4}Complete Port Connection Table}{67}{section.8.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8.1}{\ignorespaces Complete flowgraph stream port connections}}{67}{table.caption.22}\protected@file@percent }
+\newlabel{tab:connections}{{8.1}{67}{Complete flowgraph stream port connections}{table.caption.22}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8.5}How to Run the Flowgraph}{67}{section.8.5}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8.2}{\ignorespaces Build, simulate, and run the ACM loopback flowgraph}}{67}{lstlisting.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.5.1}Expected Startup Sequence}{68}{subsection.8.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.5.2}Common Issues and Diagnostics}{69}{subsection.8.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8.2}{\ignorespaces Common flowgraph issues and diagnostic steps}}{69}{table.caption.23}\protected@file@percent }
+\newlabel{tab:diag}{{8.2}{69}{Common flowgraph issues and diagnostic steps}{table.caption.23}{}}
+\citation{bischl2010}
+\@writefile{toc}{\contentsline {chapter}{\numberline {9}Simulation Results}{70}{chapter.9}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {9.1}LEO Channel Characteristics}{22}{section.9.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {9.1}{\ignorespaces LEO satellite link parameters at 500~km altitude, X-Band}}{22}{table.caption.13}\protected@file@percent }
-\newlabel{tab:leo_params}{{9.1}{22}{LEO satellite link parameters at 500~km altitude, X-Band}{table.caption.13}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {9.2}Physics-Based Pass Model}{22}{section.9.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.2.1}Orbital Mechanics}{22}{subsection.9.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.2.2}Doppler Shift and Rate}{23}{subsection.9.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.2.3}Free-Space Path Loss}{23}{subsection.9.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.2.4}Rain Attenuation (ITU-R P.618-13)}{23}{subsection.9.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.2.5}Tropospheric Scintillation and Rician Fading}{24}{subsection.9.2.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9.3}Simulated Pass: 500 km Orbit at X-Band}{24}{section.9.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {9.1}{\ignorespaces Running the LEO pass simulation}}{24}{lstlisting.9.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {9.2}{\ignorespaces LEO pass summary output}}{24}{lstlisting.9.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9.4}ACM Implications for LEO}{24}{section.9.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.1}Faster ACM Loop}{24}{subsection.9.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.2}Doppler Pre-Compensation}{25}{subsection.9.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.3}Dynamic SNR Range}{25}{subsection.9.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4.4}Pass-Aware Scheduling}{25}{subsection.9.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {10}Future Work}{26}{chapter.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9.1}Simulation Setup}{70}{section.9.1}\protected@file@percent }
+\citation{etsi_dvbs2}
+\@writefile{lot}{\contentsline {table}{\numberline {9.1}{\ignorespaces BER waterfall approximation used in simulation (DVB-S2 quasi-error-free definition: BER $< 10^{-7}$). ETSI thresholds are defined as the Es/N0 where QEF is achieved, so margin $= 0$~dB is the QEF cliff.}}{71}{table.caption.24}\protected@file@percent }
+\newlabel{tab:ber_model}{{9.1}{71}{BER waterfall approximation used in simulation (DVB-S2 quasi-error-free definition: BER $< 10^{-7}$). ETSI thresholds are defined as the Es/N0 where QEF is achieved, so margin $= 0$~dB is the QEF cliff}{table.caption.24}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9.2}Scenario 1: Full SNR Sweep}{71}{section.9.2}\protected@file@percent }
+\newlabel{sec:result_sweep}{{9.2}{71}{Scenario 1: Full SNR Sweep}{section.9.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9.1}{\ignorespaces Selected MODCOD transitions during full SNR sweep (rule-based ACM)}}{71}{lstlisting.9.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9.1}{\ignorespaces SNR sweep scenario: SNR profile (top-left), spectral efficiency $\eta $ (top-right), MODCOD ID (bottom-left), and frame error rate (bottom-right) for CCM, rule-based ACM, and DQN ACM. Sweep: $+20~\text  {dB} \to -3~\text  {dB} \to +20~\text  {dB}$, 300 steps.}}{72}{figure.caption.25}\protected@file@percent }
+\newlabel{fig:sweep_result}{{9.1}{72}{SNR sweep scenario: SNR profile (top-left), spectral efficiency $\eta $ (top-right), MODCOD ID (bottom-left), and frame error rate (bottom-right) for CCM, rule-based ACM, and DQN ACM. Sweep: $+20~\text {dB} \to -3~\text {dB} \to +20~\text {dB}$, 300 steps}{figure.caption.25}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9.2}{\ignorespaces Sweep scenario performance summary (SNR $+20 \to -3 \to +20$~dB, 300 steps). TEF $=$ QEF fraction $\times \,\bar  {\eta }$.}}{72}{table.caption.26}\protected@file@percent }
+\newlabel{tab:perf_sweep}{{9.2}{72}{Sweep scenario performance summary (SNR $+20 \to -3 \to +20$~dB, 300 steps). TEF $=$ QEF fraction $\times \,\bar {\eta }$}{table.caption.26}{}}
+\@writefile{toc}{\contentsline {paragraph}{Note on GRC flowgraph SNR offset.}{72}{table.caption.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9.3}Scenario 2: LEO Pass at 500~km}{73}{section.9.3}\protected@file@percent }
+\newlabel{sec:result_leo}{{9.3}{73}{Scenario 2: LEO Pass at 500~km}{section.9.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.2}{\ignorespaces LEO pass scenario (500~km, 8.025~GHz, 5~mm/hr rain): SNR profile over one $\approx 9.2$~min pass (top-left), spectral efficiency (top-right), MODCOD ID (bottom-left), and frame error rate (bottom-right) for all three strategies.}}{73}{figure.caption.27}\protected@file@percent }
+\newlabel{fig:leo_result}{{9.2}{73}{LEO pass scenario (500~km, 8.025~GHz, 5~mm/hr rain): SNR profile over one $\approx 9.2$~min pass (top-left), spectral efficiency (top-right), MODCOD ID (bottom-left), and frame error rate (bottom-right) for all three strategies}{figure.caption.27}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9.3}{\ignorespaces LEO pass scenario performance (500~km, 5~mm/hr, one full pass).}}{74}{table.caption.28}\protected@file@percent }
+\newlabel{tab:perf_leo}{{9.3}{74}{LEO pass scenario performance (500~km, 5~mm/hr, one full pass)}{table.caption.28}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9.4}Scenario 3: Rain Fade Event}{74}{section.9.4}\protected@file@percent }
+\newlabel{sec:result_rain}{{9.4}{74}{Scenario 3: Rain Fade Event}{section.9.4}{}}
+\citation{bischl2010}
+\citation{bischl2010}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.3}{\ignorespaces Rain fade scenario: 10~dB fade onset at $t=30$~s, recovery at $t=90$~s over 120~s. Panels show SNR profile, spectral efficiency, MODCOD ID, and frame error rate for all three strategies.}}{75}{figure.caption.29}\protected@file@percent }
+\newlabel{fig:rain_result}{{9.3}{75}{Rain fade scenario: 10~dB fade onset at $t=30$~s, recovery at $t=90$~s over 120~s. Panels show SNR profile, spectral efficiency, MODCOD ID, and frame error rate for all three strategies}{figure.caption.29}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9.4}{\ignorespaces Rain fade scenario performance (10~dB fade, 120~s duration). Rule-based thresholds from~\cite  {bischl2010}.}}{75}{table.caption.30}\protected@file@percent }
+\newlabel{tab:perf_rain}{{9.4}{75}{Rain fade scenario performance (10~dB fade, 120~s duration). Rule-based thresholds from~\cite {bischl2010}}{table.caption.30}{}}
+\citation{wang2022sensors}
+\citation{wang2022sensors}
+\citation{wang2022sensors}
+\@writefile{toc}{\contentsline {section}{\numberline {9.5}MODCOD Selection Curve}{76}{section.9.5}\protected@file@percent }
+\newlabel{sec:modcod_curve}{{9.5}{76}{MODCOD Selection Curve}{section.9.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9.4}{\ignorespaces Spectral efficiency vs SNR: rule-based ACM (aggressive, operates at threshold boundary), converged DQN (conservative, 1--2 levels below boundary), and Shannon capacity limit. The DQN sacrifices peak $\eta $ to keep a safe link margin, yielding higher QEF and TEF on time-varying LEO channels.}}{76}{figure.caption.31}\protected@file@percent }
+\newlabel{fig:modcod_vs_snr}{{9.4}{76}{Spectral efficiency vs SNR: rule-based ACM (aggressive, operates at threshold boundary), converged DQN (conservative, 1--2 levels below boundary), and Shannon capacity limit. The DQN sacrifices peak $\eta $ to keep a safe link margin, yielding higher QEF and TEF on time-varying LEO channels}{figure.caption.31}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9.6}Transmission Efficiency Factor (TEF) Summary}{76}{section.9.6}\protected@file@percent }
+\newlabel{sec:tef}{{9.6}{76}{Transmission Efficiency Factor (TEF) Summary}{section.9.6}{}}
+\newlabel{eq:tef}{{9.1}{76}{Transmission Efficiency Factor (TEF) Summary}{equation.9.6.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9.5}{\ignorespaces TEF summary across all three simulation scenarios. DQN achieves the highest TEF in every scenario. Wang et al.~\cite  {wang2022sensors} report 796\% ACM gain over CCM at Ka-band LEO; our LEO result ($+61\%$) is conservative owing to the aggressive rule-based baseline used for the denominator.}}{77}{table.caption.32}\protected@file@percent }
+\newlabel{tab:tef}{{9.5}{77}{TEF summary across all three simulation scenarios. DQN achieves the highest TEF in every scenario. Wang et al.~\cite {wang2022sensors} report 796\% ACM gain over CCM at Ka-band LEO; our LEO result ($+61\%$) is conservative owing to the aggressive rule-based baseline used for the denominator}{table.caption.32}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9.7}ACM Controller Console Output Format}{77}{section.9.7}\protected@file@percent }
+\newlabel{sec:console_output}{{9.7}{77}{ACM Controller Console Output Format}{section.9.7}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9.2}{\ignorespaces ACM controller console format: one line printed per MODCOD switch}}{77}{lstlisting.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9.8}FEC Decoder Performance}{78}{section.9.8}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {9.6}{\ignorespaces FEC decoder coding gain comparison}}{78}{table.caption.33}\protected@file@percent }
+\newlabel{tab:fec_perf}{{9.6}{78}{FEC decoder coding gain comparison}{table.caption.33}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {10}Engineering Challenges and Solutions}{79}{chapter.10}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {10.1}Short Term}{26}{section.10.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {10.2}Medium Term}{26}{section.10.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {10.3}Long Term}{26}{section.10.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {11}Conclusion}{28}{chapter.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10.1}GNU Radio Scheduler and Frame Size Mismatch}{79}{section.10.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10.2}Spinning Constellation (Doppler Frequency Offset)}{79}{section.10.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10.3}FLL Band-Edge Filter at 1 Sample/Symbol}{80}{section.10.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10.4}GRC YAML Folded Scalar Bug}{80}{section.10.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10.1}{\ignorespaces Correct YAML list syntax for GRC enum options}}{80}{lstlisting.10.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10.5}Python Module Discovery by GRC}{80}{section.10.5}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10.2}{\ignorespaces Dual-path Python installation in build.sh}}{80}{lstlisting.10.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10.6}Message Port Flooding}{81}{section.10.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {11}Build System and Deployment}{82}{chapter.11}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {section}{\numberline {11.1}Build Script (\texttt  {build.sh})}{82}{section.11.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11.1}{\ignorespaces Key sections of build.sh}}{82}{lstlisting.11.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11.2}Usage}{83}{section.11.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11.2}{\ignorespaces Building and running the module}}{83}{lstlisting.11.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11.3}System Requirements}{83}{section.11.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {11.1}{\ignorespaces Software dependencies}}{83}{table.caption.34}\protected@file@percent }
+\newlabel{tab:deps}{{11.1}{83}{Software dependencies}{table.caption.34}{}}
+\citation{itu_p618}
+\citation{itu_p838}
+\citation{itu_p839}
+\citation{itu_p676}
+\citation{itu_p840}
+\citation{itu_p681}
+\citation{3gpp_tr38811}
+\@writefile{toc}{\contentsline {chapter}{\numberline {12}Conclusions and Future Work}{84}{chapter.12}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {section}{\numberline {12.1}Summary of Contributions}{84}{section.12.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12.2}Current Limitations}{85}{section.12.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12.3}Development Roadmap}{85}{section.12.3}\protected@file@percent }
+\newlabel{sec:roadmap}{{12.3}{85}{Development Roadmap}{section.12.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12.1}{\ignorespaces Development roadmap}}{85}{table.caption.35}\protected@file@percent }
+\newlabel{tab:roadmap}{{12.1}{85}{Development roadmap}{table.caption.35}{}}
+\citation{etsi_dvbs2}
+\@writefile{toc}{\contentsline {section}{\numberline {12.4}Future Work}{86}{section.12.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Near-term (Q2 2025):}{86}{section.12.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Medium-term (Q3--Q4 2025):}{86}{section.12.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Long-term (Q1 2026):}{86}{section.12.4}\protected@file@percent }
 \gdef \LT@i {\LT@entry 
-    {1}{27.37125pt}\LT@entry 
-    {4}{56.20448pt}\LT@entry 
-    {1}{40.03482pt}\LT@entry 
-    {4}{41.36784pt}\LT@entry 
-    {1}{46.64609pt}\LT@entry 
-    {4}{38.75735pt}\LT@entry 
-    {4}{66.66312pt}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {A}MODCOD Reference Table (All 28 MODCODs)}{29}{appendix.A}\protected@file@percent }
+    {1}{103.04872pt}\LT@entry 
+    {1}{310.75394pt}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {A}Glossary of Terms and Acronyms}{87}{appendix.A}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{lot}{\contentsline {table}{\numberline {A.1}{\ignorespaces Complete DVB-S2 MODCOD table (normal frames, ETSI EN 302 307-1)}}{29}{table.A.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {B}File Listing}{30}{appendix.B}\protected@file@percent }
-\@writefile{lof}{\addvspace {10\p@ }}
-\@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {B.1}Python Block Files}{30}{section.B.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B.2}GRC YAML Block Descriptors}{30}{section.B.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B.3}C++ Source Files (Compiled)}{30}{section.B.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {C}Glossary}{31}{appendix.C}\protected@file@percent }
-\@writefile{lof}{\addvspace {10\p@ }}
-\@writefile{lot}{\addvspace {10\p@ }}
-\gdef \@abspage@last{33}
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{etsi_dvbs2}{1}
+\bibcite{mnih2015}{2}
+\bibcite{zhang2022}{3}
+\bibcite{bischl2010}{4}
+\bibcite{rinaldo2004}{5}
+\bibcite{gardikis2008}{6}
+\bibcite{makara2024}{7}
+\bibcite{wang2019wcnc}{8}
+\bibcite{mdpi2024snr}{9}
+\bibcite{rahman2020}{10}
+\bibcite{wang2022sensors}{11}
+\bibcite{magro2025}{12}
+\bibcite{altunc2015}{13}
+\bibcite{gr_dvbs2}{14}
+\bibcite{gr_dvbs2rx}{15}
+\bibcite{itu_p618}{16}
+\bibcite{itu_p838}{17}
+\bibcite{itu_p839}{18}
+\bibcite{itu_p676}{19}
+\bibcite{itu_p840}{20}
+\bibcite{itu_p681}{21}
+\bibcite{3gpp_tr38811}{22}
+\bibcite{lutz1991}{23}
+\bibcite{pauluzzi2000}{24}
+\bibcite{wang2016dueling}{25}
+\bibcite{vanhasselt2016}{26}
+\bibcite{schaul2016per}{27}
+\gdef \@abspage@last{95}

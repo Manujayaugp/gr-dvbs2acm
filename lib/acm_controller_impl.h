@@ -46,6 +46,7 @@ private:
 
     // Internal methods
     void handle_snr_msg(pmt::pmt_t msg);
+    void handle_channel_state_msg(pmt::pmt_t msg);
     void handle_feedback_msg(pmt::pmt_t msg);
     uint8_t compute_modcod_rule_based(double avg_snr_db);
     uint8_t compute_modcod_with_hysteresis(double snr_db, uint8_t current);

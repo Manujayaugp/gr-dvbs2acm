@@ -1,12 +1,16 @@
 options:
   parameters:
-    author: Research - DVB-S2 ACM
+    author: Pasindu Manujaya
     catch_exceptions: 'True'
-    category: Custom
+    category: '[GRC Hier Blocks]'
     cmake_opt: ''
     comment: ''
-    copyright: GPLv3
-    description: DVB-S2 ACM full loopback with physics-based LEO satellite channel
+    copyright: ''
+    description: 'DVB-S2 ACM Closed-Loop Software Simulation. Full TX -> LEO Channel
+      -> AWGN -> RX -> ACM Controller -> feedback loop entirely in software. Architecture:
+      Random Source -> BB Framer -> FEC Encoder -> Modulator -> PL Framer -> Throttle
+      -> LEO Channel -> AWGN Channel -> PL Sync -> SNR Estimator -> Demodulator ->
+      FEC Decoder -> ACM Feedback -> ACM Controller -> BB Framer (loopback).'
     gen_cmake: 'On'
     gen_linking: dynamic
     generate_options: qt_gui
@@ -22,8 +26,8 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: "DVB-S2 ACM Loopback \u2014 LEO Satellite Channel"
-    window_size: (1400,900)
+    title: DVB-S2 ACM Loopback Simulation
+    window_size: (1400, 900)
   states:
     bus_sink: false
     bus_source: false
@@ -33,59 +37,32 @@ options:
     state: enabled
 
 blocks:
-- name: altitude_km
+- name: initial_modcod
   id: variable
   parameters:
-    comment: "LEO orbital altitude (km) \u2014 restart flowgraph to apply"
-    value: '500.0'
+    comment: QPSK 1/2 = safe initial MODCOD
+    value: '4'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [680, 8]
-    rotation: 0
-    state: enabled
-- name: samps_per_sym
-  id: variable
-  parameters:
-    comment: Oversampling rate — 2 samples per symbol for RRC pulse shaping
-    value: '2'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1160, 8]
-    rotation: 0
-    state: enabled
-- name: rrc_taps
-  id: variable
-  parameters:
-    comment: Root-Raised-Cosine filter taps (rolloff=0.20, 45 taps)
-    value: firdes.root_raised_cosine(1.0, samps_per_sym, 1.0, 0.20, 45)
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1300, 8]
-    rotation: 0
-    state: enabled
-- name: noise_amp
-  id: variable
-  parameters:
-    comment: ''
-    value: 10**(-snr_db/20.0)
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [504, 8]
+    coordinate: [520, 8]
     rotation: 0
     state: enabled
 - name: rain_rate
-  id: variable
+  id: variable_qtgui_range
   parameters:
-    comment: "Rain rate (mm/hr) \u2014 0=clear sky, 5=light, 25=heavy"
-    value: '5.0'
+    comment: Rain attenuation slider (ITU-R P.618-13)
+    gui_hint: tab@0:1,0,1,2
+    label: Rain Rate (mm/hr)
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '1'
+    stop: '50'
+    value: '5'
+    widget: counter_slider
   states:
     bus_sink: false
     bus_source: false
@@ -96,180 +73,62 @@ blocks:
 - name: samp_rate
   id: variable
   parameters:
-    comment: ''
-    value: '2000000'
+    comment: Sample rate = symbol rate
+    value: symbol_rate
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [184, 8]
+    coordinate: [360, 8]
     rotation: 0
     state: enabled
 - name: snr_db
   id: variable_qtgui_range
   parameters:
-    comment: ''
-    gui_hint: 0,0,1,3
-    label: "AWGN Noise Floor (dB) \u2014 LEO fading handled by channel block"
+    comment: AWGN noise level. Measured SNR = snr_db - 16.6 dB at TCA.
+    gui_hint: tab@0:0,0,1,2
+    label: SNR (dB)
     min_len: '200'
     orient: QtCore.Qt.Horizontal
     rangeType: float
     start: '20'
-    step: '1'
-    stop: '40'
-    value: '30'
+    step: '0.5'
+    stop: '50'
+    value: '33'
     widget: counter_slider
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [296, 8]
+    coordinate: [680, 8]
     rotation: 0
     state: enabled
-- name: analog_random_source_x_0
-  id: analog_random_source_x
+- name: symbol_rate
+  id: variable
   parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    max: '255'
-    maxoutbuf: '0'
-    min: '0'
-    minoutbuf: '0'
-    num_samps: '188000'
-    repeat: 'True'
-    type: byte
+    comment: 5 Msps DVB-S2 symbol rate
+    value: 5e6
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [32, 220]
+    coordinate: [200, 8]
     rotation: 0
     state: enabled
-- name: blocks_message_debug_0
-  id: blocks_message_debug
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: Prints MODCOD decisions to console
-    en_uvec: 'True'
-    log_level: info
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1216, 584.0]
-    rotation: 0
-    state: enabled
-- name: blocks_message_debug_1
-  id: blocks_message_debug
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: Prints LEO channel state (SNR, elevation, Doppler, RTT) to console
-    en_uvec: 'True'
-    log_level: info
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1568, 200.0]
-    rotation: 0
-    state: enabled
-- name: blocks_null_sink_0
-  id: blocks_null_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    bus_structure_sink: '[[0,],]'
-    comment: ''
-    num_inputs: '1'
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [32, 420]
-    rotation: 0
-    state: enabled
-- name: blocks_throttle2_0
-  id: blocks_throttle2
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    ignoretag: 'True'
-    limit: auto
-    maximum: '0.1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_second: samp_rate * samps_per_sym
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1080, 168.0]
-    rotation: 0
-    state: enabled
-- name: channels_channel_model_0
-  id: channels_channel_model
-  parameters:
-    affinity: ''
-    alias: ''
-    block_tags: 'False'
-    comment: "AWGN background noise only \u2014 LEO fading is in dvbs2acm_leo_channel_0"
-    epsilon: '1.0'
-    freq_offset: '0.0'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    noise_voltage: noise_amp
-    seed: '0'
-    taps: 1.0+0j
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1568, 64.0]
-    rotation: 0
-    state: enabled
-- name: digital_fll_band_edge_cc_0
-  id: digital_fll_band_edge_cc
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: "Frequency-Locked Loop (FLL) \u2014 modulation-agnostic Doppler correction.\n\
-      Works for ALL DVB-S2 MODCODs (QPSK/8PSK/16APSK/32APSK).\nLocks on spectral band-edges\
-      \ (rolloff region), not the constellation.\nPL Sync handles residual fine phase\
-      \ recovery via SOF + pilots."
-    filter_size: '45'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    rolloff: '0.20'
-    samps_per_sym: samps_per_sym
-    type: cc
-    w: '0.01'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1024, 368.0]
-    rotation: 0
-    state: enabled
-- name: dvbs2acm_acm_controller_0
+- name: acm_controller
   id: dvbs2acm_acm_controller
   parameters:
     acm_mode: dvbs2acm.AcmMode.ACM
     affinity: ''
     ai_socket: '"tcp://localhost:5557"'
     alias: ''
-    comment: ''
+    comment: "ACM DECISION BLOCK. Selects optimal MODCOD based on measured SNR+BER.\
+      \ modcod_out \u2192 BB Framer modcod_in = loopback feedback (simulated return\
+      \ channel). Enable AI/ML: start acm_controller_ai.py then set use_ai=True."
     frame_size: dvbs2acm.FrameSize.NORMAL
     history_len: '16'
-    hysteresis_db: '0.3'
-    initial_modcod: '4'
+    hysteresis_db: '0.5'
+    initial_modcod: initial_modcod
     maxoutbuf: '0'
     minoutbuf: '0'
     snr_margin_db: '1.0'
@@ -279,16 +138,17 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [800, 588.0]
+    coordinate: [1336, 852.0]
     rotation: 0
     state: enabled
-- name: dvbs2acm_acm_feedback_0
+- name: acm_feedback
   id: dvbs2acm_acm_feedback
   parameters:
     affinity: ''
     alias: ''
     ber_alpha: '0.05'
-    comment: ''
+    comment: Aggregates SNR (from SNR Estimator) and BER/FER (from FEC Decoder) into
+      a single feedback message for the ACM Controller.
     maxoutbuf: '0'
     minoutbuf: '0'
     report_period_ms: '100.0'
@@ -297,17 +157,61 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [504, 624.0]
+    coordinate: [1616, 568]
     rotation: 0
     state: enabled
-- name: dvbs2acm_bb_framer_acm_0
+- name: analog_random_source
+  id: analog_random_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Simulated transport stream data (MPEG-TS)
+    max: '256'
+    maxoutbuf: '0'
+    min: '0'
+    minoutbuf: '0'
+    num_samps: '1000'
+    repeat: 'True'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 264.0]
+    rotation: 0
+    state: enabled
+- name: awgn_channel
+  id: channels_channel_model
+  parameters:
+    affinity: ''
+    alias: ''
+    block_tags: 'False'
+    comment: "AWGN noise channel. Noise amplitude = 10^(-snr_db/20). Measured SNR\
+      \ at SNR Estimator = snr_db - 16.6 dB (signal chain power offset). Default snr_db=33\
+      \ -> TCA SNR\u224816.4 dB, AOS/LOS SNR\u22484.2 dB."
+    epsilon: '1.0'
+    freq_offset: '0.0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    noise_voltage: '0'
+    seed: '0'
+    taps: '1.0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [736, 624.0]
+    rotation: 0
+    state: enabled
+- name: bb_framer
   id: dvbs2acm_bb_framer_acm
   parameters:
     affinity: ''
     alias: ''
-    comment: ''
+    comment: 'TX: BB Framer. ACM Controller feeds MODCOD back here via modcod_in message
+      port (loopback feedback = simulated return channel).'
     frame_size: dvbs2acm.FrameSize.NORMAL
-    initial_modcod: '4'
+    initial_modcod: initial_modcod
     maxoutbuf: '0'
     minoutbuf: '0'
     pilots: 'True'
@@ -316,16 +220,16 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [248, 200]
+    coordinate: [248, 280.0]
     rotation: 0
     state: enabled
-- name: dvbs2acm_demodulator_acm_0
+- name: demodulator
   id: dvbs2acm_demodulator_acm
   parameters:
     affinity: ''
     alias: ''
-    comment: ''
-    initial_modcod: '4'
+    comment: 'RX: soft-decision max-log LLR demodulation'
+    initial_modcod: initial_modcod
     maxoutbuf: '0'
     minoutbuf: '0'
     noise_var: '0.1'
@@ -333,17 +237,17 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [528, 304.0]
+    coordinate: [1328, 528.0]
     rotation: 0
     state: enabled
-- name: dvbs2acm_fec_decoder_acm_0
+- name: fec_decoder
   id: dvbs2acm_fec_decoder_acm
   parameters:
     affinity: ''
     alias: ''
-    comment: ''
+    comment: 'RX: iterative LDPC + BCH FEC decoding. Publishes BER/FER to ber_out.'
     frame_size: dvbs2acm.FrameSize.NORMAL
-    initial_modcod: '4'
+    initial_modcod: initial_modcod
     ldpc_algorithm: dvbs2acm.LdpcAlgorithm.ONESIDE
     max_iter: '20'
     maxoutbuf: '0'
@@ -352,17 +256,17 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [160, 424.0]
+    coordinate: [1664, 384]
     rotation: 0
     state: enabled
-- name: dvbs2acm_fec_encoder_acm_0
+- name: fec_encoder
   id: dvbs2acm_fec_encoder_acm
   parameters:
     affinity: ''
     alias: ''
-    comment: ''
+    comment: 'TX: BCH outer + LDPC inner FEC encoder. All 28 MODCODs supported.'
     frame_size: dvbs2acm.FrameSize.NORMAL
-    initial_modcod: '4'
+    initial_modcod: initial_modcod
     ldpc_algorithm: dvbs2acm.LdpcAlgorithm.ONESIDE
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -370,58 +274,100 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [472, 200]
+    coordinate: [632, 288.0]
     rotation: 0
     state: enabled
-- name: dvbs2acm_leo_channel_0
+- name: leo_channel
   id: dvbs2acm_leo_channel
   parameters:
     affinity: ''
     alias: ''
-    altitude_km: altitude_km
-    comment: 'Physics-based LEO channel: Doppler + path loss + rain + Rician fading'
+    altitude_km: '500.0'
+    comment: Physics-based LEO channel at 500 km, X-Band 8.025 GHz. Applies FSPL,
+      Doppler (+/-188 kHz), rain, scintillation, Rician fading. Publishes channel_state
+      messages.
+    fading_coherence_s: '30.0'
     freq_hz: 8.025e9
     maxoutbuf: '0'
     min_elevation_deg: '5.0'
     minoutbuf: '0'
     noise_temp_k: '150.0'
     rain_rate_mm_hr: rain_rate
-    rx_gain_dbi: '40.0'
-    sample_rate: samp_rate * samps_per_sym
-    tx_gain_dbi: '35.0'
-    tx_power_dbw: '20.0'
+    rx_gain_dbi: '37.0'
+    sample_rate: samp_rate
+    snr_offset_db: '0.0'
+    time_acceleration: '10.0'
+    tx_gain_dbi: '10.0'
+    tx_power_dbw: '0.0'
     update_period_ms: '100.0'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1280, 36.0]
+    coordinate: [392, 548.0]
     rotation: 0
     state: enabled
-- name: dvbs2acm_modulator_acm_0
+- name: modulator
   id: dvbs2acm_modulator_acm
   parameters:
     affinity: ''
     alias: ''
-    comment: ''
-    initial_modcod: '4'
+    comment: 'TX: constellation mapper (QPSK/8PSK/16APSK/32APSK). ACM-switched per
+      frame.'
+    initial_modcod: initial_modcod
     maxoutbuf: '0'
     minoutbuf: '0'
-    rolloff: '0.20'
+    rolloff: '0.2'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [704, 232.0]
+    coordinate: [1024, 296.0]
     rotation: 0
     state: enabled
-- name: dvbs2acm_pl_framer_acm_0
+- name: null_sink
+  id: blocks_null_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    bus_structure_sink: '[[0,],]'
+    comment: Decoded data sink (replace with file sink or MPEG-TS demux for real use)
+    num_inputs: '1'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1768, 380]
+    rotation: 0
+    state: enabled
+- name: orbit_visualizer
+  id: dvbs2acm_orbit_visualizer
+  parameters:
+    affinity: ''
+    alias: ''
+    altitude_km: '500.0'
+    comment: 'Real-time two-tab visualizer: Sky View (polar plot) + Ground Track (world
+      map).'
+    gs_lat_deg: '0.0'
+    gs_lon_deg: '0.0'
+    pass_inclination_deg: '0.0'
+    title: "\"DVB-S2 ACM \u2014 LEO Pass Visualizer\""
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1096, 848.0]
+    rotation: 0
+    state: enabled
+- name: pl_framer
   id: dvbs2acm_pl_framer_acm
   parameters:
     affinity: ''
     alias: ''
-    comment: ''
-    initial_modcod: '4'
+    comment: 'TX: PL Header (90 syms: SOF + PLSCODE), pilot blocks, Gold code scrambling'
+    initial_modcod: initial_modcod
     maxoutbuf: '0'
     minoutbuf: '0'
     pilots: 'True'
@@ -430,16 +376,17 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 96.0]
+    coordinate: [56, 416.0]
     rotation: 0
     state: enabled
-- name: dvbs2acm_pl_sync_acm_0
+- name: pl_sync
   id: dvbs2acm_pl_sync_acm
   parameters:
     affinity: ''
     alias: ''
     avg_frames: '4'
-    comment: ''
+    comment: 'RX: SOF correlation, PLSCODE RM decoding, PLL, Gold descrambling. Tags
+      output stream with detected MODCOD ID.'
     maxoutbuf: '0'
     minoutbuf: '0'
     threshold: '0.7'
@@ -447,215 +394,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1016, 232.0]
+    coordinate: [904, 472.0]
     rotation: 0
     state: enabled
-- name: dvbs2acm_snr_estimator_0
-  id: dvbs2acm_snr_estimator
-  parameters:
-    affinity: ''
-    alias: ''
-    avg_frames: '4'
-    comment: ''
-    estimator_type: dvbs2acm.SnrEstimatorType.HYBRID
-    frame_size: dvbs2acm.FrameSize.NORMAL
-    kalman_filter: 'True'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    pilots: 'True'
-    report_period: '8'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [664, 400.0]
-    rotation: 0
-    state: enabled
-- name: qtgui_const_sink_x_0
-  id: qtgui_const_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    alpha1: '1.0'
-    alpha10: '1.0'
-    alpha2: '1.0'
-    alpha3: '1.0'
-    alpha4: '1.0'
-    alpha5: '1.0'
-    alpha6: '1.0'
-    alpha7: '1.0'
-    alpha8: '1.0'
-    alpha9: '1.0'
-    autoscale: 'True'
-    axislabels: 'True'
-    color1: '"blue"'
-    color10: '"dark blue"'
-    color2: '"red"'
-    color3: '"green"'
-    color4: '"black"'
-    color5: '"cyan"'
-    color6: '"magenta"'
-    color7: '"yellow"'
-    color8: '"dark red"'
-    color9: '"dark green"'
-    comment: ''
-    grid: 'True'
-    gui_hint: 1,1,1,1
-    label1: Post-FLL IQ
-    label10: ''
-    label2: ''
-    label3: ''
-    label4: ''
-    label5: ''
-    label6: ''
-    label7: ''
-    label8: ''
-    label9: ''
-    legend: 'True'
-    marker1: '0'
-    marker10: '0'
-    marker2: '0'
-    marker3: '0'
-    marker4: '0'
-    marker5: '0'
-    marker6: '0'
-    marker7: '0'
-    marker8: '0'
-    marker9: '0'
-    name: '"RX Constellation (Post-FLL)"'
-    nconnections: '1'
-    size: '2048'
-    style1: '0'
-    style10: '0'
-    style2: '0'
-    style3: '0'
-    style4: '0'
-    style5: '0'
-    style6: '0'
-    style7: '0'
-    style8: '0'
-    style9: '0'
-    tr_chan: '0'
-    tr_level: '0.0'
-    tr_mode: qtgui.TRIG_MODE_FREE
-    tr_slope: qtgui.TRIG_SLOPE_POS
-    tr_tag: '""'
-    type: complex
-    update_time: '0.10'
-    width1: '1'
-    width10: '1'
-    width2: '1'
-    width3: '1'
-    width4: '1'
-    width5: '1'
-    width6: '1'
-    width7: '1'
-    width8: '1'
-    width9: '1'
-    xmax: '2'
-    xmin: '-2'
-    ymax: '2'
-    ymin: '-2'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1408, 440.0]
-    rotation: 0
-    state: enabled
-- name: qtgui_const_sink_x_1
-  id: qtgui_const_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    alpha1: '1.0'
-    alpha10: '1.0'
-    alpha2: '1.0'
-    alpha3: '1.0'
-    alpha4: '1.0'
-    alpha5: '1.0'
-    alpha6: '1.0'
-    alpha7: '1.0'
-    alpha8: '1.0'
-    alpha9: '1.0'
-    autoscale: 'False'
-    axislabels: 'True'
-    color1: '"blue"'
-    color10: '"dark blue"'
-    color2: '"red"'
-    color3: '"green"'
-    color4: '"black"'
-    color5: '"cyan"'
-    color6: '"magenta"'
-    color7: '"yellow"'
-    color8: '"dark red"'
-    color9: '"dark green"'
-    comment: ''
-    grid: 'False'
-    gui_hint: ''
-    label1: ''
-    label10: ''
-    label2: ''
-    label3: ''
-    label4: ''
-    label5: ''
-    label6: ''
-    label7: ''
-    label8: ''
-    label9: ''
-    legend: 'True'
-    marker1: '0'
-    marker10: '0'
-    marker2: '0'
-    marker3: '0'
-    marker4: '0'
-    marker5: '0'
-    marker6: '0'
-    marker7: '0'
-    marker8: '0'
-    marker9: '0'
-    name: '""'
-    nconnections: '1'
-    size: '1024'
-    style1: '0'
-    style10: '0'
-    style2: '0'
-    style3: '0'
-    style4: '0'
-    style5: '0'
-    style6: '0'
-    style7: '0'
-    style8: '0'
-    style9: '0'
-    tr_chan: '0'
-    tr_level: '0.0'
-    tr_mode: qtgui.TRIG_MODE_FREE
-    tr_slope: qtgui.TRIG_SLOPE_POS
-    tr_tag: '""'
-    type: complex
-    update_time: '0.10'
-    width1: '1'
-    width10: '1'
-    width2: '1'
-    width3: '1'
-    width4: '1'
-    width5: '1'
-    width6: '1'
-    width7: '1'
-    width8: '1'
-    width9: '1'
-    xmax: '2'
-    xmin: '-2'
-    ymax: '2'
-    ymin: '-2'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [632, 80.0]
-    rotation: 0
-    state: enabled
-- name: qtgui_freq_sink_x_0
+- name: qtgui_freq_sink
   id: qtgui_freq_sink_x
   parameters:
     affinity: ''
@@ -663,87 +405,6 @@ blocks:
     alpha1: '1.0'
     alpha10: '1.0'
     alpha2: '1.0'
-    alpha3: '1.0'
-    alpha4: '1.0'
-    alpha5: '1.0'
-    alpha6: '1.0'
-    alpha7: '1.0'
-    alpha8: '1.0'
-    alpha9: '1.0'
-    autoscale: 'False'
-    average: '0.1'
-    axislabels: 'True'
-    bw: samp_rate * samps_per_sym
-    color1: '"blue"'
-    color10: '"dark blue"'
-    color2: '"red"'
-    color3: '"green"'
-    color4: '"black"'
-    color5: '"cyan"'
-    color6: '"magenta"'
-    color7: '"yellow"'
-    color8: '"dark red"'
-    color9: '"dark green"'
-    comment: ''
-    ctrlpanel: 'False'
-    fc: '0'
-    fftsize: '1024'
-    freqhalf: 'True'
-    grid: 'True'
-    gui_hint: 1,0,1,1
-    label: Relative Gain
-    label1: TX Spectrum
-    label10: ''''''
-    label2: RX Spectrum
-    label3: ''
-    label4: ''
-    label5: ''
-    label6: ''''''
-    label7: ''''''
-    label8: ''''''
-    label9: ''''''
-    legend: 'True'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    name: '"DVB-S2 Spectrum"'
-    nconnections: '2'
-    norm_window: 'False'
-    showports: 'False'
-    tr_chan: '0'
-    tr_level: '0.0'
-    tr_mode: qtgui.TRIG_MODE_FREE
-    tr_tag: '""'
-    type: complex
-    units: dB
-    update_time: '0.10'
-    width1: '1'
-    width10: '1'
-    width2: '1'
-    width3: '1'
-    width4: '1'
-    width5: '1'
-    width6: '1'
-    width7: '1'
-    width8: '1'
-    width9: '1'
-    wintype: window.WIN_BLACKMAN_hARRIS
-    ymax: '10'
-    ymin: '-140'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1416, 296.0]
-    rotation: 0
-    state: enabled
-- name: qtgui_freq_sink_x_1
-  id: qtgui_freq_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    alpha1: '1.0'
-    alpha10: '1.0'
-    alpha2: '0.8'
     alpha3: '1.0'
     alpha4: '1.0'
     alpha5: '1.0'
@@ -754,7 +415,7 @@ blocks:
     autoscale: 'False'
     average: '0.2'
     axislabels: 'True'
-    bw: samp_rate * samps_per_sym
+    bw: samp_rate
     color1: '"blue"'
     color10: '"dark blue"'
     color2: '"red"'
@@ -765,36 +426,36 @@ blocks:
     color7: '"yellow"'
     color8: '"dark red"'
     color9: '"dark green"'
-    comment: 'Pre-Costas vs Post-Costas spectrum: red shift = uncorrected Doppler,
-      blue = after carrier recovery'
+    comment: 'Dual spectrum: pre-sync (blue) = AWGN output, post-sync (red) = PL Sync
+      output. After lock both should be centred at DC.'
     ctrlpanel: 'False'
     fc: '0'
     fftsize: '1024'
     freqhalf: 'True'
-    grid: 'True'
-    gui_hint: 2,2,1,2
+    grid: 'False'
+    gui_hint: tab@2:0,0,1,2
     label: Relative Gain
-    label1: Pre-Costas (raw)
-    label10: ''''''
-    label2: Post-FLL
+    label1: Pre-Sync (AWGN out)
+    label10: ''
+    label2: Post-Sync (PL Sync out)
     label3: ''
     label4: ''
     label5: ''
-    label6: ''''''
-    label7: ''''''
-    label8: ''''''
-    label9: ''''''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
     legend: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
-    name: '"Carrier Recovery: Pre vs Post FLL (Doppler Correction)"'
+    name: '"DVB-S2 Spectrum (pre- vs post-PL Sync)"'
     nconnections: '2'
     norm_window: 'False'
     showports: 'False'
     tr_chan: '0'
     tr_level: '0.0'
     tr_mode: qtgui.TRIG_MODE_FREE
-    tr_tag: '""'
+    tr_tag: ''
     type: complex
     units: dB
     update_time: '0.10'
@@ -815,17 +476,17 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1416, 472.0]
+    coordinate: [1272, 616.0]
     rotation: 0
     state: enabled
-- name: qtgui_time_sink_x_0
+- name: qtgui_time_sink
   id: qtgui_time_sink_x
   parameters:
     affinity: ''
     alias: ''
     alpha1: '1.0'
     alpha10: '1.0'
-    alpha2: '0.6'
+    alpha2: '1.0'
     alpha3: '1.0'
     alpha4: '1.0'
     alpha5: '1.0'
@@ -833,7 +494,7 @@ blocks:
     alpha7: '1.0'
     alpha8: '1.0'
     alpha9: '1.0'
-    autoscale: 'True'
+    autoscale: 'False'
     axislabels: 'True'
     color1: blue
     color10: dark blue
@@ -845,21 +506,21 @@ blocks:
     color7: yellow
     color8: dark red
     color9: dark green
-    comment: ''
+    comment: Signal amplitude vs time. Shows LEO fading and rain attenuation.
     ctrlpanel: 'False'
     entags: 'True'
-    grid: 'True'
-    gui_hint: 1,2,1,1
-    label1: Real
-    label10: Signal 10
-    label2: Imag
-    label3: Signal 3
-    label4: Signal 4
-    label5: Signal 5
-    label6: Signal 6
-    label7: Signal 7
-    label8: Signal 8
-    label9: Signal 9
+    grid: 'False'
+    gui_hint: tab@3:0,0,1,1
+    label1: Signal Amplitude
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
     legend: 'True'
     marker1: '-1'
     marker10: '-1'
@@ -871,10 +532,10 @@ blocks:
     marker7: '-1'
     marker8: '-1'
     marker9: '-1'
-    name: '"TX IQ Waveform"'
+    name: '"Received Signal Envelope"'
     nconnections: '1'
     size: '1024'
-    srate: samp_rate * samps_per_sym
+    srate: samp_rate
     stemplot: 'False'
     style1: '1'
     style10: '1'
@@ -891,7 +552,7 @@ blocks:
     tr_level: '0.0'
     tr_mode: qtgui.TRIG_MODE_FREE
     tr_slope: qtgui.TRIG_SLOPE_POS
-    tr_tag: '""'
+    tr_tag: ''
     type: complex
     update_time: '0.10'
     width1: '1'
@@ -912,10 +573,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1480, 568.0]
+    coordinate: [1056, 704.0]
     rotation: 0
     state: enabled
-- name: qtgui_waterfall_sink_x_0
+- name: qtgui_waterfall_sink
   id: qtgui_waterfall_sink_x
   parameters:
     affinity: ''
@@ -931,7 +592,7 @@ blocks:
     alpha8: '1.0'
     alpha9: '1.0'
     axislabels: 'True'
-    bw: samp_rate * samps_per_sym
+    bw: samp_rate
     color1: '0'
     color10: '0'
     color2: '0'
@@ -942,13 +603,13 @@ blocks:
     color7: '0'
     color8: '0'
     color9: '0'
-    comment: "LEO Doppler waterfall \u2014 watch carrier shift \xB1188 kHz across\
-      \ the pass (AOS\u2192TCA\u2192LOS visible as chevron pattern)"
+    comment: Scrolling spectrogram. Shows Doppler drift (spectrum shifts horizontally)
+      and modulation changes.
     fc: '0'
-    fftsize: '2048'
+    fftsize: '1024'
     freqhalf: 'True'
-    grid: 'True'
-    gui_hint: 2,0,1,2
+    grid: 'False'
+    gui_hint: tab@3:0,1,1,1
     int_max: '10'
     int_min: '-140'
     label1: ''
@@ -964,7 +625,7 @@ blocks:
     legend: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
-    name: '"LEO Doppler Waterfall (AOS\u2192TCA\u2192LOS)"'
+    name: '"Waterfall (time-frequency)"'
     nconnections: '1'
     showports: 'False'
     type: complex
@@ -974,55 +635,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1416, 152.0]
+    coordinate: [1584, 476]
     rotation: 0
     state: enabled
-
-- name: filter_interp_fir_filter_xxx_0
-  id: filter_interp_fir_filter_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: 'TX RRC pulse shaping — interpolates by 2, applies root-raised-cosine
-      (rolloff=0.20). Limits spectral occupancy to symbol rate × (1+rolloff).'
-    interp: samps_per_sym
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_delay: '0'
-    taps: rrc_taps
-    type: ccf
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1080, 96.0]
-    rotation: 0
-    state: enabled
-- name: digital_pfb_clock_sync_xxx_0
-  id: digital_pfb_clock_sync_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: 'RX matched RRC filter + symbol timing recovery (polyphase filterbank).
-      Input: 2 sps  |  Output: 1 sps (1 clean sample per symbol).
-      After this block the constellation shows standard DVB-S2 points.'
-    filter_size: '32'
-    init_phase: '16'
-    max_rate_deviation: '1.5'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    osps: '1'
-    sps: samps_per_sym
-    taps: rrc_taps
-    type: ccf
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [864, 368.0]
-    rotation: 0
-    state: enabled
-- name: qtgui_const_sink_x_2
+- name: rx_constellation_sink
   id: qtgui_const_sink_x
   parameters:
     affinity: ''
@@ -1037,7 +653,7 @@ blocks:
     alpha7: '1.0'
     alpha8: '1.0'
     alpha9: '1.0'
-    autoscale: 'True'
+    autoscale: 'False'
     axislabels: 'True'
     color1: '"blue"'
     color10: '"dark blue"'
@@ -1049,12 +665,11 @@ blocks:
     color7: '"yellow"'
     color8: '"dark red"'
     color9: '"dark green"'
-    comment: 'DVB-S2 recovered symbol constellation after RRC matched filter +
-      timing recovery. Should show QPSK (4 pts), 8PSK (8 pts), 16APSK (16 pts)
-      or 32APSK (32 pts) depending on current MODCOD selected by ACM/DQN.'
-    grid: 'True'
-    gui_hint: 1,2,1,2
-    label1: Recovered Symbols
+    comment: RX Constellation after PL Sync (Panel 2). Spinning = not locked. Blobs
+      = low SNR. Clean clusters = good link.
+    grid: 'False'
+    gui_hint: tab@1:0,1,1,1
+    label1: RX Constellation (PL Sync out)
     label10: ''
     label2: ''
     label3: ''
@@ -1075,9 +690,9 @@ blocks:
     marker7: '0'
     marker8: '0'
     marker9: '0'
-    name: '"DVB-S2 Recovered Constellation (Post-Timing-Recovery)"'
+    name: '"RX Signal (after PL Sync)"'
     nconnections: '1'
-    size: '4096'
+    size: '1024'
     style1: '0'
     style10: '0'
     style2: '0'
@@ -1092,7 +707,7 @@ blocks:
     tr_level: '0.0'
     tr_mode: qtgui.TRIG_MODE_FREE
     tr_slope: qtgui.TRIG_SLOPE_POS
-    tr_tag: '""'
+    tr_tag: ''
     type: complex
     update_time: '0.10'
     width1: '1'
@@ -1113,41 +728,204 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1080, 480.0]
+    coordinate: [1352, 96]
+    rotation: 0
+    state: enabled
+- name: snr_estimator
+  id: dvbs2acm_snr_estimator
+  parameters:
+    affinity: ''
+    alias: ''
+    avg_frames: '4'
+    comment: 'RX: pilot-based SNR estimation (Hybrid MMSE/M2M4 + Kalman). Connected
+      to raw AWGN output (before PL Sync) for channel-independent measurement.'
+    estimator_type: dvbs2acm.SnrEstimatorType.HYBRID
+    frame_size: dvbs2acm.FrameSize.NORMAL
+    kalman_filter: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    pilots: 'True'
+    report_period: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1024, 640.0]
+    rotation: 0
+    state: enabled
+- name: tab
+  id: qtgui_tab_widget
+  parameters:
+    alias: ''
+    comment: ''
+    gui_hint: ''
+    label0: Control
+    label1: Constellations
+    label10: Tab 10
+    label11: Tab 11
+    label12: Tab 12
+    label13: Tab 13
+    label14: Tab 14
+    label15: Tab 15
+    label16: Tab 16
+    label17: Tab 17
+    label18: Tab 18
+    label19: Tab 19
+    label2: Spectrum
+    label3: Time / Waterfall
+    label4: Tab 4
+    label5: Tab 5
+    label6: Tab 6
+    label7: Tab 7
+    label8: Tab 8
+    label9: Tab 9
+    num_tabs: '4'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 100]
+    rotation: 0
+    state: enabled
+- name: throttle
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Throttle to real-time symbol rate (prevents CPU overload in software
+      loopback)
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [200, 544.0]
+    rotation: 0
+    state: enabled
+- name: tx_constellation_sink
+  id: qtgui_const_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    axislabels: 'True'
+    color1: '"blue"'
+    color10: '"dark blue"'
+    color2: '"red"'
+    color3: '"green"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: TX Constellation before channel (Panel 1). Noiseless reference.
+    grid: 'False'
+    gui_hint: tab@1:0,0,1,1
+    label1: TX Constellation (Modulator out)
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    marker1: '0'
+    marker10: '0'
+    marker2: '0'
+    marker3: '0'
+    marker4: '0'
+    marker5: '0'
+    marker6: '0'
+    marker7: '0'
+    marker8: '0'
+    marker9: '0'
+    name: '"TX Signal (before channel)"'
+    nconnections: '1'
+    size: '1024'
+    style1: '0'
+    style10: '0'
+    style2: '0'
+    style3: '0'
+    style4: '0'
+    style5: '0'
+    style6: '0'
+    style7: '0'
+    style8: '0'
+    style9: '0'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: ''
+    type: complex
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    xmax: '2'
+    xmin: '-2'
+    ymax: '2'
+    ymin: '-2'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [912, 128.0]
     rotation: 0
     state: enabled
 
 connections:
-- [analog_random_source_x_0, '0', dvbs2acm_bb_framer_acm_0, '0']
-- [blocks_throttle2_0, '0', dvbs2acm_leo_channel_0, '0']
-- [channels_channel_model_0, '0', digital_fll_band_edge_cc_0, '0']
-- [channels_channel_model_0, '0', dvbs2acm_snr_estimator_0, '0']
-- [channels_channel_model_0, '0', qtgui_freq_sink_x_0, '0']
-- [channels_channel_model_0, '0', qtgui_freq_sink_x_1, '0']
-- [channels_channel_model_0, '0', qtgui_time_sink_x_0, '0']
-- [channels_channel_model_0, '0', qtgui_waterfall_sink_x_0, '0']
-- [digital_fll_band_edge_cc_0, '0', digital_pfb_clock_sync_xxx_0, '0']
-- [digital_fll_band_edge_cc_0, '0', qtgui_const_sink_x_0, '0']
-- [digital_fll_band_edge_cc_0, '0', qtgui_freq_sink_x_1, '1']
-- [digital_pfb_clock_sync_xxx_0, '0', dvbs2acm_pl_sync_acm_0, '0']
-- [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_2, '0']
-- [dvbs2acm_acm_controller_0, modcod_out, blocks_message_debug_0, print]
-- [dvbs2acm_acm_controller_0, modcod_out, dvbs2acm_bb_framer_acm_0, modcod_in]
-- [dvbs2acm_acm_controller_0, stats_out, blocks_message_debug_0, store]
-- [dvbs2acm_acm_feedback_0, feedback_out, dvbs2acm_acm_controller_0, snr_in]
-- [dvbs2acm_bb_framer_acm_0, '0', dvbs2acm_fec_encoder_acm_0, '0']
-- [dvbs2acm_demodulator_acm_0, '0', dvbs2acm_fec_decoder_acm_0, '0']
-- [dvbs2acm_fec_decoder_acm_0, '0', blocks_null_sink_0, '0']
-- [dvbs2acm_fec_decoder_acm_0, ber_out, dvbs2acm_acm_feedback_0, ber_in]
-- [dvbs2acm_fec_encoder_acm_0, '0', dvbs2acm_modulator_acm_0, '0']
-- [dvbs2acm_leo_channel_0, '0', channels_channel_model_0, '0']
-- [dvbs2acm_modulator_acm_0, '0', dvbs2acm_pl_framer_acm_0, '0']
-- [dvbs2acm_modulator_acm_0, '0', qtgui_const_sink_x_1, '0']
-- [dvbs2acm_pl_framer_acm_0, '0', filter_interp_fir_filter_xxx_0, '0']
-- [filter_interp_fir_filter_xxx_0, '0', blocks_throttle2_0, '0']
-- [dvbs2acm_pl_sync_acm_0, '0', dvbs2acm_demodulator_acm_0, '0']
-- [dvbs2acm_pl_sync_acm_0, '0', qtgui_freq_sink_x_0, '1']
-- [dvbs2acm_snr_estimator_0, snr_out, dvbs2acm_acm_feedback_0, snr_in]
+- [acm_controller, modcod_out, bb_framer, modcod_in]
+- [acm_controller, modcod_out, orbit_visualizer, modcod_in]
+- [acm_feedback, feedback_out, acm_controller, snr_in]
+- [analog_random_source, '0', bb_framer, '0']
+- [awgn_channel, '0', pl_sync, '0']
+- [awgn_channel, '0', qtgui_freq_sink, '0']
+- [awgn_channel, '0', qtgui_time_sink, '0']
+- [awgn_channel, '0', qtgui_waterfall_sink, '0']
+- [awgn_channel, '0', snr_estimator, '0']
+- [bb_framer, '0', fec_encoder, '0']
+- [demodulator, '0', fec_decoder, '0']
+- [fec_decoder, '0', null_sink, '0']
+- [fec_decoder, ber_out, acm_feedback, ber_in]
+- [fec_encoder, '0', modulator, '0']
+- [leo_channel, '0', awgn_channel, '0']
+- [leo_channel, channel_state, acm_controller, channel_state_in]
+- [leo_channel, channel_state, orbit_visualizer, channel_state_in]
+- [modulator, '0', pl_framer, '0']
+- [modulator, '0', tx_constellation_sink, '0']
+- [pl_framer, '0', throttle, '0']
+- [pl_sync, '0', demodulator, '0']
+- [pl_sync, '0', qtgui_freq_sink, '1']
+- [pl_sync, '0', rx_constellation_sink, '0']
+- [snr_estimator, snr_out, acm_feedback, snr_in]
+- [throttle, '0', leo_channel, '0']
 
 metadata:
   file_format: 1
