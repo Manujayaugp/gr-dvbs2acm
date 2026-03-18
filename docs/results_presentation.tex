@@ -586,21 +586,19 @@
 \begin{columns}[T]
   \begin{column}{0.58\textwidth}
     \begin{center}
-      % Video embedded in PDF — click to play in Adobe Acrobat Reader
-      \includemedia[
-        width=\linewidth,
-        height=0.5625\linewidth,  % 16:9 aspect ratio
-        activate=onclick,
-        addresource=grc_screen_record.mp4,
-        flashvars={
-          src=grc_screen_record.mp4
-          &autoPlay=false
-          &loop=false
-        },
-        passcontext
-      ]{\includegraphics[width=\linewidth]{grc_poster_frame.png}}{VPlayer.swf}
-      \\[0.3em]
-      {\scriptsize\textcolor{NUSgray}{Click video to play $\cdot$ H.264 MP4 embedded $\cdot$ Adobe Acrobat Reader}}
+      % Screen annotation — plays in Adobe Acrobat Reader (modern, no Flash needed)
+      % grc_screen_record.mp4 must be in the same folder as this PDF
+      \movie[width=\linewidth, height=0.5625\linewidth,
+             poster, showcontrols]{%
+        \includegraphics[width=\linewidth]{grc_poster_frame.png}%
+      }{grc_screen_record.mp4}
+      \\[0.25em]
+      {\scriptsize\textcolor{NUSgray}{%
+        \textbf{Option 1 (Acrobat Reader):} Click above to play inline\\[0.15em]
+        \textbf{Option 2 (any device — full screen):}\enskip
+        \href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{%
+          \textcolor{NUSorange}{\textbf{$\blacktriangleright$\enskip Watch full-screen on OneDrive}}}
+      }}
     \end{center}
   \end{column}
   \begin{column}{0.39\textwidth}
