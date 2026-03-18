@@ -582,41 +582,32 @@
 \end{columns}
 \end{frame}
 % ── GNU Radio Demo — Embedded Video ──────────────────────────
-\begin{frame}[shrink=10]{GNU Radio Software Loopback Demo}
+\begin{frame}[shrink=4]{GNU Radio Software Loopback Demo}
 \begin{columns}[T]
-  \begin{column}{0.58\textwidth}
+  \begin{column}{0.56\textwidth}
     \begin{center}
-      % Screen annotation — plays in Adobe Acrobat Reader (modern, no Flash needed)
-      % grc_screen_record.mp4 must be in the same folder as this PDF
       \movie[width=\linewidth, height=0.5625\linewidth,
              poster, showcontrols]{%
         \includegraphics[width=\linewidth]{grc_poster_frame.png}%
-      }{grc_screen_record.mp4}
-      \\[0.25em]
-      {\scriptsize\textcolor{NUSgray}{%
-        \textbf{Option 1 (Acrobat Reader):} Click above to play inline\\[0.15em]
-        \textbf{Option 2 (any device — full screen):}\enskip
-        \href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{%
-          \textcolor{NUSorange}{\textbf{$\blacktriangleright$\enskip Watch full-screen on OneDrive}}}
-      }}
+      }{grc_screen_record.mp4}\\[0.2em]
+      {\tiny\textcolor{NUSgray}{\textbf{Option 1:} Click above (Acrobat Reader)\quad
+        \textbf{Option 2:}\enskip\href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{\textcolor{NUSorange}{\textbf{$\blacktriangleright$ OneDrive full-screen}}}}}
     \end{center}
   \end{column}
-  \begin{column}{0.39\textwidth}
-    \vspace{0.5em}
-    \textbf{Current setup:} Random source $\to$ full signal chain $\to$ AWGN channel (no USRP yet)
+  \begin{column}{0.41\textwidth}
+    \small\textbf{Setup:} Random source $\to$ full IQ signal chain $\to$ AWGN channel
+    \vspace{0.3em}
 
-    \vspace{0.4em}
     \textbf{What the video shows:}
     \begin{enumerate}\small
-      \item GRC flowgraph — TX chain, AWGN channel, RX chain, ACM controller
+      \item GRC flowgraph — TX, channel, RX, ACM controller
       \item Execution starts — QPSK constellation appears
-      \item AWGN noise increases — MODCOD steps down\\(32APSK $\to$ 16APSK $\to$ 8PSK $\to$ QPSK)
-      \item Noise reduces — link climbs back to high-order MODCOD
+      \item Noise increases — MODCOD steps down\\(32APSK $\to$ 16APSK $\to$ 8PSK $\to$ QPSK)
+      \item Noise reduces — link recovers to high-order MODCOD
     \end{enumerate}
-
-    \vspace{0.4em}
+    \vspace{0.3em}
     \begin{keybox}{Key point}
-      \small Full BCH+LDPC FEC, real Pilot-MMSE SNR estimation, and PLSCODE signalling — all working in software. Constellation changes \textit{automatically} with no manual intervention.
+      \scriptsize Full BCH+LDPC FEC, Pilot-MMSE SNR estimation, PLSCODE signalling — all working. Constellation changes \textit{automatically}.
     \end{keybox}
   \end{column}
 \end{columns}
