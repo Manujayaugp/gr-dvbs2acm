@@ -638,67 +638,6 @@
 \end{columns}
 \end{frame}
 
-% ── Constellation Screenshots Placeholder ────────────────────
-\begin{frame}[shrink=5]{GNU Radio: Constellation at Each MODCOD}
-\begin{center}
-\small\textit{Screenshots from GNU Radio Qt GUI — to be inserted from screen recording}
-\end{center}
-\vspace{0.3em}
-\begin{columns}[T]
-  \begin{column}{0.23\textwidth}
-    \begin{tikzpicture}
-      \draw[NUSblue!40, fill=NUSlightgray, rounded corners=4pt, line width=1pt]
-        (0,0) rectangle (3.2,3.2);
-      \node[font=\tiny, NUSgray, align=center] at (1.6,1.6)
-        {QPSK\\4 points\\1 bit/sym};
-      \node[font=\tiny\bfseries, NUSblue] at (1.6,2.9) {Low SNR};
-    \end{tikzpicture}
-  \end{column}
-  \begin{column}{0.23\textwidth}
-    \begin{tikzpicture}
-      \draw[NUSgreen!40, fill=NUSlightgray, rounded corners=4pt, line width=1pt]
-        (0,0) rectangle (3.2,3.2);
-      \node[font=\tiny, NUSgray, align=center] at (1.6,1.6)
-        {8PSK\\8 points\\1.5 bits/sym};
-      \node[font=\tiny\bfseries, NUSgreen] at (1.6,2.9) {Medium SNR};
-    \end{tikzpicture}
-  \end{column}
-  \begin{column}{0.23\textwidth}
-    \begin{tikzpicture}
-      \draw[NUSorange!60, fill=NUSlightgray, rounded corners=4pt, line width=1pt]
-        (0,0) rectangle (3.2,3.2);
-      \node[font=\tiny, NUSgray, align=center] at (1.6,1.6)
-        {16APSK\\16 points\\2 bits/sym};
-      \node[font=\tiny\bfseries, NUSorange] at (1.6,2.9) {Good SNR};
-    \end{tikzpicture}
-  \end{column}
-  \begin{column}{0.23\textwidth}
-    \begin{tikzpicture}
-      \draw[NUSred!50, fill=NUSlightgray, rounded corners=4pt, line width=1pt]
-        (0,0) rectangle (3.2,3.2);
-      \node[font=\tiny, NUSgray, align=center] at (1.6,1.6)
-        {32APSK\\32 points\\2.5 bits/sym};
-      \node[font=\tiny\bfseries, NUSred] at (1.6,2.9) {High SNR};
-    \end{tikzpicture}
-  \end{column}
-\end{columns}
-
-\vspace{0.8em}
-\begin{columns}[T]
-  \begin{column}{0.55\textwidth}
-    \begin{notebox}{How to read the constellation}
-      \small Each dot is a received IQ symbol. Tight clusters = high SNR, good link.
-      Spread/overlapping clusters = low SNR or wrong MODCOD selected.
-      The ACM system keeps clusters tight by choosing the right MODCOD.
-    \end{notebox}
-  \end{column}
-  \begin{column}{0.42\textwidth}
-    \begin{resultbox}{What to look for in the video}
-      \small As SNR drops: constellation transitions from 32APSK (dense) $\to$ QPSK (4 clear points). The link stays connected throughout.
-    \end{resultbox}
-  \end{column}
-\end{columns}
-\end{frame}
 % ── Conclusions ───────────────────────────────────────────────
 \begin{frame}{Summary}
 \begin{columns}[T]
