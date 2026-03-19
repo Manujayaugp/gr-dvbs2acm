@@ -496,9 +496,10 @@
 \end{frame}
 
 % ── Cross-Scenario Comparison ────────────────────────────────
-\begin{frame}[shrink=15]{Cross-Scenario Comparison Summary \normalfont\small(DQN: online training, $\varepsilon: 1.0 \to 0.56$ across runs)}
+\begin{frame}[shrink=25]{Cross-Scenario Comparison Summary \normalfont\small(DQN: online training, $\varepsilon: 1.0 \to 0.56$ across runs)}
 \begin{center}
-\renewcommand{\arraystretch}{1.3}
+\renewcommand{\arraystretch}{1.15}
+\small
 \begin{tabular}{llcccc}
   \toprule
   \textbf{Scenario} & \textbf{Strategy} & \textbf{$\eta$ (bits/sym)} &
@@ -522,12 +523,12 @@
 \end{tabular}
 \end{center}
 
-\vspace{0.5em}
+\vspace{0.2em}
 \begin{columns}[T]
   \begin{column}{0.48\textwidth}
     \begin{resultbox}{DQN strengths}
       \small
-      \begin{itemize}
+      \begin{itemize}\setlength{\itemsep}{1pt}
         \item Best QEF\% in 2 of 3 scenarios
         \item Learns to be conservative during fades
         \item Reward penalises FER heavily ($-3.0 \times \text{FER}$)
@@ -537,7 +538,7 @@
   \begin{column}{0.48\textwidth}
     \begin{notebox}{DQN — current limitation}
       \small
-      \begin{itemize}
+      \begin{itemize}\setlength{\itemsep}{1pt}
         \item High switch count in LEO (7076) — still exploring ($\varepsilon$-greedy)
         \item Needs more training passes to converge
         \item Online learning: improves each pass
