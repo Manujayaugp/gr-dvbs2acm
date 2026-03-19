@@ -72,22 +72,30 @@ try:
     _CPP_AVAILABLE = True
 except ImportError:
     _CPP_AVAILABLE = False
-    from .acm_controller_py  import acm_controller
-    from .bb_framer_acm_py   import bb_framer_acm
-    from .snr_estimator_py   import snr_estimator
-    from .fec_encoder_acm_py import fec_encoder_acm, encode_frame, kbch_for_modcod
-    from .modulator_acm_py   import modulator_acm
-    from .pl_framer_acm_py   import pl_framer_acm
-    from .pl_sync_acm_py     import pl_sync_acm
-    from .demodulator_acm_py import demodulator_acm
-    from .fec_decoder_acm_py import fec_decoder_acm
-    from .acm_feedback_py    import acm_feedback
-    from .leo_channel_gr_py  import leo_channel
+    try:
+        from .acm_controller_py  import acm_controller
+        from .bb_framer_acm_py   import bb_framer_acm
+        from .snr_estimator_py   import snr_estimator
+        from .fec_encoder_acm_py import fec_encoder_acm, encode_frame, kbch_for_modcod
+        from .modulator_acm_py   import modulator_acm
+        from .pl_framer_acm_py   import pl_framer_acm
+        from .pl_sync_acm_py     import pl_sync_acm
+        from .demodulator_acm_py import demodulator_acm
+        from .fec_decoder_acm_py import fec_decoder_acm
+        from .acm_feedback_py    import acm_feedback
+        from .leo_channel_gr_py  import leo_channel
+    except ImportError:
+        # GNU Radio not available (e.g. NumPy version mismatch) — pure-Python
+        # AI/simulation tools still work without GR blocks
+        pass
 
 # Always available: Python utilities
 from .modcod_table import MODCOD_TABLE, get_modcod, snr_to_modcod
 from .acm_controller_ai import AcmAIEngine, DQNAgent, SNRPredictor, rule_based_modcod
-from .orbit_visualizer_py import orbit_visualizer
+try:
+    from .orbit_visualizer_py import orbit_visualizer
+except ImportError:
+    pass
 
 __version__ = "1.0.0"
 __author__  = "Research Implementation"
