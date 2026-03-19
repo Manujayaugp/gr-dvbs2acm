@@ -50,9 +50,11 @@ import argparse
 from collections import deque
 from typing import List, Optional, Tuple
 
+import warnings
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
+warnings.filterwarnings('ignore', message='Unable to import Axes3D')
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
@@ -62,6 +64,13 @@ sys.path.insert(0, os.path.join(_HERE, '..', 'python'))
 
 
 # ── import the real AI engine (same as GRC flowgraph) ─────────────────────────
+# Redirect fd-2 (stderr) to /dev/null during import so that GNU Radio's
+# C-extension NumPy compatibility warnings don't clutter startup output.
+_saved_stderr_fd = os.dup(2)
+_devnull_fd      = os.open(os.devnull, os.O_WRONLY)
+os.dup2(_devnull_fd, 2)
+os.close(_devnull_fd)
+_ai_import_err = None
 try:
     from dvbs2acm.acm_controller_ai import (
         DQNAgent,
@@ -71,10 +80,15 @@ try:
     )
     _AI_ENGINE_OK = True
 except Exception as _e:
-    _AI_ENGINE_OK = False
-    _TORCH_OK     = False
-    DQNAgent      = None
+    _AI_ENGINE_OK  = False
+    _TORCH_OK      = False
+    DQNAgent       = None
+    _ai_import_err = _e
+finally:
+    os.dup2(_saved_stderr_fd, 2)
+    os.close(_saved_stderr_fd)
 
+if not _AI_ENGINE_OK:
     # Minimal stubs so the rest of the file type-checks cleanly
     class ChannelFeatures:          # type: ignore[no-redef]
         def __init__(self, elevation_deg=45.0, pass_fraction=0.5,
@@ -93,7 +107,7 @@ except Exception as _e:
             self.next_state = next_state
             self.done       = done
 
-    print(f"[WARNING] acm_controller_ai import failed ({_e}). "
+    print(f"[WARNING] acm_controller_ai import failed ({_ai_import_err}). "
           "DQN disabled; falling back to rule-based ACM.")
 
 
