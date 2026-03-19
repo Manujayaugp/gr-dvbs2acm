@@ -77,7 +77,7 @@
 
 % ── Title Info ───────────────────────────────────────────────
 \title[DVB-S2 ACM Results]{DVB-S2 ACM with AI/ML Cognitive Engine\\[0.3em]
-\normalsize Simulation \& GNU Radio Software Loopback Results}
+\normalsize Simulation \& Software Validation Results}
 \author[Pasindu Manujaya]{Pasindu Manujaya}
 \institute[NUS]{National University of Singapore}
 \date{2026}
@@ -582,6 +582,24 @@
   \end{column}
 \end{columns}
 \end{frame}
+% ── Simulation Demo — Video slide ────────────────────────────
+\begin{frame}[shrink=8]{Python Simulation Demo — acm\_loopback\_sim.py}
+\begin{center}
+  \includemedia[
+    width=0.80\textwidth,
+    height=0.45\textwidth,
+    activate=onclick,
+    addresource=sim_screen_record.mp4,
+    passcontext
+  ]{\includegraphics[width=0.80\textwidth]{sim_poster_frame.png}}{sim_screen_record.mp4}
+  \\[0.3em]
+  {\small\textbf{Click image to play inline}\enspace{\scriptsize(Adobe Acrobat Reader)}}\\[0.15em]
+  \href{https://nusu-my.sharepoint.com/:f:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}%
+    {\textcolor{NUSorange}{\large$\blacktriangleright$}\enspace%
+     \textbf{\textcolor{NUSorange}{Or watch full-screen on NUS OneDrive}}}
+\end{center}
+\end{frame}
+
 % ── GNU Radio Demo — Video slide ─────────────────────────────
 \begin{frame}[shrink=8]{GNU Radio Software Loopback Demo}
 \begin{center}
@@ -606,36 +624,6 @@
     \textbf{\textcolor{NUSorange}{Or watch full-screen on NUS OneDrive}}}\\[0.1em]
   {\scriptsize\textcolor{NUSgray}{(Edge, Chrome, phone — any browser)}}
 \end{center}
-\end{frame}
-
-% ── GNU Radio Demo — Content slide ───────────────────────────
-\begin{frame}[shrink=18]{GNU Radio Software Loopback Demo — What It Shows}
-\begin{columns}[T]
-  \begin{column}{0.54\textwidth}
-    \textbf{Current setup:}\\
-    Random source $\to$ full IQ signal chain $\to$ AWGN channel (no USRP yet)
-
-    \vspace{0.6em}
-    \textbf{What the video shows:}
-    \begin{enumerate}
-      \item GRC flowgraph — TX chain, AWGN channel, RX chain, ACM controller
-      \item Execution starts — QPSK constellation appears
-      \item AWGN noise increases — MODCOD steps down\\
-            (32APSK $\to$ 16APSK $\to$ 8PSK $\to$ QPSK)
-      \item Noise reduces — link recovers to high-order MODCOD
-    \end{enumerate}
-  \end{column}
-  \begin{column}{0.43\textwidth}
-    \begin{keybox}{Key point}
-      Full BCH+LDPC FEC, real Pilot-MMSE SNR estimation, and PLSCODE signalling — all working in software loopback. Constellation changes \textit{automatically} with no manual intervention.
-    \end{keybox}
-
-    \vspace{0.6em}
-    \begin{resultbox}{Next step}
-      Connect USRP B200 hardware and run \texttt{acm\_loopback.grc} over a real X-Band link for hardware validation.
-    \end{resultbox}
-  \end{column}
-\end{columns}
 \end{frame}
 
 % ── Conclusions ───────────────────────────────────────────────
