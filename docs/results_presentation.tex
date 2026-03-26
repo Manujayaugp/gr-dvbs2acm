@@ -496,52 +496,49 @@
 \end{frame}
 
 % ── Cross-Scenario Comparison ────────────────────────────────
-\begin{frame}[shrink=25]{Cross-Scenario Comparison Summary \normalfont\small(DQN: online training, $\varepsilon: 1.0 \to 0.56$ across runs)}
+\begin{frame}[shrink=20]{Cross-Scenario Comparison Summary}
 \begin{center}
-\renewcommand{\arraystretch}{1.15}
+\renewcommand{\arraystretch}{1.1}
 \small
-\begin{tabular}{llcccc}
+\begin{tabular}{llccc}
   \toprule
-  \textbf{Scenario} & \textbf{Strategy} & \textbf{$\eta$ (bits/sym)} &
+  \textbf{Scenario} & \textbf{Strategy} & \textbf{$\eta$ (b/s/Hz)} &
   \textbf{Switches} & \textbf{QEF\%} \\
   \midrule
   \multirow{3}{*}{SNR Sweep}
     & CCM             & 0.99 & 0   & 76.0 \\
-    & Rule-based      & 2.07 & 42  & 47.3 \\
-    & \textbf{DQN}   & \textbf{1.30} & 235 & \textbf{69.3} \\
+    & Rule-based      & \textbf{2.08} & 42  & 47.4 \\
+    & \textbf{DQN}   & 1.43 & 56 & \textbf{70.5} \\
   \midrule
   \multirow{3}{*}{LEO Pass}
     & CCM             & 0.99 & 0   & 99.8 \\
-    & Rule-based      & \textbf{3.02} & 393 & 64.2 \\
-    & \textbf{DQN}   & 1.74 & 7076 & \textbf{83.3} \\
+    & Rule-based      & \textbf{3.02} & 410 & 65.0 \\
+    & \textbf{DQN}   & 1.77 & 891 & \textbf{91.6} \\
   \midrule
   \multirow{3}{*}{Rain Fade}
     & CCM             & 0.99 & 0  & 100.0 \\
-    & Rule-based      & 3.07 & 18 & 68.0 \\
-    & \textbf{DQN}   & \textbf{2.01} & 697 & \textbf{88.2} \\
+    & Rule-based      & \textbf{3.06} & 20 & 67.2 \\
+    & \textbf{DQN}   & 1.78 & 87 & \textbf{93.8} \\
   \bottomrule
 \end{tabular}
 \end{center}
-
-\vspace{0.2em}
+\vspace{-0.3em}
 \begin{columns}[T]
   \begin{column}{0.48\textwidth}
     \begin{resultbox}{DQN strengths}
-      \small
-      \begin{itemize}\setlength{\itemsep}{1pt}
-        \item Best QEF\% in 2 of 3 scenarios
-        \item Learns to be conservative during fades
-        \item Reward penalises FER heavily ($-3.0 \times \text{FER}$)
+      \scriptsize
+      \begin{itemize}\setlength{\itemsep}{0pt}
+        \item Best QEF\% in 2/3 scenarios
+        \item Conservative during fades (reward penalises FER)
       \end{itemize}
     \end{resultbox}
   \end{column}
   \begin{column}{0.48\textwidth}
-    \begin{notebox}{DQN — current limitation}
-      \small
-      \begin{itemize}\setlength{\itemsep}{1pt}
-        \item High switch count in LEO (7076) — still exploring ($\varepsilon$-greedy)
-        \item Needs more training passes to converge
-        \item Online learning: improves each pass
+    \begin{notebox}{Trade-off}
+      \scriptsize
+      \begin{itemize}\setlength{\itemsep}{0pt}
+        \item DQN conservatively trades $\eta$ for QEF reliability
+        \item 0.29\,ms/decision — real-time feasible (4.4\% frame)
       \end{itemize}
     \end{notebox}
   \end{column}
@@ -592,38 +589,24 @@
     activate=onclick,
     addresource=sim_screen_record.mp4,
     passcontext
-  ]{\includegraphics[width=0.80\textwidth]{sim_poster_frame.png}}{sim_screen_record.mp4}
+  ]{\href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IQC4RPBsyLUYTKmggNV0iH9TAYb82JL_AcG6a3O7OpCzZs8?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=P2MvmI}{\includegraphics[width=0.80\textwidth]{sim_poster_frame.png}}}{sim_screen_record.mp4}
   \\[0.3em]
-  {\small\textbf{Click image to play inline}\enspace{\scriptsize(Adobe Acrobat Reader)}}\\[0.15em]
-  \href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IQC4RPBsyLUYTKmggNV0iH9TAYb82JL_AcG6a3O7OpCzZs8?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0\&e=P2MvmI}%
-    {\textcolor{NUSorange}{\large$\blacktriangleright$}\enspace%
-     \textbf{\textcolor{NUSorange}{Or watch full-screen on NUS OneDrive}}}
+  {\small\textbf{Click image to play} {\scriptsize(Adobe Acrobat)} \textbf{or open video link} {\scriptsize(any viewer)}}
 \end{center}
 \end{frame}
 
 % ── GNU Radio Demo — Video slide ─────────────────────────────
 \begin{frame}[shrink=8]{GNU Radio Software Loopback Demo}
 \begin{center}
-  % Video embedded in PDF — VPlayer.swf plays MP4 inline in Adobe Acrobat Reader
   \includemedia[
     width=0.80\textwidth,
     height=0.45\textwidth,
     activate=onclick,
     addresource=grc_screen_record.mp4,
-    addresource=VPlayer.swf,
-    flashvars={
-      src=grc_screen_record.mp4
-      &autoPlay=false
-      &loop=false
-    },
     passcontext
-  ]{\includegraphics[width=0.80\textwidth]{grc_poster_frame.png}}{VPlayer.swf}
+  ]{\href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{\includegraphics[width=0.80\textwidth]{grc_poster_frame.png}}}{grc_screen_record.mp4}
   \\[0.3em]
-  {\small\textbf{Click image to play inline}\enspace{\scriptsize(Adobe Acrobat Reader)}}\\[0.15em]
-  \href{https://nusu-my.sharepoint.com/:v:/g/personal/manujayaugp_u_nus_edu/IgBL8WLq6Kg3T72oFts44raeAY2qRBnLZsHWS2kot5pOpYc}{%
-    \textcolor{NUSorange}{\large$\blacktriangleright$}\enspace
-    \textbf{\textcolor{NUSorange}{Or watch full-screen on NUS OneDrive}}}\\[0.1em]
-  {\scriptsize\textcolor{NUSgray}{(Edge, Chrome, phone — any browser)}}
+  {\small\textbf{Click image to play} {\scriptsize(Adobe Acrobat)} \textbf{or open video link} {\scriptsize(any viewer)}}
 \end{center}
 \end{frame}
 
@@ -648,9 +631,9 @@
   \begin{column}{0.42\textwidth}
     \begin{resultbox}{Best result}
       \small Rain fade scenario: DQN achieves\\
-      $\eta = 2.01$ bits/sym with QEF $= 88.2\%$\\
-      vs rule-based QEF $= 68.0\%$\\[0.3em]
-      \textbf{+20 percentage points} reliability\\with $2\times$ CCM throughput.
+      $\eta = 1.78$ bits/sym with QEF $= 93.8\%$\\
+      vs rule-based QEF $= 67.2\%$\\[0.3em]
+      \textbf{+27 percentage points} reliability\\with $1.8\times$ CCM throughput.
     \end{resultbox}
 
     \vspace{0.5em}

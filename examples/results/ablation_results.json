@@ -1,0 +1,82 @@
+{
+  "Full DQN (52-dim, Dueling+PER)": {
+    "sweep": {
+      "label": "",
+      "avg_eta": 1.4219933333333332,
+      "switches": 52,
+      "qef_pct": 71.0
+    },
+    "leo": {
+      "label": "",
+      "avg_eta": 1.7745004221444935,
+      "switches": 937,
+      "qef_pct": 91.6777228319865
+    },
+    "rain_fade": {
+      "label": "",
+      "avg_eta": 1.7869789123196447,
+      "switches": 72,
+      "qef_pct": 93.78468368479467
+    }
+  },
+  "No orbital features (neutral ch)": {
+    "sweep": {
+      "label": "",
+      "avg_eta": 1.4459,
+      "switches": 57,
+      "qef_pct": 69.66666666666667
+    },
+    "leo": {
+      "label": "",
+      "avg_eta": 1.774744662887468,
+      "switches": 963,
+      "qef_pct": 91.73802918827644
+    },
+    "rain_fade": {
+      "label": "",
+      "avg_eta": 1.7863429522752494,
+      "switches": 80,
+      "qef_pct": 92.78579356270811
+    }
+  },
+  "Reduced SNR history (8)": {
+    "sweep": {
+      "label": "",
+      "avg_eta": 1.4511766666666666,
+      "switches": 46,
+      "qef_pct": 69.0
+    },
+    "leo": {
+      "label": "",
+      "avg_eta": 1.7721254372210828,
+      "switches": 857,
+      "qef_pct": 91.81039681582439
+    },
+    "rain_fade": {
+      "label": "",
+      "avg_eta": 1.7901576026637067,
+      "switches": 83,
+      "qef_pct": 93.89567147613762
+    }
+  },
+  "Rule-based (no ML)": {
+    "sweep": {
+      "label": "",
+      "avg_eta": 2.0804733333333334,
+      "switches": 42,
+      "qef_pct": 47.333333333333336
+    },
+    "leo": {
+      "label": "",
+      "avg_eta": 3.041444457845857,
+      "switches": 411,
+      "qef_pct": 65.58919310095284
+    },
+    "rain_fade": {
+      "label": "",
+      "avg_eta": 3.0663607103218653,
+      "switches": 20,
+      "qef_pct": 67.9245283018868
+    }
+  }
+}

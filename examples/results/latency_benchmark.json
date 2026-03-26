@@ -1,0 +1,11 @@
+{
+  "policy_params": 149917,
+  "state_dim": 52,
+  "n_actions": 28,
+  "model_size_kb": 2498.8662109375,
+  "inference_ms": 0.14906847400015977,
+  "full_decision_ms": 0.2904517750002924,
+  "train_step_ms": 9.78784784999334,
+  "frame_duration_ms": 6.6564,
+  "realtime_feasible": true
+}
